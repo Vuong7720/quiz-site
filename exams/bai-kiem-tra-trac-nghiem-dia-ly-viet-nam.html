@@ -1,0 +1,1595 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head><!--quiz-guard--><script>if(window.top===window.self)location.replace('../play.html?e='+encodeURIComponent(location.pathname.split('/').pop().replace(/\.html$/,'')))</script><!--/quiz-guard-->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Kiểm Tra Trắc Nghiệm Địa Lý Việt Nam</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff;
+            --primary-light-hover: #dbeafe;
+            --success: #16a34a;
+            --success-bg: #dcfce7;
+            --danger: #dc2626;
+            --danger-bg: #fee2e2;
+            --warning: #d97706;
+            --warning-bg: #fef3c7;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #3b82f6;
+                --primary-hover: #60a5fa;
+                --primary-light: rgba(59, 130, 246, 0.15);
+                --primary-light-hover: rgba(59, 130, 246, 0.25);
+                --success: #22c55e;
+                --success-bg: rgba(34, 197, 94, 0.15);
+                --danger: #ef4444;
+                --danger-bg: rgba(239, 68, 68, 0.15);
+                --warning: #f59e0b;
+                --warning-bg: rgba(245, 158, 11, 0.15);
+                --bg: #0f172a;
+                --card-bg: #1e293b;
+                --text: #f1f5f9;
+                --text-secondary: #94a3b8;
+                --border: #334155;
+                --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+                --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Utility classes */
+        .hidden { display: none !important; }
+
+        /* Main layout container */
+        .app-container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 24px 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 1. MÀN HÌNH BẮT ĐẦU */
+        #start-screen {
+            max-width: 650px;
+            margin: auto;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 40px 32px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .start-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .start-desc {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            font-size: 1rem;
+        }
+
+        .start-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-box {
+            background: var(--bg);
+            padding: 16px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-box .value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-box .label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .instructions {
+            text-align: left;
+            background: var(--bg);
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+            border: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        .instructions h3 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .instructions ul {
+            padding-left: 20px;
+            color: var(--text-secondary);
+        }
+
+        .instructions li {
+            margin-bottom: 4px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* 2. MÀN HÌNH LÀM BÀI */
+        #quiz-screen {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .sticky-header {
+            position: sticky;
+            top: 16px;
+            z-index: 10;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .quiz-title-small {
+            font-weight: 600;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 250px;
+        }
+
+        .progress-indicator {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .timer-pill {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            transition: all 0.3s;
+        }
+
+        .timer-pill.warning {
+            background: var(--warning-bg);
+            color: var(--warning);
+            border-color: rgba(217, 119, 6, 0.3);
+        }
+
+        .timer-pill.danger {
+            background: var(--danger-bg);
+            color: var(--danger);
+            border-color: rgba(220, 38, 38, 0.3);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .quiz-body-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .quiz-body-grid {
+                grid-template-columns: 1fr;
+            }
+            .sidebar-panel {
+                display: none;
+            }
+        }
+
+        .question-card-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            min-height: 420px;
+            position: relative;
+        }
+
+        .question-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .question-number-tag {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.9rem;
+            background: var(--primary-light);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .flag-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .flag-btn.active {
+            background: var(--warning-bg);
+            color: var(--warning);
+            border-color: var(--warning);
+            font-weight: 500;
+        }
+
+        .question-text {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-card {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--card-bg);
+        }
+
+        .option-card:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .option-card.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .option-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-right: 14px;
+            flex-shrink: 0;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .option-card.selected .option-badge {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .option-text {
+            font-size: 1rem;
+            color: var(--text);
+            flex: 1;
+        }
+
+        .quiz-navigation-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-nav {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .btn-nav:hover:not(:disabled) {
+            background: var(--bg);
+            border-color: var(--text-secondary);
+        }
+
+        .btn-nav:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-submit-main {
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px rgba(22, 163, 74, 0.25);
+        }
+
+        .btn-submit-main:hover {
+            background: #15803d;
+        }
+
+        /* Sidebar / Question Matrix Panel */
+        .sidebar-panel {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            position: sticky;
+            top: 84px;
+        }
+
+        .sidebar-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .matrix-item {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.15s;
+            color: var(--text-secondary);
+        }
+
+        .matrix-item:hover {
+            border-color: var(--primary);
+        }
+
+        .matrix-item.current {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-light);
+            color: var(--primary);
+        }
+
+        .matrix-item.answered {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .matrix-item.flagged::after {
+            content: '🚩';
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            font-size: 0.65rem;
+        }
+
+        .matrix-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+            padding-top: 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 4px;
+        }
+
+        /* Mobile Question Drawer Trigger */
+        .mobile-drawer-trigger {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+            z-index: 99;
+            cursor: pointer;
+            align-items: center;
+            gap: 8px;
+        }
+
+        @media (max-width: 900px) {
+            .mobile-drawer-trigger {
+                display: flex;
+            }
+        }
+
+        /* Mobile Drawer */
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .drawer-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-drawer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--card-bg);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            padding: 24px;
+            z-index: 101;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .mobile-drawer.open {
+            transform: translateY(0);
+        }
+
+        .drawer-close {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        /* 3. MÀN HÌNH KẾT QUẢ */
+        #result-screen {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            width: 100%;
+        }
+
+        .result-header-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 20px;
+        }
+
+        .score-circle-wrapper {
+            position: relative;
+            width: 140px;
+            height: 140px;
+        }
+
+        .score-circle-wrapper svg {
+            transform: rotate(-90deg);
+            width: 140px;
+            height: 140px;
+        }
+
+        .score-circle-bg {
+            fill: none;
+            stroke: var(--border);
+            stroke-width: 10;
+        }
+
+        .score-circle-progress {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 10;
+            stroke-linecap: round;
+            stroke-dasharray: 377;
+            stroke-dashoffset: 377;
+            transition: stroke-dashoffset 1s ease-in-out;
+        }
+
+        .score-circle-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .score-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1;
+        }
+
+        .score-total {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .result-status-badge {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .result-status-badge.passed {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .result-status-badge.failed {
+            background: var(--danger-bg);
+            color: var(--danger);
+        }
+
+        .result-comment {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            max-width: 500px;
+        }
+
+        .stats-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            width: 100%;
+        }
+
+        @media (max-width: 600px) {
+            .stats-grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .stat-card-item {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card-item .num {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-card-item.correct .num { color: var(--success); }
+        .stat-card-item.incorrect .num { color: var(--danger); }
+        .stat-card-item.skipped .num { color: var(--warning); }
+        .stat-card-item.time .num { color: var(--primary); }
+
+        .stat-card-item .lbl {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Review Section Tabs & List */
+        .review-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .review-tabs {
+            display: flex;
+            gap: 8px;
+            background: var(--bg);
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--card-bg);
+            color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .review-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .review-item-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            background: var(--card-bg);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .review-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .review-status-tag {
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+        }
+
+        .review-status-tag.correct { background: var(--success-bg); color: var(--success); }
+        .review-status-tag.incorrect { background: var(--danger-bg); color: var(--danger); }
+        .review-status-tag.skipped { background: var(--warning-bg); color: var(--warning); }
+
+        .review-options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .review-opt {
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+            background: var(--bg);
+        }
+
+        .review-opt.correct-ans {
+            background-color: var(--success-bg) !important;
+            border-color: var(--success) !important;
+            color: var(--success);
+            font-weight: 500;
+        }
+
+        .review-opt.user-wrong {
+            background-color: var(--danger-bg) !important;
+            border-color: var(--danger) !important;
+            color: var(--danger);
+        }
+
+        .explanation-box {
+            margin-top: 8px;
+            padding: 12px 16px;
+            background: var(--primary-light);
+            border-left: 4px solid var(--primary);
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        .result-actions {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .btn-secondary {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg);
+            border-color: var(--text-secondary);
+        }
+
+        /* MODAL CUSTOM */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            padding: 16px;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-box {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 28px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            text-align: center;
+            transform: scale(0.95);
+            transition: transform 0.2s;
+        }
+
+        .modal-overlay.open .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .modal-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .btn-modal-cancel {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-modal-confirm {
+            background: var(--primary);
+            border: none;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- 1. MÀN HÌNH BẮT ĐẦU -->
+        <div id="start-screen">
+            <div class="start-icon">🇻🇳</div>
+            <h1 id="main-heading">Bài Kiểm Tra Trắc Nghiệm Địa Lý Việt Nam</h1>
+            <p class="start-desc">Khám phá và kiểm tra kiến thức toàn diện về địa hình, khí hậu, sông ngòi và các vùng kinh tế của đất nước.</p>
+            
+            <div class="start-stats">
+                <div class="stat-box">
+                    <div class="value">20</div>
+                    <div class="label">Số câu hỏi</div>
+                </div>
+                <div class="stat-box">
+                    <div class="value">20 phút</div>
+                    <div class="label">Thời gian</div>
+                </div>
+                <div class="stat-box">
+                    <div class="value">10/10</div>
+                    <div class="label">Điểm đạt</div>
+                </div>
+            </div>
+
+            <div class="instructions">
+                <h3>📌 Hướng dẫn làm bài</h3>
+                <ul>
+                    <li>Chọn 1 đáp án chính xác nhất cho mỗi câu hỏi.</li>
+                    <li>Có thể đánh dấu cờ (🚩) để xem lại câu hỏi bất cứ lúc nào.</li>
+                    <li>Sử dụng phím tắt <strong>1-4</strong> hoặc <strong>A-D</strong> để chọn đáp án, phím mũi tên <strong>← →</strong> để chuyển câu.</li>
+                    <li>Hệ thống sẽ tự động nộp bài khi hết thời gian.</li>
+                </ul>
+            </div>
+
+            <button class="btn-primary" onclick="startQuiz()">Bắt đầu làm bài</button>
+        </div>
+
+        <!-- 2. MÀN HÌNH LÀM BÀI -->
+        <div id="quiz-screen" class="hidden">
+            <header class="sticky-header">
+                <div class="quiz-title-small">Địa Lý Việt Nam</div>
+                <div class="progress-indicator" id="progress-indicator">Đã làm 0/20 câu</div>
+                <div class="timer-pill" id="timer-display">
+                    <span>⏱</span> <span id="time-text">20:00</span>
+                </div>
+            </header>
+
+            <div class="quiz-body-grid">
+                <!-- Nội dung câu hỏi -->
+                <div class="question-card-container">
+                    <div class="question-header-row">
+                        <span class="question-number-tag" id="q-num-tag">Câu 1 / 20</span>
+                        <button class="flag-btn" id="flag-btn-current" onclick="toggleFlagCurrent()">
+                            <span>🚩</span> <span id="flag-text">Đánh dấu</span>
+                        </button>
+                    </div>
+
+                    <div class="question-text" id="question-text">Đang tải câu hỏi...</div>
+
+                    <div class="options-grid" id="options-container">
+                        <!-- Render options dynamically -->
+                    </div>
+
+                    <div class="quiz-navigation-footer">
+                        <button class="btn-nav" id="prev-btn" onclick="prevQuestion()">← Câu trước</button>
+                        <button class="btn-submit-main" onclick="openSubmitConfirmModal()">Nộp bài</button>
+                        <button class="btn-nav" id="next-btn" onclick="nextQuestion()">Câu tiếp →</button>
+                    </div>
+                </div>
+
+                <!-- Bảng câu hỏi (Sidebar cho Desktop) -->
+                <div class="sidebar-panel">
+                    <div class="sidebar-title">
+                        <span>Danh sách câu hỏi</span>
+                        <span id="answered-count-sidebar" style="font-size: 0.85rem; color: var(--text-secondary);">0/20</span>
+                    </div>
+                    <div class="matrix-grid" id="desktop-matrix">
+                        <!-- Render matrix items -->
+                    </div>
+                    <div class="matrix-legend">
+                        <div class="legend-item"><div class="legend-color" style="background: var(--primary-light); border: 1px solid var(--primary);"></div> Đã trả lời</div>
+                        <div class="legend-item"><div class="legend-color" style="background: var(--bg); border: 1px solid var(--border);"></div> Chưa làm</div>
+                        <div class="legend-item"><div class="legend-color" style="background: var(--warning-bg);"></div> Có đánh dấu (🚩)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Nút mở danh sách câu hỏi trên Mobile -->
+            <button class="mobile-drawer-trigger" onclick="openMobileDrawer()">
+                <span>📋</span> Danh sách câu hỏi
+            </button>
+        </div>
+
+        <!-- 3. MÀN HÌNH KẾT QUẢ -->
+        <div id="result-screen" class="hidden">
+            <div class="result-header-card">
+                <div class="score-circle-wrapper">
+                    <svg>
+                        <circle class="score-circle-bg" cx="70" cy="70" r="60"></circle>
+                        <circle class="score-circle-progress" id="score-svg-progress" cx="70" cy="70" r="60"></circle>
+                    </svg>
+                    <div class="score-circle-text">
+                        <div class="score-number" id="score-display-num">0.0</div>
+                        <div class="score-total">/ 10 điểm</div>
+                    </div>
+                </div>
+
+                <div class="result-status-badge" id="result-status-badge">ĐẠT</div>
+                <div class="result-comment" id="result-comment">Tuyệt vời! Bạn đã nắm rất vững kiến thức địa lý.</div>
+
+                <div class="stats-grid-4">
+                    <div class="stat-card-item correct">
+                        <div class="num" id="stat-correct">0</div>
+                        <div class="lbl">Số câu đúng</div>
+                    </div>
+                    <div class="stat-card-item incorrect">
+                        <div class="num" id="stat-incorrect">0</div>
+                        <div class="lbl">Số câu sai</div>
+                    </div>
+                    <div class="stat-card-item skipped">
+                        <div class="num" id="stat-skipped">0</div>
+                        <div class="lbl">Bỏ trống</div>
+                    </div>
+                    <div class="stat-card-item time">
+                        <div class="num" id="stat-time">00:00</div>
+                        <div class="lbl">Thời gian làm</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phần xem lại đáp án -->
+            <div class="review-section">
+                <div class="review-header">
+                    <h3>Chi tiết đáp án & Giải thích</h3>
+                    <div class="review-tabs">
+                        <button class="tab-btn active" onclick="filterReview('all', this)">Tất cả (20)</button>
+                        <button class="tab-btn" onclick="filterReview('incorrect', this)">Sai / Trống</button>
+                    </div>
+                </div>
+                <div class="review-list" id="review-list-container">
+                    <!-- Render review items -->
+                </div>
+            </div>
+
+            <div class="result-actions">
+                <button class="btn-secondary" onclick="scrollToTop()">↑ Về đầu trang</button>
+                <button class="btn-primary" onclick="retryQuiz()" style="width: auto; padding: 12px 28px;">Làm lại bài thi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Drawer & Overlay -->
+    <div class="drawer-overlay" id="drawer-overlay" onclick="closeMobileDrawer()"></div>
+    <div class="mobile-drawer" id="mobile-drawer">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3 style="font-size: 1rem;">Danh sách câu hỏi</h3>
+            <button class="drawer-close" onclick="closeMobileDrawer()">✕</button>
+        </div>
+        <div class="matrix-grid" id="mobile-matrix" style="grid-template-columns: repeat(5, 1fr); margin-bottom: 0;">
+            <!-- Render mobile matrix -->
+        </div>
+    </div>
+
+    <!-- Custom Modal Xác nhận Nộp bài -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal-box">
+            <div class="modal-icon">📤</div>
+            <div class="modal-title">Xác nhận nộp bài</div>
+            <div class="modal-desc" id="modal-desc-text">Bạn còn câu chưa làm. Bạn có chắc chắn muốn nộp bài ngay bây giờ không?</div>
+            <div class="modal-actions">
+                <button class="btn-modal-cancel" onclick="closeSubmitConfirmModal()">Làm tiếp</button>
+                <button class="btn-modal-confirm" onclick="confirmSubmitQuiz()">Nộp bài</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const rawQuizData = [
+            {
+                question: "Điểm cực Bắc phần đất liền của nước ta thuộc tỉnh nào?",
+                options: ["Hà Giang", "Cao Bằng", "Lào Cai", "Lạng Sơn"],
+                correct: 0,
+                explanation: "Điểm cực Bắc phần đất liền nước ta nằm ở xã Lũng Cú, huyện Đồng Văn, tỉnh Hà Giang."
+            },
+            {
+                question: "Đường bờ biển của nước ta dài khoảng bao nhiêu ki-lô-mét?",
+                options: ["2.600 km", "3.260 km", "3.460 km", "4.000 km"],
+                correct: 1,
+                explanation: "Đường bờ biển nước ta dài khoảng 3.260 km, kéo dài từ Móng Cái (Quảng Ninh) đến Hà Tiên (Kiên Giang)."
+            },
+            {
+                question: "Loại đất chiếm diện tích lớn nhất ở vùng đồi núi nước ta là gì?",
+                options: ["Đất phù sa", "Đất feralit", "Đất mùn núi cao", "Đất xám bạc màu"],
+                correct: 1,
+                explanation: "Đất feralit là loại đất chính hình thành ở khu vực đồi núi thấp do quá trình phong hóa mạnh trong điều kiện nhiệt đới ẩm gió mùa."
+            },
+            {
+                question: "Vịnh biển nào của nước ta được UNESCO công nhận là di sản thiên nhiên thế giới?",
+                options: ["Vịnh Xuân Đài", "Vịnh Cam Ranh", "Vịnh Hạ Long", "Vịnh Vân Phong"],
+                correct: 2,
+                explanation: "Vịnh Hạ Long (Quảng Ninh) đã được UNESCO nhiều lần công nhận là Di sản Thiên nhiên Thế giới nhờ giá trị cảnh quan và địa chất."
+            },
+            {
+                question: "Sông nào có lưu vực lớn nhất ở nước ta?",
+                options: ["Sông Hồng", "Sông Thái Bình", "Sông Mê Công (sông Cửu Long)", "Sông Đồng Nai"],
+                correct: 2,
+                explanation: "Hệ thống sông Mê Công (phần chảy qua Việt Nam gọi là sông Cửu Long) có diện tích lưu vực lớn nhất."
+            },
+            {
+                question: "Khí hậu nước ta mang đặc điểm chủ yếu nào?",
+                options: ["Ôn đới lục địa", "Nhiệt đới gió mùa ẩm", "Xích đạo ẩm", "Cận nhiệt đới gió mùa"],
+                correct: 1,
+                explanation: "Nước ta nằm trong vùng nội chí tuyến, chịu ảnh hưởng sâu sắc của hoàn lưu gió mùa và nguồn ẩm dồi dào từ biển."
+            },
+            {
+                question: "Cực Nam phần đất liền của nước ta nằm ở tỉnh nào?",
+                options: ["Bạc Liêu", "Sóc Trăng", "Cà Mau", "Kiên Giang"],
+                correct: 2,
+                explanation: "Điểm cực Nam phần đất liền nước ta nằm ở xã Đất Mũi, huyện Ngọc Hiển, tỉnh Cà Mau."
+            },
+            {
+                question: "Đỉnh núi nào được mệnh danh là 'Nóc nhà Đông Dương'?",
+                options: ["Đỉnh Tây Côn Lĩnh", "Đỉnh Phan Xi Păng", "Đỉnh Lảo Thẩn", "Đỉnh Phu Si Lùng"],
+                correct: 1,
+                explanation: "Đỉnh Phan Xi Păng thuộc dãy núi Hoàng Liên Sơn có độ cao 3.147m, là đỉnh núi cao nhất Việt Nam và toàn khu vực Đông Dương."
+            },
+            {
+                question: "Vùng kinh tế nào của nước ta giáp với cả Lào và Campuchia?",
+                options: ["Trung du và miền núi Bắc Bộ", "Bắc Trung Bộ", "Tây Nguyên", "Đông Nam Bộ"],
+                correct: 2,
+                explanation: "Tây Nguyên là vùng duy nhất ở nước ta có đường biên giới tiếp giáp với cả hai nước Lào và Campuchia."
+            },
+            {
+                question: "Đặc điểm nào dưới đây không phải của gió mùa Đông Bắc ở nước ta vào mùa đông?",
+                options: ["Thổi từ cao áp Xibia đến", "Gây ra mùa đông lạnh khô ở miền Bắc", "Hoạt động mạnh mẽ suốt từ Bắc chí Nam", "Tạo nên mùa mưa cho duyên hải miền Trung"],
+                correct: 2,
+                explanation: "Gió mùa Đông Bắc khi di chuyển xuống phía Nam bị suy yếu nhiều và hầu như bị chặn lại ở dãy Bạch Mã (khoảng vĩ tuyến 16°B), không ảnh hưởng mạnh mẽ đến Nam Bộ."
+            },
+            {
+                question: "Hồ nước ngọt tự nhiên lớn nhất ở nước ta là hồ nào?",
+                options: ["Hồ Ba Bể", "Hồ Lắk", "Hồ T’Nưng", "Hồ Tây"],
+                correct: 0,
+                explanation: "Hồ Ba Bể nằm tại tỉnh Bắc Kạn là hồ nước ngọt tự nhiên lớn nhất nước ta, nằm trong Vườn quốc gia Ba Bể."
+            },
+            {
+                question: "Tỉnh nào ở nước ta có diện tích lớn nhất?",
+                options: ["Gia Lai", "Nghệ An", "Lâm Đồng", "Đắk Lắk"],
+                correct: 1,
+                explanation: "Nghệ An là tỉnh có diện tích tự nhiên lớn nhất cả nước (khoảng 16.490 km²)."
+            },
+            {
+                question: "Đảo nào có diện tích lớn nhất nước ta hiện nay?",
+                options: ["Đảo Cát Bà", "Đảo Phú Quốc", "Đảo Lý Sơn", "Đảo Côn Sơn"],
+                correct: 1,
+                explanation: "Phú Quốc (tỉnh Kiên Giang) là hòn đảo lớn nhất Việt Nam, còn được mệnh danh là Đảo Ngọc."
+            },
+            {
+                question: "Dãy núi nào đóng vai trò là ranh giới tự nhiên chính giữa vùng Bắc Trung Bộ và Duyên hải Nam Trung Bộ?",
+                options: ["Dãy Hoàng Liên Sơn", "Dãy Trường Sơn Nam", "Dãy Bạch Mã", "Dãy Hoành Sơn"],
+                correct: 2,
+                explanation: "Dãy Bạch Mã với đỉnh núi cao cùng tên có đèo Hải Vân cắt ngang chính là ranh giới khí hậu và tự nhiên quan trọng chia cắt Bắc Trung Bộ và Nam Trung Bộ."
+            },
+            {
+                question: "Loại khoáng sản có trữ lượng lớn nhất và giá trị nhất ở thềm lục địa nước ta là gì?",
+                options: ["Sắt", "Bô-xít", "Dầu mỏ và khí đốt", "Than đá"],
+                correct: 2,
+                explanation: "Dầu mỏ và khí đốt tập trung chủ yếu ở các bể trầm tích thềm lục địa phía Nam, là tài nguyên khoáng sản có giá trị kinh tế cao nhất."
+            },
+            {
+                question: "Vùng nào sau đây ở nước ta thường xuyên chịu ảnh hưởng nặng nề nhất bởi bão và lũ quét, sạt lở đất?",
+                options: ["Đồng bằng sông Hồng", "Đồng bằng sông Cửu Long", "Bắc Trung Bộ và Duyên hải miền Trung", "Đông Nam Bộ"],
+                correct: 2,
+                explanation: "Miền Trung là nơi chịu tác động trực tiếp của bão từ Biển Đông cùng địa hình hẹp ngang, dốc, gây ra tình trạng lũ lụt và sạt lở đất nghiêm trọng."
+            },
+            {
+                question: "Tính chất nhiệt đới của nền khí hậu nước ta được quy định bởi yếu tố nào chủ yếu?",
+                options: ["Vị trí nằm trong vùng nội chí tuyến", "Ảnh hưởng của các khối khí biển", "Địa hình đồi núi chiếm phần lớn", "Hoạt động của gió mùa Đông Bắc"],
+                correct: 0,
+                explanation: "Do nằm trong vùng nội chí tuyến Bắc bán cầu, nước ta nhận được lượng bức xạ mặt trời rất lớn quanh năm, quy định tính chất nhiệt đới."
+            },
+            {
+                question: "Quần đảo Hoàng Sa hiện đang thuộc sự quản lý hành chính của thành phố nào?",
+                options: ["Thành phố Hải Phòng", "Thành phố Đà Nẵng", "Tỉnh Khánh Hòa", "Thành phố Hồ Chí Minh"],
+                correct: 1,
+                explanation: "Về mặt hành chính, quần đảo Hoàng Sa trực thuộc huyện đảo Hoàng Sa, thành phố Đà Nẵng."
+            },
+            {
+                question: "Sông nào ở nước ta đổ ra biển qua cửa Ba Lạt?",
+                options: ["Sông Đà", "Sông Hồng", "Sông Thái Bình", "Sông Mã"],
+                correct: 1,
+                explanation: "Sông Hồng là con sông lớn đổ ra vịnh Bắc Bộ qua nhiều cửa sông, trong đó cửa Ba Lạt là cửa lớn nhất thuộc ranh giới tỉnh Thái Bình và Nam Định."
+            },
+            {
+                question: "Đặc điểm nào thể hiện rõ tính chất 'ẩm' của khí hậu Việt Nam?",
+                options: ["Nhiệt độ trung bình năm cao trên 20°C", "Lượng mưa trung bình năm rất lớn (1.500 - 2.000mm)", "Số giờ nắng cao từ 1.400 - 3.000 giờ/năm", "Biên độ nhiệt năm nhỏ"],
+                correct: 1,
+                explanation: "Lượng mưa trung bình năm lớn cùng độ ẩm không khí cao (trên 80%) là biểu hiện rõ nét nhất của tính chất ẩm do biển Đông mang lại."
+            }
+        ];
+
+        let quizQuestions = [];
+        let currentIndex = 0;
+        let userAnswers = {}; // { questionIndex: chosenOptionIndex }
+        let flaggedQuestions = {}; // { questionIndex: true }
+        let timerInterval = null;
+        let timeLeft = 20 * 60; // 20 minutes
+        let timeSpent = 0;
+
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function initQuizData() {
+            quizQuestions = rawQuizData.map((q) => {
+                const indexedOptions = q.options.map((opt, idx) => ({ text: opt, originalIndex: idx }));
+                const shuffledOpts = shuffleArray(indexedOptions);
+                const newCorrect = shuffledOpts.findIndex(o => o.originalIndex === q.correct);
+                return {
+                    question: q.question,
+                    options: shuffledOpts.map(o => o.text),
+                    correct: newCorrect,
+                    explanation: q.explanation
+                };
+            });
+            quizQuestions = shuffleArray(quizQuestions);
+        }
+
+        function startQuiz() {
+            initQuizData();
+            currentIndex = 0;
+            userAnswers = {};
+            flaggedQuestions = {};
+            timeLeft = 20 * 60;
+            timeSpent = 0;
+
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('result-screen').classList.add('hidden');
+
+            renderCurrentQuestion();
+            renderMatrices();
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timeSpent++;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuizAction();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const min = Math.floor(timeLeft / 60);
+            const sec = timeLeft % 60;
+            const text = `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+            document.getElementById('time-text').textContent = text;
+
+            const timerPill = document.getElementById('timer-display');
+            timerPill.classList.remove('warning', 'danger');
+            if (timeLeft <= 60) {
+                timerPill.classList.add('danger');
+            } else if (timeLeft <= 5 * 60) {
+                timerPill.classList.add('warning');
+            }
+        }
+
+        function renderCurrentQuestion() {
+            const q = quizQuestions[currentIndex];
+            document.getElementById('q-num-tag').textContent = `Câu ${currentIndex + 1} / ${quizQuestions.length}`;
+            document.getElementById('question-text').textContent = q.question;
+
+            // Flag button state
+            const flagBtn = document.getElementById('flag-btn-current');
+            const flagText = document.getElementById('flag-text');
+            if (flaggedQuestions[currentIndex]) {
+                flagBtn.classList.add('active');
+                flagText.textContent = 'Đã đánh dấu';
+            } else {
+                flagBtn.classList.remove('active');
+                flagText.textContent = 'Đánh dấu';
+            }
+
+            // Options
+            const optContainer = document.getElementById('options-container');
+            const labels = ['A', 'B', 'C', 'D'];
+            let html = '';
+            q.options.forEach((opt, idx) => {
+                const isSelected = userAnswers[currentIndex] === idx;
+                html += `
+                    <div class="option-card ${isSelected ? 'selected' : ''}" onclick="selectOption(${idx})">
+                        <div class="option-badge">${labels[idx]}</div>
+                        <div class="option-text">${opt}</div>
+                    </div>
+                `;
+            });
+            optContainer.innerHTML = html;
+
+            // Nav buttons
+            document.getElementById('prev-btn').disabled = currentIndex === 0;
+            document.getElementById('next-btn').disabled = currentIndex === quizQuestions.length - 1;
+
+            updateProgressIndicator();
+            updateMatrices();
+        }
+
+        function selectOption(optIdx) {
+            userAnswers[currentIndex] = optIdx;
+            renderCurrentQuestion();
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderCurrentQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentIndex < quizQuestions.length - 1) {
+                currentIndex++;
+                renderCurrentQuestion();
+            }
+        }
+
+        function jumpToQuestion(idx) {
+            currentIndex = idx;
+            renderCurrentQuestion();
+            closeMobileDrawer();
+        }
+
+        function toggleFlagCurrent() {
+            if (flaggedQuestions[currentIndex]) {
+                delete flaggedQuestions[currentIndex];
+            } else {
+                flaggedQuestions[currentIndex] = true;
+            }
+            renderCurrentQuestion();
+        }
+
+        function updateProgressIndicator() {
+            const answeredCount = Object.keys(userAnswers).length;
+            document.getElementById('progress-indicator').textContent = `Đã làm ${answeredCount}/${quizQuestions.length} câu`;
+            document.getElementById('answered-count-sidebar').textContent = `${answeredCount}/${quizQuestions.length}`;
+        }
+
+        function renderMatrices() {
+            const desktopMatrix = document.getElementById('desktop-matrix');
+            const mobileMatrix = document.getElementById('mobile-matrix');
+            let html = '';
+            quizQuestions.forEach((_, idx) => {
+                html += `<div class="matrix-item" id="matrix-item-${idx}" onclick="jumpToQuestion(${idx})">${idx + 1}</div>`;
+            });
+            desktopMatrix.innerHTML = html;
+            mobileMatrix.innerHTML = html;
+            updateMatrices();
+        }
+
+        function updateMatrices() {
+            quizQuestions.forEach((_, idx) => {
+                const dItem = document.getElementById(`matrix-item-${idx}`);
+                const mItem = document.getElementById(`mobile-matrix`).children[idx];
+                
+                [dItem, mItem].forEach(item => {
+                    if (!item) return;
+                    item.className = 'matrix-item';
+                    if (idx === currentIndex) item.classList.add('current');
+                    if (userAnswers[idx] !== undefined) item.classList.add('answered');
+                    if (flaggedQuestions[idx]) item.classList.add('flagged');
+                });
+            });
+        }
+
+        function openMobileDrawer() {
+            document.getElementById('drawer-overlay').classList.add('open');
+            document.getElementById('mobile-drawer').classList.add('open');
+        }
+
+        function closeMobileDrawer() {
+            document.getElementById('drawer-overlay').classList.remove('open');
+            document.getElementById('mobile-drawer').classList.remove('open');
+        }
+
+        function openSubmitConfirmModal() {
+            const answeredCount = Object.keys(userAnswers).length;
+            const unanswered = quizQuestions.length - answeredCount;
+            const flaggedCount = Object.keys(flaggedQuestions).length;
+
+            let msg = `Bạn đã trả lời ${answeredCount}/${quizQuestions.length} câu.`;
+            if (unanswered > 0) {
+                msg += ` Còn ${unanswered} câu chưa trả lời.`;
+            }
+            if (flaggedCount > 0) {
+                msg += ` Có ${flaggedCount} câu đang gắn cờ.`;
+            }
+            msg += ` Bạn có chắc chắn muốn nộp bài ngay không?`;
+
+            document.getElementById('modal-desc-text').textContent = msg;
+            document.getElementById('confirm-modal').classList.add('open');
+        }
+
+        function closeSubmitConfirmModal() {
+            document.getElementById('confirm-modal').classList.remove('open');
+        }
+
+        function confirmSubmitQuiz() {
+            closeSubmitConfirmModal();
+            submitQuizAction();
+        }
+
+        function submitQuizAction() {
+            clearInterval(timerInterval);
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            let correctCount = 0;
+            let incorrectCount = 0;
+            let skippedCount = 0;
+
+            quizQuestions.forEach((q, idx) => {
+                const userAns = userAnswers[idx];
+                if (userAns === undefined) {
+                    skippedCount++;
+                } else if (userAns === q.correct) {
+                    correctCount++;
+                } else {
+                    incorrectCount++;
+                }
+            });
+
+            const score10 = ((correctCount / quizQuestions.length) * 10).toFixed(1);
+            
+            // Render circle progress
+            const circle = document.getElementById('score-svg-progress');
+            const circumference = 2 * Math.PI * 60; // r=60 => ~376.99
+            const strokeDashoffset = circumference - (score10 / 10) * circumference;
+            circle.style.strokeDashoffset = strokeDashoffset;
+
+            document.getElementById('score-display-num').textContent = score10;
+            document.getElementById('stat-correct').textContent = correctCount;
+            document.getElementById('stat-incorrect').textContent = incorrectCount;
+            document.getElementById('stat-skipped').textContent = skippedCount;
+
+            const minSpent = Math.floor(timeSpent / 60);
+            const secSpent = timeSpent % 60;
+            document.getElementById('stat-time').textContent = `${minSpent.toString().padStart(2, '0')}:${secSpent.toString().padStart(2, '0')}`;
+
+            const badge = document.getElementById('result-status-badge');
+            const comment = document.getElementById('result-comment');
+
+            if (parseFloat(score10) >= 5.0) {
+                badge.textContent = 'ĐẠT';
+                badge.className = 'result-status-badge passed';
+                comment.textContent = 'Chúc mừng bạn đã vượt qua bài kiểm tra địa lý xuất sắc!';
+            } else {
+                badge.textContent = 'CHƯA ĐẠT';
+                badge.className = 'result-status-badge failed';
+                comment.textContent = 'Cần cố gắng ôn tập thêm về địa hình và khí hậu Việt Nam bạn nhé!';
+            }
+
+            renderReviewList('all');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        let currentReviewFilter = 'all';
+
+        function filterReview(filter, btnEl) {
+            currentReviewFilter = filter;
+            document.querySelectorAll('.review-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+            btnEl.classList.add('active');
+            renderReviewList(filter);
+        }
+
+        function renderReviewList(filter) {
+            const container = document.getElementById('review-list-container');
+            const labels = ['A', 'B', 'C', 'D'];
+            let html = '';
+
+            quizQuestions.forEach((q, idx) => {
+                const userAns = userAnswers[idx];
+                const isCorrect = userAns === q.correct;
+                const isSkipped = userAns === undefined;
+
+                if (filter === 'incorrect' && (isCorrect)) return;
+
+                let statusTag = '';
+                if (isSkipped) {
+                    statusTag = `<span class="review-status-tag skipped">Bỏ trống</span>`;
+                } else if (isCorrect) {
+                    statusTag = `<span class="review-status-tag correct">Đúng</span>`;
+                } else {
+                    statusTag = `<span class="review-status-tag incorrect">Sai</span>`;
+                }
+
+                html += `
+                    <div class="review-item-card">
+                        <div class="review-item-header">
+                            <span>Câu ${idx + 1}: ${q.question}</span>
+                            ${statusTag}
+                        </div>
+                        <div class="review-options-list">
+                `;
+
+                q.options.forEach((opt, oIdx) => {
+                    let optClass = 'review-opt';
+                    if (oIdx === q.correct) {
+                        optClass += ' correct-ans';
+                    } else if (oIdx === userAns && !isCorrect) {
+                        optClass += ' user-wrong';
+                    }
+                    html += `<div class="${optClass}">${labels[oIdx]}. ${opt}</div>`;
+                });
+
+                html += `
+                        </div>
+                        <div class="explanation-box"><strong>Giải thích:</strong> ${q.explanation}</div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function retryQuiz() {
+            startQuiz();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
