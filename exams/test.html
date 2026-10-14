@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trắc nghiệm Lịch sử Việt Nam</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #dcdde1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .nav-back {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .nav-back:hover {
+            color: var(--accent-color);
+        }
+
+        header {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .meta-info {
+            display: flex;
+            gap: 15px;
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        .timer-box {
+            background: #eef2f7;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .timer-box.warning {
+            background: #fdeed9;
+            color: var(--warning-color);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        .quiz-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .question-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-item:hover {
+            background-color: #f1f2f6;
+            border-color: #b2bec3;
+        }
+
+        .option-item input {
+            margin-top: 4px;
+        }
+
+        .explanation {
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #f8f9fa;
+            border-left: 3px solid #718093;
+            font-size: 0.9rem;
+            display: none;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .explanation strong {
+            color: var(--primary-color);
+        }
+
+        /* Kết quả tô màu đáp án */
+        .option-item.correct {
+            background-color: #d4edda !important;
+            border-color: var(--success-color) !important;
+            color: #155724;
+            font-weight: 500;
+        }
+
+        .option-item.incorrect {
+            background-color: #f8d7da !important;
+            border-color: var(--accent-color) !important;
+            color: #721c24;
+        }
+
+        .actions-bar {
+            margin-top: 30px;
+            text-align: center;
+            padding-bottom: 40px;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #34495e;
+        }
+
+        .btn-restart {
+            background-color: var(--success-color);
+            display: none;
+        }
+
+        .btn-restart:hover {
+            background-color: #219653;
+        }
+
+        .score-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            display: none;
+        }
+
+        .score-card h2 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin: 10px 0;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a href="../index.html" class="nav-back">← Danh sách bài thi</a>
+
+        <header>
+            <div>
+                <h1>Kiểm tra Lịch sử Việt Nam</h1>
+                <div class="meta-info">
+                    <span id="total-questions-label">Số câu: 20</span>
+                    <span>Thời gian: 60 phút</span>
+                </div>
+            </div>
+            <div class="timer-box" id="timer">60:00</div>
+        </header>
+
+        <div class="score-card" id="score-card">
+            <h2>Kết quả bài thi</h2>
+            <div class="score-value" id="score-text">0/20</div>
+            <p id="score-detail">Điểm hệ 10: <strong id="score-10">0.0</strong></p>
+        </div>
+
+        <div class="quiz-container" id="quiz-container">
+            <!-- Câu hỏi sẽ được render bằng JavaScript -->
+        </div>
+
+        <div class="actions-bar">
+            <button class="btn" id="submit-btn" onclick="submitQuiz()">Nộp bài</button>
+            <button class="btn btn-restart" id="restart-btn" onclick="restartQuiz()">Làm lại</button>
+        </div>
+    </div>
+
+    <script>
+        // Mảng chứa danh sách câu hỏi
+        const rawQuestions = [
+            {
+                question: "Cuộc khởi nghĩa Hai Bà Trưng bùng nổ vào năm nào?",
+                options: ["40 TCN", "40", "248", "542"],
+                correct: 1,
+                explanation: "Cuộc khởi nghĩa Hai Bà Trưng bùng nổ vào năm 40 công nguyên chống lại ách đô hộ của nhà Đông Hô."
+            },
+            {
+                question: "Ai là người lãnh đạo cuộc khởi nghĩa chống quân Nam Hán và chiến thắng trên sông Bạch Đằng năm 938?",
+                options: ["Đinh Bộ Lĩnh", "Ngô Quyền", "Lê Hoàn", "Lý Thường Kiệt"],
+                correct: 1,
+                explanation: "Ngô Quyền lãnh đạo nhân dân đánh bại quân Nam Hán trên sông Bạch Đằng năm 938, chấm dứt hơn 1000 năm Bắc thuộc."
+            },
+            {
+                question: "Đinh Bộ Lĩnh lên ngôi hoàng đế, đặt quốc hiệu là Đại Cồ Việt vào năm nào?",
+                options: ["938", "968", "1010", "1054"],
+                correct: 1,
+                explanation: "Năm 968, sau khi dẹp xong loạn 12 sứ quân, Đinh Bộ Lĩnh lên ngôi hoàng đế (Đinh Tiên Hoàng) và đặt quốc hiệu Đại Cồ Việt."
+            },
+            {
+                question: "Vua Lý Thái Tổ dời đô từ Hoa Lư về Thăng Long vào năm nào?",
+                options: ["1009", "1010", "1025", "1054"],
+                correct: 1,
+                explanation: "Năm 1010, Lý Thái Tổ ban 'Chiếu dời đô' và dời kinh đô từ Hoa Lư về Đại La, đổi tên là Thăng Long."
+            },
+            {
+                question: "Bài thơ 'Nam quốc sơn hà' được coi là bản Tuyên ngôn độc lập đầu tiên của nước ta ra đời trong cuộc kháng chiến nào?",
+                options: ["Chống quân Tống lần thứ nhất (981)", "Chống quân Tống lần thứ hai (1075-1077)", "Chống quân Mông - Nguyên lần thứ nhất", "Chống quân Minh"],
+                correct: 1,
+                explanation: "Bài thơ vang lên trong cuộc kháng chiến chống quân Tống lần thứ hai (1075-1077) dưới sự chỉ huy của Lý Thường Kiệt."
+            },
+            {
+                question: "Triều đại nào dưới thời phong kiến Việt Nam đã ba lần đánh thắng quân Nguyên - Mông hùng mạnh?",
+                options: ["Nhà Lý", "Nhà Trần", "Nhà Lê sơ", "Nhà Nguyễn"],
+                correct: 1,
+                explanation: "Nhà Trần dưới sự lãnh đạo tài tình của Trần Hưng Đạo và các vua Trần đã 3 lần đánh bại quân xâm lược Mông - Nguyên (1258, 1285, 1287-1288)."
+            },
+            {
+                question: "Bộ luật nào được coi là bộ luật thành văn đầu tiên và hoàn chỉnh nhất của phong kiến Việt Nam?",
+                options: ["Hình luật (thời Lý)", "Hình thư (thời Trần)", "Quốc luật thư (Quốc triều hình luật - thời Lê)", "Hoàng Việt luật lệ"],
+                correct: 2,
+                explanation: "Quốc triều hình luật (Luật Hồng Đức) thời Lê sơ là bộ luật thành văn hoàn chỉnh và tiến bộ nhất thời phong kiến."
+            },
+            {
+                question: "Nguyễn Huệ lên ngôi hoàng đế, lấy niên hiệu là Quang Trung vào năm nào?",
+                options: ["1786", "1788", "1789", "1802"],
+                correct: 1,
+                explanation: "Cuối năm 1788 (trước khi ra Bắc đại phá quân Thanh), Nguyễn Huệ lên ngôi hoàng đế, lấy niên hiệu Quang Trung."
+            },
+            {
+                question: "Chiến thắng Ngọc Hồi - Đống Đa diễn ra vào mùa xuân năm nào?",
+                options: ["1787", "1788", "1789", "1790"],
+                correct: 2,
+                explanation: "Mùa xuân năm 1789, quân Tây Sơn dưới sự chỉ huy của vua Quang Trung đã đại phá 20 vạn quân Thanh."
+            },
+            {
+                question: "Triều đại phong kiến cuối cùng trong lịch sử Việt Nam là gì?",
+                options: ["Nhà Lê trung hưng", "Nhà Tây Sơn", "Nhà Nguyễn", "Nhà Mạc"],
+                correct: 2,
+                explanation: "Nhà Nguyễn là triều đại phong kiến cuối cùng, tồn tại từ năm 1802 đến năm 1945."
+            },
+            {
+                question: "Thực dân Pháp chính thức nổ súng bắt đầu cuộc chiến tranh xâm lược Việt Nam vào năm nào?",
+                options: ["1858", "1862", "1873", "1884"],
+                correct: 0,
+                explanation: "Ngày 1/9/1858, liên quân Pháp - Tây Ban Nha nổ súng tấn công Đà Nẵng, mở đầu quá trình xâm lược Việt Nam."
+            },
+            {
+                question: "Phong trào Cần Vương chống Pháp do ai pháting động?",
+                options: ["Phan Đình Phùng", "Tôn Thất Thuyết và vua Hàm Nghi", "Nguyễn Trường Tộ", "Hoàng Hoa Thám"],
+                correct: 1,
+                explanation: "Phong trào Cần Vương (1885-1896) do Tôn Thất Thuyết thay mặt vua Hàm Nghi ban chiếu Cần Vương kêu gọi văn thân, sĩ phu và nhân dân cứu nước."
+            },
+            {
+                question: "Nguyễn Tất Thành (Nguyễn Ái Quốc) ra đi tìm đường cứu nước vào ngày tháng năm nào?",
+                options: ["05/06/1911", "03/02/1930", "19/08/1945", "02/09/1945"],
+                correct: 0,
+                explanation: "Ngày 5/6/1911, từ bến cảng Nhà Rồng (Sài Gòn), thanh niên Nguyễn Tất Thành đã lên con tàu Amiral Latouche Tréville ra đi tìm đường cứu nước."
+            },
+            {
+                question: "Đảng Cộng sản Việt Nam chính thức được thành lập vào thời gian nào?",
+                options: ["03/02/1930", "17/06/1929", "02/09/1945", "19/12/1946"],
+                correct: 0,
+                explanation: "Đảng Cộng sản Việt Nam được thành lập ngày 3/2/1930 thông qua Hội nghị hợp nhất các tổ chức cộng sản do Nguyễn Ái Quốc chủ trì tại Hương Cảng."
+            },
+            {
+                question: "Cách mạng Tháng Tám năm 1945 thành công, Chủ tịch Hồ Chí Minh đọc Tuyên ngôn Độc lập tại Quảng trường Ba Đình vào ngày nào?",
+                options: ["19/08/1945", "02/09/1945", "30/04/1975", "07/05/1954"],
+                correct: 1,
+                explanation: "Ngày 2/9/1945, tại Quảng trường Ba Đình (Hà Nội), Chủ tịch Hồ Chí Minh đọc bản Tuyên ngôn Độc lập khai sinh ra nước Việt Nam Dân chủ Cộng hòa."
+            },
+            {
+                question: "Cuộc kháng chiến chống thực dân Pháp kết thúc thắng lợi bằng chiến dịch lịch sử nào?",
+                options: ["Chiến dịch Việt Bắc 1947", "Chiến dịch Biên giới 1950", "Chiến dịch Điện Biên Phủ 1954", "Cuộc tổng tiến công và nổi dậy Xuân 1975"],
+                correct: 2,
+                explanation: "Chiến dịch Điện Biên Phủ năm 1954 'lừng lẫy năm châu, chấn động địa cầu' đã kết thúc thắng lợi cuộc kháng chiến chống Pháp."
+            },
+            {
+                question: "Hiệp định Giơ-ne-vơ về đình chỉ chiến sự ở Việt Nam được ký kết vào năm nào?",
+                options: ["1953", "1954", "1972", "1973"],
+                correct: 1,
+                explanation: "Hiệp định Giơ-ne-vơ được ký kết vào tháng 7/1954, công nhận độc lập, chủ quyền, thống nhất và toàn vẹn lãnh thổ của Việt Nam."
+            },
+            {
+                question: "Đại thắng mùa Xuân năm 1975, đỉnh cao là chiến dịch nào đã giải phóng hoàn toàn miền Nam, thống nhất đất nước?",
+                options: ["Chiến dịch Tây Nguyên", "Chiến dịch Huế - Đà Nẵng", "Chiến dịch Hồ Chí Minh", "Chiến dịch Đường 9 - Nam Lào"],
+                correct: 2,
+                explanation: "Chiến dịch Hồ Chí Minh lịch sử (kết thúc bằng sự kiện ngày 30/4/1975) đã giải phóng hoàn toàn miền Nam, thống nhất đất nước."
+            },
+            {
+                question: "Đảng ta khởi xướng công cuộc Đổi mới đất nước từ Đại hội đại biểu toàn quốc lần thứ mấy?",
+                options: ["Đại hội VI (1986)", "Đại hội VII (1991)", "Đại hội VIII (1996)", "Đại hội IX (2001)"],
+                correct: 0,
+                explanation: "Đại hội VI của Đảng (tháng 12/1986) đã đề ra đường lối đổi mới toàn diện đất nước, đưa nước ta bước vào thời kỳ phát triển mới."
+            },
+            {
+                question: "Việt Nam chính thức gia nhập tổ chức Liên Hợp Quốc (UN) vào năm nào?",
+                options: ["1975", "1977", "1995", "2006"],
+                correct: 1,
+                explanation: "Việt Nam chính thức trở thành thành viên thứ 149 của Liên Hợp Quốc vào ngày 20/9/1977."
+            }
+        ];
+
+        let questions = [];
+        let timerInterval;
+        let timeLeft = 60 * 60; // 60 phút
+        let isSubmitted = false;
+
+        // Hàm xáo trộn mảng (Fisher-Yates shuffle)
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Chuẩn bị câu hỏi và xáo trộn cả câu hỏi lẫn đáp án (lưu ánh xạ vị trí đúng)
+        function initQuizData() {
+            questions = rawQuestions.map((q) => {
+                // Tạo mảng các lựa chọn kèm chỉ số gốc
+                let optsWithIndex = q.options.map((opt, idx) => ({ text: opt, originalIndex: idx }));
+                // Xáo trộn thứ tự các lựa chọn
+                let shuffledOpts = shuffleArray(optsWithIndex);
+                // Tìm lại vị trí mới của đáp án đúng
+                let newCorrectIndex = shuffledOpts.findIndex(item => item.originalIndex === q.correct);
+
+                return {
+                    question: q.question,
+                    options: shuffledOpts.map(item => item.text),
+                    correct: newCorrectIndex,
+                    explanation: q.explanation
+                };
+            });
+            // Xáo trộn luôn thứ tự các câu hỏi
+            questions = shuffleArray(questions);
+        }
+
+        function renderQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+
+            questions.forEach((q, qIndex) => {
+                let optionsHtml = '';
+                q.options.forEach((opt, oIndex) => {
+                    optionsHtml += `
+                        <label class="option-item" id="opt-${qIndex}-${oIndex}">
+                            <input type="radio" name="question-${qIndex}" value="${oIndex}" onchange="handleSelect(${qIndex}, ${oIndex})">
+                            <span>${opt}</span>
+                        </label>
+                    `;
+                });
+
+                let html = `
+                    <div class="question-card" id="q-card-${qIndex}">
+                        <div class="question-title">Câu ${qIndex + 1}: ${q.question}</div>
+                        <div class="options-list">
+                            ${optionsHtml}
+                        </div>
+                        <div class="explanation" id="exp-${qIndex}">
+                            <strong>Giải thích:</strong> ${q.explanation}
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        function handleSelect(qIndex, oIndex) {
+            // Có thể xử lý thêm hiệu ứng chọn nếu cần
+        }
+
+        function startTimer() {
+            const timerDisplay = document.getElementById('timer');
+            timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Đã hết thời gian làm bài! Hệ thống sẽ tự động nộp bài.");
+                    submitQuiz(true);
+                    return;
+                }
+                timeLeft--;
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft < 300) { // Dưới 5 phút cảnh báo màu đỏ
+                    timerDisplay.classList.add('warning');
+                }
+            }, 1000);
+        }
+
+        function submitQuiz(forced = false) {
+            if (isSubmitted) return;
+
+            // Kiểm tra xem còn câu chưa làm không nếu không phải do hết giờ tự nộp
+            if (!forced) {
+                let unansweredCount = 0;
+                for (let i = 0; i < questions.length; i++) {
+                    const radios = document.getElementsByName(`question-${i}`);
+                    let answered = false;
+                    for (let r of radios) {
+                        if (r.checked) {
+                            answered = true;
+                            break;
+                        }
+                    }
+                    if (!answered) unansweredCount++;
+                }
+
+                if (unansweredCount > 0) {
+                    let confirmSubmit = confirm(`Bạn còn ${unansweredCount} câu chưa trả lời. Bạn có chắc chắn muốn nộp bài không?`);
+                    if (!confirmSubmit) return;
+                }
+            }
+
+            clearInterval(timerInterval);
+            isSubmitted = true;
+
+            let correctCount = 0;
+
+            questions.forEach((q, qIndex) => {
+                const radios = document.getElementsByName(`question-${qIndex}`);
+                let selectedIndex = -1;
+
+                radios.forEach((r, rIndex) => {
+                    if (r.checked) {
+                        selectedIndex = parseInt(r.value);
+                    }
+                    // Khóa không cho chọn tiếp
+                    r.disabled = true;
+                });
+
+                // Tô màu đáp án
+                const correctOptElem = document.getElementById(`opt-${qIndex}-${q.correct}`);
+                correctOptElem.classList.add('correct');
+
+                if (selectedIndex !== -1) {
+                    if (selectedIndex === q.correct) {
+                        correctCount++;
+                    } else {
+                        const incorrectOptElem = document.getElementById(`opt-${qIndex}-${selectedIndex}`);
+                        incorrectOptElem.classList.add('incorrect');
+                    }
+                }
+
+                // Hiện giải thích
+                document.getElementById(`exp-${qIndex}`).style.display = 'block';
+            });
+
+            // Tính điểm
+            let score10 = ((correctCount / questions.length) * 10).toFixed(1);
+
+            // Hiển thị khung kết quả
+            document.getElementById('score-text').textContent = `${correctCount} / ${questions.length}`;
+            document.getElementById('score-10').textContent = score10;
+            document.getElementById('score-card').style.display = 'block';
+
+            // Ẩn nút nộp bài, hiện nút làm lại
+            document.getElementById('submit-btn').style.display = 'none';
+            document.getElementById('restart-btn').style.display = 'inline-block';
+
+            // Cuộn lên đầu xem kết quả
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function restartQuiz() {
+            timeLeft = 60 * 60;
+            isSubmitted = false;
+            document.getElementById('score-card').style.display = 'none';
+            document.getElementById('submit-btn').style.display = 'inline-block';
+            document.getElementById('restart-btn').style.display = 'none';
+            document.getElementById('timer').classList.remove('warning');
+            
+            initQuizData();
+            renderQuiz();
+            startTimer();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Khởi chạy lần đầu khi tải trang
+        window.onload = function() {
+            initQuizData();
+            renderQuiz();
+            startTimer();
+        };
+    </script>
+</body>
+</html>
