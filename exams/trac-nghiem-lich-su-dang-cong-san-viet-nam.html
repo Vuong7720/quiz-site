@@ -1,0 +1,1888 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head><!--quiz-guard--><script>if(window.top===window.self)location.replace('../play.html?e='+encodeURIComponent(location.pathname.split('/').pop().replace(/\.html$/,'')))</script><!--/quiz-guard-->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trắc Nghiệm Lịch Sử Đảng Cộng Sản Việt Nam</title>
+    <!-- Google Fonts: Be Vietnam Pro -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff;
+            --primary-border: #bfdbfe;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --success: #16a34a;
+            --success-light: #f0fdf4;
+            --danger: #dc2626;
+            --danger-light: #fef2f2;
+            --warning: #d97706;
+            --warning-light: #fffbeb;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #3b82f6;
+                --primary-hover: #60a5fa;
+                --primary-light: rgba(59, 130, 246, 0.15);
+                --primary-border: #1e3a8a;
+                --bg-body: #0f172a;
+                --bg-card: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #94a3b8;
+                --border-color: #334155;
+                --success: #22c55e;
+                --success-light: rgba(34, 197, 94, 0.15);
+                --danger: #ef4444;
+                --danger-light: rgba(239, 68, 68, 0.15);
+                --warning: #f59e0b;
+                --warning-light: rgba(245, 158, 11, 0.15);
+                --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+                --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+                --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Container Layouts */
+        .app-container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px 16px 40px;
+            flex: 1;
+        }
+
+        .screen {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Card Styling */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            padding: 28px;
+            margin-bottom: 24px;
+            transition: var(--transition);
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            color: var(--text-main);
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        h1 { font-size: 1.75rem; }
+        h2 { font-size: 1.35rem; }
+        p { color: var(--text-muted); }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: var(--radius-md);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            user-select: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary-light);
+            border-color: var(--primary-border);
+            color: var(--primary);
+        }
+
+        .btn-outline-danger {
+            background-color: transparent;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .btn-outline-danger:hover {
+            background-color: var(--danger-light);
+        }
+
+        /* SCREEN 1: START */
+        .start-card {
+            text-align: center;
+            max-width: 680px;
+            margin: 40px auto 0;
+            padding: 40px 32px;
+        }
+
+        .start-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 28px 0;
+        }
+
+        .stat-item {
+            background: var(--bg-body);
+            padding: 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-item .val {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-top: 4px;
+        }
+
+        .instructions {
+            text-align: left;
+            background: var(--primary-light);
+            border-left: 4px solid var(--primary);
+            padding: 16px;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            margin-bottom: 28px;
+            font-size: 0.92rem;
+        }
+
+        .instructions ul {
+            padding-left: 20px;
+            margin-top: 8px;
+        }
+
+        /* SCREEN 2: QUIZ MAIN */
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            padding: 12px 0;
+            margin-bottom: 24px;
+        }
+
+        .header-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .quiz-title-short {
+            font-weight: 700;
+            font-size: 1.05rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .progress-bar-wrap {
+            flex: 1;
+            max-width: 280px;
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-track {
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .timer-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            border: 1px solid var(--primary-border);
+            white-space: nowrap;
+        }
+
+        .timer-pill.warning {
+            background: var(--warning-light);
+            color: var(--warning);
+            border-color: var(--warning);
+        }
+
+        .timer-pill.danger {
+            background: var(--danger-light);
+            color: var(--danger);
+            border-color: var(--danger);
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 1; }
+            to { opacity: 0.5; }
+        }
+
+        .quiz-layout {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 24px;
+        }
+
+        .question-card {
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .q-number {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--primary-light);
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+        }
+
+        .btn-flag {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .btn-flag:hover, .btn-flag.active {
+            border-color: var(--warning);
+            color: var(--warning);
+            background: var(--warning-light);
+        }
+
+        .q-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--bg-card);
+            user-select: none;
+        }
+
+        .option-item:hover {
+            border-color: var(--primary-border);
+            background: var(--primary-light);
+        }
+
+        .option-item.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .opt-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-right: 14px;
+            flex-shrink: 0;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .option-item.selected .opt-badge {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+        }
+
+        .opt-text {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-main);
+            flex: 1;
+        }
+
+        .quiz-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+            margin-top: auto;
+        }
+
+        /* Question Navigation Grid (Sidebar) */
+        .nav-card {
+            position: sticky;
+            top: 84px;
+            height: fit-content;
+        }
+
+        .nav-title {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .grid-q {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .btn-qnum {
+            aspect-ratio: 1;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .btn-qnum:hover {
+            border-color: var(--primary);
+        }
+
+        .btn-qnum.answered {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary-border);
+        }
+
+        .btn-qnum.current {
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-light);
+            font-weight: 800;
+        }
+
+        .btn-qnum.flagged::after {
+            content: '🚩';
+            position: absolute;
+            top: -4px;
+            right: -2px;
+            font-size: 0.65rem;
+        }
+
+        .mobile-drawer-toggle {
+            display: none;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+
+        /* SCREEN 3: RESULT */
+        .result-card {
+            text-align: center;
+            padding: 36px 24px;
+        }
+
+        .score-circle-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 20px;
+        }
+
+        .score-circle-svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .score-circle-bg {
+            fill: none;
+            stroke: var(--border-color);
+            stroke-width: 10;
+        }
+
+        .score-circle-fill {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 10;
+            stroke-linecap: round;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 440;
+            transition: stroke-dashoffset 1s ease-out;
+        }
+
+        .score-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .score-val {
+            font-size: 2.8rem;
+            font-weight: 800;
+            line-height: 1;
+            color: var(--text-main);
+        }
+
+        .score-max {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .badge-status {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+        }
+
+        .badge-status.pass {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .badge-status.fail {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .feedback-msg {
+            font-size: 1.05rem;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 24px;
+        }
+
+        .result-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .r-stat {
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
+            padding: 14px;
+            border-radius: var(--radius-md);
+        }
+
+        .r-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .r-stat-val {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        /* Review Section */
+        .review-section {
+            margin-top: 32px;
+            text-align: left;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .review-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .review-item.correct-item { border-left: 4px solid var(--success); }
+        .review-item.incorrect-item { border-left: 4px solid var(--danger); }
+        .review-item.skipped-item { border-left: 4px solid var(--warning); }
+
+        .rev-q-head {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
+
+        .rev-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .rev-opt {
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 0.92rem;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rev-opt.user-correct {
+            background: var(--success-light);
+            border-color: var(--success);
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .rev-opt.user-wrong {
+            background: var(--danger-light);
+            border-color: var(--danger);
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .rev-opt.actual-correct {
+            background: var(--success-light);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .explanation-box {
+            background: var(--bg-body);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            border-left: 3px solid var(--primary);
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition);
+            padding: 16px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 440px;
+            padding: 24px;
+            box-shadow: var(--shadow-lg);
+            transform: scale(0.95);
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .modal-body {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        /* MOBILE DRAWER FOR QUESTION GRID */
+        @media (max-width: 768px) {
+            .quiz-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-card {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                top: auto;
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+                z-index: 200;
+                transform: translateY(100%);
+                transition: transform 0.3s ease;
+                margin: 0;
+                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+
+            .nav-card.drawer-open {
+                transform: translateY(0);
+            }
+
+            .mobile-drawer-toggle {
+                display: flex;
+            }
+
+            .stats-grid, .result-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .start-card {
+                padding: 24px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SCREEN 1: BẮT ĐẦU -->
+    <div id="screen-start" class="screen active">
+        <div class="app-container">
+            <div class="card start-card">
+                <div class="start-icon">🇻🇳</div>
+                <h1>Trắc Nghiệm Lịch Sử Đảng Cộng Sản Việt Nam</h1>
+                <p style="margin-top: 8px;">Ôn tập & Kiểm tra kiến thức Lịch sử Đảng từ thành lập (1930) đến nay</p>
+                
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div style="font-size: 1.2rem;">📝</div>
+                        <div class="val">20 Câu / Lượt</div>
+                    </div>
+                    <div class="stat-item">
+                        <div style="font-size: 1.2rem;">⏱</div>
+                        <div class="val">30 Phút</div>
+                    </div>
+                    <div class="stat-item">
+                        <div style="font-size: 1.2rem;">🎯</div>
+                        <div class="val">Đạt ≥ 10/10 điểm</div>
+                    </div>
+                </div>
+
+                <div class="instructions">
+                    <strong>📌 Lưu ý khi làm bài:</strong>
+                    <ul>
+                        <li>Mỗi lượt làm bài sẽ bốc <strong>20 câu hỏi ngẫu nhiên</strong> từ ngân hàng 60 câu.</li>
+                        <li>Dùng phím <strong>1 - 4</strong> hoặc <strong>A - D</strong> để chọn đáp án nhanh.</li>
+                        <li>Dùng phím mũi tên <strong>← →</strong> để chuyển câu hỏi.</li>
+                        <li>Có thể đánh dấu 🚩 các câu chưa chắc chắn để xem lại sau.</li>
+                    </ul>
+                </div>
+
+                <button class="btn btn-primary" id="btn-start" style="width: 100%; max-width: 280px; height: 48px; font-size: 1.05rem;">
+                    🚀 Bắt đầu làm bài
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 2: LÀM BÀI -->
+    <div id="screen-quiz" class="screen">
+        <!-- Sticky Header -->
+        <div class="sticky-header">
+            <div class="header-content">
+                <div class="quiz-title-short">Lịch Sử Đảng CS Việt Nam</div>
+                
+                <div class="progress-bar-wrap">
+                    <div class="progress-text">
+                        <span>Tiến độ</span>
+                        <span id="progress-text-val">0/20</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                </div>
+
+                <div class="timer-pill" id="timer-pill">
+                    <span>⏱</span>
+                    <span id="timer-val">30:00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="app-container">
+            <button class="btn btn-secondary mobile-drawer-toggle" id="btn-open-drawer">
+                📋 Danh sách câu hỏi (<span id="mobile-answered-count">0</span>/20)
+            </button>
+
+            <div class="quiz-layout">
+                <!-- Question Main Card -->
+                <div class="card question-card">
+                    <div>
+                        <div class="question-header">
+                            <span class="q-number" id="q-number-badge">Câu 1</span>
+                            <button class="btn-flag" id="btn-flag">
+                                <span>🚩</span> <span id="flag-text">Đánh dấu</span>
+                            </button>
+                        </div>
+                        
+                        <div class="q-text" id="q-text">Đang tải câu hỏi...</div>
+
+                        <div class="options-list" id="options-container">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <div class="quiz-actions">
+                        <button class="btn btn-secondary" id="btn-prev">← Câu trước</button>
+                        <button class="btn btn-primary" id="btn-next">Câu tiếp →</button>
+                        <button class="btn btn-primary" id="btn-submit-quiz" style="display: none; background-color: var(--success);">Nộp bài ✨</button>
+                    </div>
+                </div>
+
+                <!-- Sidebar Navigation / Drawer -->
+                <div class="card nav-card" id="nav-drawer">
+                    <div class="nav-title">
+                        <span>Danh sách câu</span>
+                        <button id="btn-close-drawer" style="display: none; background:none; border:none; font-size: 1.2rem; cursor:pointer; color: var(--text-main);">✕</button>
+                    </div>
+                    <div class="grid-q" id="grid-questions">
+                        <!-- Populated via JS -->
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-primary" id="btn-trigger-submit" style="width: 100%;">
+                            📥 Nộp bài thi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 3: KẾT QUẢ -->
+    <div id="screen-result" class="screen">
+        <div class="app-container" style="max-width: 800px;">
+            <div class="card result-card">
+                <div class="score-circle-wrap">
+                    <svg class="score-circle-svg" viewBox="0 0 160 160">
+                        <circle class="score-circle-bg" cx="80" cy="80" r="70"></circle>
+                        <circle class="score-circle-fill" id="score-circle-fill" cx="80" cy="80" r="70"></circle>
+                    </svg>
+                    <div class="score-text">
+                        <span class="score-val" id="score-val">0.0</span>
+                        <span class="score-max">Thang điểm 10</span>
+                    </div>
+                </div>
+
+                <div id="result-badge-wrap">
+                    <!-- Status badge inserted via JS -->
+                </div>
+
+                <div class="feedback-msg" id="feedback-msg">---</div>
+
+                <div class="result-stats-grid">
+                    <div class="r-stat">
+                        <div class="r-stat-label">✅ Câu đúng</div>
+                        <div class="r-stat-val" id="stat-correct" style="color: var(--success);">0</div>
+                    </div>
+                    <div class="r-stat">
+                        <div class="r-stat-label">❌ Câu sai</div>
+                        <div class="r-stat-val" id="stat-wrong" style="color: var(--danger);">0</div>
+                    </div>
+                    <div class="r-stat">
+                        <div class="r-stat-label">⏭ Bỏ trống</div>
+                        <div class="r-stat-val" id="stat-skipped" style="color: var(--warning);">0</div>
+                    </div>
+                    <div class="r-stat">
+                        <div class="r-stat-label">⏱ Thời gian</div>
+                        <div class="r-stat-val" id="stat-time">00:00</div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn btn-primary" id="btn-retry">🔄 Làm lại bài mới</button>
+                    <button class="btn btn-secondary" id="btn-review-top">📜 Xem chi tiết đáp án</button>
+                </div>
+
+                <!-- Review Section -->
+                <div class="review-section" id="review-section">
+                    <h3 style="margin-bottom: 16px;">Chi tiết đáp án & Giải thích</h3>
+                    
+                    <div class="filter-tabs">
+                        <button class="tab-btn active" data-filter="all">Tất cả (<span id="cnt-all">20</span>)</button>
+                        <button class="tab-btn" data-filter="wrong">Câu sai (<span id="cnt-wrong">0</span>)</button>
+                        <button class="tab-btn" data-filter="skipped">Bỏ trống (<span id="cnt-skipped">0</span>)</button>
+                    </div>
+
+                    <div id="review-list">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL XÁC NHẬN NỘP BÀI -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal-card">
+            <div class="modal-title">Xác nhận nộp bài?</div>
+            <div class="modal-body" id="modal-msg">
+                Bạn có chắc chắn muốn nộp bài không?
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="btn-modal-cancel">Làm tiếp</button>
+                <button class="btn btn-primary" id="btn-modal-confirm">Đồng ý nộp</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ==========================================================================
+           1. NGÂN HÀNG CÂU HỎI (60 CÂU ĐẦY ĐỦ VỀ LỊCH SỬ ĐẢNG CS VIỆT NAM)
+           ========================================================================== */
+        const QUESTION_BANK = [
+            {
+                q: "Đảng Cộng sản Việt Nam được thành lập vào ngày tháng năm nào?",
+                options: ["03/02/1930", "03/02/1931", "26/03/1931", "19/05/1890"],
+                answer: 0,
+                explain: "Hội nghị thành lập Đảng diễn ra từ ngày 6/1 đến đầu tháng 2/1930 tại Cửu Long (Hương Cảng, Trung Quốc). Đại hội III của Đảng (1960) quyết định lấy ngày 3/2 hàng năm làm ngày kỷ niệm thành lập Đảng.",
+                level: "de"
+            },
+            {
+                q: "Hội nghị hợp nhất các tổ chức cộng sản Việt Nam đầu năm 1930 diễn ra tại đâu?",
+                options: ["Hà Nội, Việt Nam", "Quảng Châu, Trung Quốc", "Hương Cảng (Cửu Long, Trung Quốc)", "Cao Bằng, Việt Nam"],
+                answer: 2,
+                explain: "Hội nghị diễn ra tại Cửu Long, Hương Cảng (Trung Quốc) dưới sự chủ trì của đồng chí Nguyễn Ái Quốc.",
+                level: "de"
+            },
+            {
+                q: "Ai là người chủ trì Hội nghị thành lập Đảng Cộng sản Việt Nam đầu năm 1930?",
+                options: ["Trần Phú", "Nguyễn Ái Quốc", "Lê Hồng Phong", "Hà Huy Tập"],
+                answer: 1,
+                explain: "Đồng chí Nguyễn Ái Quốc là đại biểu của Quốc tế Cộng sản đã triệu tập và chủ trì Hội nghị hợp nhất.",
+                level: "de"
+            },
+            {
+                q: "Ai là Tổng Bí thư đầu tiên của Đảng Cộng sản Việt Nam?",
+                options: ["Nguyễn Ái Quốc", "Trần Phú", "Lê Hồng Phong", "Truờng Chinh"],
+                answer: 1,
+                explain: "Đồng chí Trần Phú được bầu làm Tổng Bí thư đầu tiên của Đảng tại Hội nghị Ban Chấp hành Trung ương tháng 10/1930.",
+                level: "de"
+            },
+            {
+                q: "Tác phẩm nào của Nguyễn Ái Quốc xuất bản năm 1927 chuẩn bị về mặt tư tưởng, chính trị cho việc thành lập Đảng?",
+                options: ["Bản án chế độ thực dân Pháp", "Đường Kách mệnh", "Tuyên ngôn Độc lập", "Con đường cứu nước"],
+                answer: 1,
+                explain: "Cuốn sách 'Đường Kách mệnh' tập hợp các bài giảng của Nguyễn Ái Quốc tại các lớp huấn luyện cán bộ ở Quảng Châu.",
+                level: "de"
+            },
+            {
+                q: "Cương lĩnh chính trị đầu tiên của Đảng bao gồm các tài liệu nào do Nguyễn Ái Quốc soạn thảo?",
+                options: ["Chánh cương tóm tắt, Sách lược tóm tắt", "Luận cương chính trị 1930", "Tuyên ngôn của Đảng", "Báo cáo chính trị 1930"],
+                answer: 0,
+                explain: "Chánh cương tóm tắt và Sách lược tóm tắt do Nguyễn Ái Quốc thông qua tại Hội nghị thành lập Đảng là Cương lĩnh đầu tiên.",
+                level: "trungbinh"
+            },
+            {
+                q: "Luận cương chính trị tháng 10/1930 của Đảng do ai soạn thảo?",
+                options: ["Nguyễn Ái Quốc", "Trần Phú", "Lê Hồng Phong", "Nguyễn Văn Cừ"],
+                answer: 1,
+                explain: "Luận cương chính trị được Hội nghị BCH TW họp tháng 10/1930 tại Hương Cảng thông qua, do Trần Phú soạn thảo.",
+                level: "de"
+            },
+            {
+                q: "Đỉnh cao của phong trào cách mạng 1930 - 1931 ở Việt Nam là gì?",
+                options: ["Khởi nghĩa Nam Kỳ", "Xô viết Nghệ - Tĩnh", "Bãi công của công nhân Bến Thủy", "Cuộc đấu tranh của nông dân Thái Bình"],
+                answer: 1,
+                explain: "Phong trào phát triển đến đỉnh cao thành lập chính quyền Xô viết ở một số vùng nông thôn Nghệ An và Hà Tĩnh.",
+                level: "de"
+            },
+            {
+                q: "Tác phẩm 'Tự kiểm điểm' (1939) nhằm khắc phục chủ nghĩa hẹp hòi, tả khuynh trong Đảng là của ai?",
+                options: ["Trần Phú", "Nguyễn Văn Cừ", "Lê Hồng Phong", "Võ Nguyên Giáp"],
+                answer: 1,
+                explain: "Tổng Bí thư Nguyễn Văn Cừ viết tác phẩm 'Tự kiểm điểm' tháng 7/1939 để chỉ rõ những sai lầm và đề ra đường lối Mặt trận Dân chủ.",
+                level: "kho"
+            },
+            {
+                q: "Hội nghị TW 8 (tháng 5/1941) của Đảng đặt nhiệm vụ nào lên hàng đầu?",
+                options: ["Rộng mở cải cách ruộng đất", "Giải phóng dân tộc", "Đấu tranh giai cấp", "Xây dựng chủ nghĩa xã hội"],
+                answer: 1,
+                explain: "Hội nghị TW 8 khẳng định: Nhiệm vụ giải phóng dân tộc là nhiệm vụ bức thiết nhất, hàng đầu của cách mạng Việt Nam.",
+                level: "trungbinh"
+            },
+            {
+                q: "Mặt trận Việt Minh (Việt Nam Độc lập Đồng minh) được thành lập vào ngày tháng năm nào?",
+                options: ["19/05/1941", "19/05/1940", "02/09/1945", "22/12/1944"],
+                answer: 0,
+                explain: "Mặt trận Việt Minh thành lập ngày 19/05/1941 theo quyết định của Hội nghị Trung ương Đảng lần thứ 8.",
+                level: "de"
+            },
+            {
+                q: "Đội Việt Nam Tuyên truyền Giải phóng quân được thành lập ngày 22/12/1944 do ai làm chỉ huy?",
+                options: ["Võ Nguyên Giáp", "Hoàng Văn Thái", "Chu Văn Tấn", "Nguyen Bình"],
+                answer: 0,
+                explain: "Đồng chí Võ Nguyên Giáp trực tiếp đảm nhiệm chỉ huy Đội theo chỉ thị của Hồ Chí Minh.",
+                level: "de"
+            },
+            {
+                q: "Chỉ thị 'Nhật - Pháp bắn nhau và hành động của chúng ta' ra đời vào thời gian nào?",
+                options: ["09/03/1945", "12/03/1945", "15/08/1945", "19/08/1945"],
+                answer: 1,
+                explain: "Ban Thường vụ TW Đảng ra chỉ thị quan trọng này vào ngày 12/03/1945 ngay sau sự kiện Nhật đảo chính Pháp.",
+                level: "trungbinh"
+            },
+            {
+                q: "Khẩu hiệu 'Đánh đuổi Nhật - Pháp' được thay bằng khẩu hiệu nào trong Chỉ thị ngày 12/3/1945?",
+                options: ["Đánh đuổi phát xít Nhật", "Đánh đuổi thực dân Pháp", "Tăng gia sản xuất", "Tịch thu ruộng đất"],
+                answer: 0,
+                explain: "Vì Nhật đã hất cẳng Pháp nên kẻ thù chính duy nhất lúc này là phát xít Nhật, Đảng thay đổi khẩu hiệu thành 'Đánh đuổi phát xít Nhật'.",
+                level: "trungbinh"
+            },
+            {
+                q: "Cách mạng Tháng Tám năm 1945 thành công đã giành chính quyền ở Hà Nội vào ngày nào?",
+                options: ["18/08/1945", "19/08/1945", "23/08/1945", "25/08/1945"],
+                answer: 1,
+                explain: "Nhân dân Hà Nội đã tổng khởi nghĩa giành chính quyền thắng lợi rực rỡ vào ngày 19/08/1945.",
+                level: "de"
+            },
+            {
+                q: "Chủ tịch Hồ Chí Minh đọc Tuyên ngôn Độc lập khai sinh nước VNDCCH tại đâu, vào ngày nào?",
+                options: ["Quảng trường Ba Đình (02/09/1945)", "Nhà hát Lớn (19/08/1945)", "Chợ Bến Thành (25/08/1945)", "Việt Bắc (02/09/1945)"],
+                answer: 0,
+                explain: "Ngày 02/09/1945, tại Quảng trường Ba Đình Hà Nội, Bác Hồ đã đọc bản Tuyên ngôn Độc lập lịch sử.",
+                level: "de"
+            },
+            {
+                q: "Sau Cách mạng Tháng Tám 1945, nước ta phải đối mặt với những khó khăn nào?",
+                options: ["Nạn đói, nạn dốt, ngoại xâm và nội phản", "Khủng hoảng kinh tế thế giới", "Chiến tranh lạnh", "Cấm vận thương mại"],
+                answer: 0,
+                explain: "Vận mệnh dân tộc như 'ngàn cân treo sợi tóc' do cùng lúc đối mặt với giặc đói, giặc dốt và giặc ngoại xâm.",
+                level: "de"
+            },
+            {
+                q: "Chỉ thị 'Kháng chiến kiến quốc' do Trung ương Đảng ban hành vào thời gian nào?",
+                options: ["25/11/1945", "02/09/1945", "19/12/1946", "06/03/1946"],
+                answer: 0,
+                explain: "Chỉ thị 'Kháng chiến kiến quốc' ngày 25/11/1945 vạch ra con đường bảo vệ và củng cố chính quyền cách mạng non trẻ.",
+                level: "trungbinh"
+            },
+            {
+                q: "Lời kêu gọi 'Toàn quốc kháng chiến' của Chủ tịch Hồ Chí Minh được phát động vào thời điểm nào?",
+                options: ["Đêm 19/12/1946", "Sáng 20/12/1946", "Ngày 06/03/1946", "Ngày 19/12/1945"],
+                answer: 0,
+                explain: "Đêm ngày 19/12/1946, Lời kêu gọi Toàn quốc kháng chiến được ban hành khi Pháp cố tình gây hấn cướp nước ta một lần nữa.",
+                level: "de"
+            },
+            {
+                q: "Tác phẩm 'Kháng chiến nhất định thắng lợi' (1947) là của ai?",
+                options: ["Hồ Chí Minh", "Trường Chinh", "Võ Nguyên Giáp", "Lê Duẩn"],
+                answer: 1,
+                explain: "Đồng chí Trường Chinh (Tổng Bí thư) là tác giả tác phẩm giải thích đường lối kháng chiến toàn dân, toàn diện, trường kỳ.",
+                level: "trungbinh"
+            },
+            {
+                q: "Đại hội đại biểu toàn quốc lần thứ II của Đảng (2/1951) quyết định đổi tên Đảng thành gì?",
+                options: ["Đảng Cộng sản Việt Nam", "Đảng Lao động Việt Nam", "Đảng Cộng sản Đông Dương", "Hội nghiên cứu Chủ nghĩa Mác"],
+                answer: 1,
+                explain: "Đại hội II (1951) quyết định đưa Đảng ra hoạt động công khai với tên gọi Đảng Lao động Việt Nam.",
+                level: "de"
+            },
+            {
+                q: "Chiến dịch Điện Biên Phủ giành thắng lợi hoàn toàn vào ngày tháng năm nào?",
+                options: ["07/05/1954", "13/03/1954", "20/07/1954", "01/05/1954"],
+                answer: 0,
+                explain: "Chiều ngày 07/05/1954, lá cờ 'Quyết chiến Quyết thắng' tung bay trên nóc hầm De Castries, kết thúc chiến dịch Điện Biên Phủ.",
+                level: "de"
+            },
+            {
+                q: "Hiệp định Giơ-ne-vơ về chấm dứt chiến tranh, lập lại hòa bình ở Đông Dương được ký kết năm nào?",
+                options: ["1953", "1954", "1955", "1973"],
+                answer: 1,
+                explain: "Hiệp định Giơ-ne-vơ được ký ngày 21/07/1954 công nhận độc lập, chủ quyền, thống nhất và toàn vẹn lãnh thổ của Việt Nam.",
+                level: "de"
+            },
+            {
+                q: "Đại hội đại biểu toàn quốc lần thứ III của Đảng diễn ra vào năm nào?",
+                options: ["1954", "1960", "1965", "1975"],
+                answer: 1,
+                explain: "Đại hội III họp tại Hà Nội từ ngày 5 đến 10/09/1960, đề ra đường lối chiến lược cách mạng 2 miền.",
+                level: "de"
+            },
+            {
+                q: "Đại hội III của Đảng (1960) xác định cách mạng xã hội chủ nghĩa ở miền Bắc giữ vai trò gì?",
+                options: ["Quyết định nhất", "Quyết định trực tiếp", "Quan trọng nhất", "Hỗ trợ miền Nam"],
+                answer: 0,
+                explain: "Đại hội III xác định miền Bắc là hậu phương lớn, giữ vai trò quyết định nhất đối với sự phát triển của toàn bộ cách mạng Việt Nam.",
+                level: "trungbinh"
+            },
+            {
+                q: "Đại hội III của Đảng (1960) xác định cách mạng dân tộc dân chủ nhân dân ở miền Nam giữ vai trò gì?",
+                options: ["Quyết định nhất", "Quyết định trực tiếp", "Quan trọng", "Thứ yếu"],
+                answer: 1,
+                explain: "Cách mạng ở miền Nam có vai trò quyết định trực tiếp đối với sự nghiệp giải phóng miền Nam khỏi ách trị vì của đế quốc Mỹ.",
+                level: "trungbinh"
+            },
+            {
+                q: "Phong trào 'Đồng khởi' (1959 - 1960) nổ ra tiêu biểu nhất ở tỉnh nào?",
+                options: ["Bến Tre", "Mỹ Tho", "Tây Ninh", "Quảng Nam"],
+                answer: 0,
+                explain: "Phong trào Đồng khởi bắt đầu bùng nổ từ huyện Định Thủy, Hương Mỹ, Mỏ Cày (Bến Tre) rồi lan rộng toàn miền Nam.",
+                level: "de"
+            },
+            {
+                q: "Mặt trận Dân tộc Giải phóng miền Nam Việt Nam thành lập ngày tháng năm nào?",
+                options: ["20/12/1960", "19/05/1959", "01/11/1963", "30/04/1975"],
+                answer: 0,
+                explain: "Mặt trận được thành lập ngày 20/12/1960 tại Tân Lập, Châu Thành (Tây Ninh).",
+                level: "trungbinh"
+            },
+            {
+                q: "Trung ương Đảng quyết định mở đường Trường Sơn (Đường 559) chiến lược vào năm nào?",
+                options: ["1954", "1959", "1965", "1968"],
+                answer: 1,
+                explain: "Tháng 05/1959, Thường trực BCT quyết định thành lập Đoàn công tác quân sự đặc biệt (Đoàn 559) xẻ dọc Trường Sơn cứu nước.",
+                level: "de"
+            },
+            {
+                q: "Cuộc Tổng tiến công và nổi dậy Mậu Thân diễn ra vào năm nào?",
+                options: ["1965", "1968", "1972", "1975"],
+                answer: 1,
+                explain: "Cuộc Tổng tiến công và nổi dậy Mậu Thân nổ ra đồng loạt vào đêm giao thừa năm 1968 trên toàn miền Nam.",
+                level: "de"
+            },
+            {
+                q: "Trận 'Điện Biên Phủ trên không' đánh bại đợt tập kích chiến lược bằng B52 của Mỹ diễn ra trong bao nhiêu ngày đêm?",
+                options: ["10 ngày đêm", "12 ngày đêm", "15 ngày đêm", "20 ngày đêm"],
+                answer: 1,
+                explain: "Trận chiến đấu dũng cảm kéo dài 12 ngày đêm (từ 18 đến 30/12/1972) buộc Mỹ phải ký Hiệp định Pa-ri.",
+                level: "de"
+            },
+            {
+                q: "Hiệp định Pa-ri về chấm dứt chiến tranh, lập lại hòa bình ở Việt Nam được ký kết vào ngày nào?",
+                options: ["27/01/1973", "20/07/1954", "30/04/1975", "01/05/1973"],
+                answer: 0,
+                explain: "Hiệp định Pa-ri chính thức được ký kết ngày 27/01/1973 buộc Mỹ phải rút hết quân về nước.",
+                level: "de"
+            },
+            {
+                q: "Chiến dịch giải phóng Tây Nguyên mở đầu bằng trận đánh then chốt nào?",
+                options: ["Buôn Ma Thuột", "Pleiku", "Kon Tum", "Đà Nẵng"],
+                answer: 0,
+                explain: "Trận đột phá Buôn Ma Thuột ngày 10/03/1975 tạo ra bất ngờ chiến lược, mở đầu cho cuộc Tổng tiến công mùa Xuân 1975.",
+                level: "trungbinh"
+            },
+            {
+                q: "Bộ Chính trị quyết định đổi tên Chiến dịch giải phóng Sài Gòn - Gia Định thành 'Chiến dịch Hồ Chí Minh' vào ngày nào?",
+                options: ["14/04/1975", "26/04/1975", "30/04/1975", "09/04/1975"],
+                answer: 0,
+                explain: "Ngày 14/04/1975, Bộ Chính trị duyệt phê chuẩn đề nghị đổi tên chiến dịch Sài Gòn thành Chiến dịch Hồ Chí Minh.",
+                level: "trungbinh"
+            },
+            {
+                q: "Cuộc Tổng tiến công và nổi dậy mùa Xuân 1975 hoàn toàn thắng lợi vào ngày nào?",
+                options: ["30/04/1975", "01/05/1975", "19/05/1975", "02/09/1975"],
+                answer: 0,
+                explain: "Lúc 11 giờ 30 phút ngày 30/04/1975, lá cờ cách mạng tung bay trên Dinh Độc Lập, giải phóng hoàn toàn miền Nam.",
+                level: "de"
+            },
+            {
+                q: "Kỳ họp thứ nhất Quốc hội khóa VI (tháng 6-7/1976) đã quyết định đổi tên nước ta thành gì?",
+                options: ["Cộng hòa Xã hội Chủ nghĩa Việt Nam", "Việt Nam Dân chủ Cộng hòa", "Cộng hòa Miền Nam Việt Nam", "Việt Nam Cộng hòa"],
+                answer: 0,
+                explain: "Quốc hội quyết định lấy tên nước là Cộng hòa Xã hội Chủ nghĩa Việt Nam từ ngày 02/07/1976.",
+                level: "de"
+            },
+            {
+                q: "Đại hội đại biểu toàn quốc lần thứ IV của Đảng (12/1976) quyết định đổi tên Đảng thành gì?",
+                options: ["Đảng Cộng sản Việt Nam", "Đảng Lao động Việt Nam", "Đảng Xã hội Việt Nam", "Hội liên hiệp Cách mạng"],
+                answer: 0,
+                explain: "Đại hội IV khôi phục lại tên gọi nguyên bản: Đảng Cộng sản Việt Nam.",
+                level: "de"
+            },
+            {
+                q: "Đường lối Đổi mới toàn diện đất nước được Đảng khởi xướng tại Đại hội mấy?",
+                options: ["Đại hội V (1982)", "Đại hội VI (1986)", "Đại hội VII (1991)", "Đại hội VIII (1996)"],
+                answer: 1,
+                explain: "Đại hội VI (12/1986) ra quyết sách Đổi mới lịch sử, đưa đất nước thoát khỏi khủng hoảng kinh tế - xã hội.",
+                level: "de"
+            },
+            {
+                q: "Phương châm nổi tiếng của Đại hội VI (1986) là gì?",
+                options: ["Nhìn thẳng vào sự thật, đánh giá đúng sự thật, nói rõ sự thật", "Sáng tạo và phát triển", "Hội nhập quốc tế", "Đoàn kết là sức mạnh"],
+                answer: 0,
+                explain: "Đại hội VI thẳng thắn chỉ ra những sai lầm chủ quan duy ý chí và đề ra tinh thần nhìn thẳng vào sự thật.",
+                level: "trungbinh"
+            },
+            {
+                q: "Cương lĩnh xây dựng đất nước trong thời kỳ quá độ lên CNXH (Cương lĩnh 1991) được thông qua tại Đại hội nào?",
+                options: ["Đại hội VI", "Đại hội VII", "Đại hội VIII", "Đại hội IX"],
+                answer: 1,
+                explain: "Đại hội VII (6/1991) thông qua Cương lĩnh 1991 xác định mô hình và con đường đi lên CNXH ở nước ta.",
+                level: "trungbinh"
+            },
+            {
+                q: "Đại hội nào của Đảng lần đầu tiên đưa Tư tưởng Hồ Chí Minh vào Cương lĩnh, khẳng định là kim chỉ nam cho hành động?",
+                options: ["Đại hội VI (1986)", "Đại hội VII (1991)", "Đại hội VIII (1996)", "Đại hội IX (2001)"],
+                answer: 1,
+                explain: "Đại hội VII khẳng định: Đảng lấy chủ nghĩa Mác-Lênin và tư tưởng Hồ Chí Minh làm nền tảng tư tưởng, kim chỉ nam.",
+                level: "trungbinh"
+            },
+            {
+                q: "Việt Nam chính thức gia nhập Hiệp hội các quốc gia Đông Nam Á (ASEAN) vào năm nào?",
+                options: ["1993", "1995", "1997", "2000"],
+                answer: 1,
+                explain: "Ngày 28/07/1995, Việt Nam chính thức kết nạp trở thành thành viên thứ 7 của ASEAN.",
+                level: "de"
+            },
+            {
+                q: "Việt Nam chính thức trở thành thành viên của Tổ chức Thương mại Thế giới (WTO) vào năm nào?",
+                options: ["2000", "2006", "2007", "2010"],
+                answer: 2,
+                explain: "Tháng 01/2007, Việt Nam chính thức trở thành thành viên thứ 150 của Tổ chức Thương mại Thế giới (WTO).",
+                level: "trungbinh"
+            },
+            {
+                q: "Cương lĩnh xây dựng đất nước trong thời kỳ quá độ lên CNXH được bổ sung, phát triển vào năm nào?",
+                options: ["2001", "2006", "2011 (Đại hội XI)", "2016"],
+                answer: 2,
+                explain: "Đại hội XI (1/2011) thông qua Cương lĩnh bổ sung, phát triển năm 2011 với 8 đặc trưng của mô hình CNXH.",
+                level: "kho"
+            },
+            {
+                q: "Trong Cương lĩnh bổ sung, phát triển năm 2011, xã hội XHCN mà nhân dân ta xây dựng gồm mấy đặc trưng?",
+                options: ["6 đặc trưng", "7 đặc trưng", "8 đặc trưng", "10 đặc trưng"],
+                answer: 2,
+                explain: "Cương lĩnh (bổ sung, phát triển năm 2011) đã xác định mô hình XHCN ở Việt Nam gồm 8 đặc trưng cơ bản.",
+                level: "kho"
+            },
+            {
+                q: "Nghị quyết Trung ương 4 khóa XII của Đảng tập trung về vấn đề quan trọng nào?",
+                options: ["Xây dựng, chỉnh đốn Đảng; ngăn chặn suy thoái tư tưởng, đạo đức", "Phát triển giáo dục đào tạo", "Đổi mới kinh tế biển", "Cải cách tư pháp"],
+                answer: 0,
+                explain: "NQ TW 4 khóa XII đẩy mạnh công tác xây dựng, chỉnh đốn Đảng, phòng chống 'tự diễn biến', 'tự chuyển hóa'.",
+                level: "trungbinh"
+            },
+            {
+                q: "Đại hội đại biểu toàn quốc lần thứ XIII của Đảng diễn ra vào thời gian nào?",
+                options: ["Tháng 1/2020", "Tháng 1/2021", "Tháng 3/2021", "Tháng 1/2022"],
+                answer: 1,
+                explain: "Đại hội XIII của Đảng diễn ra từ ngày 25/01 đến ngày 01/02/2021 tại Thủ đô Hà Nội.",
+                level: "de"
+            },
+            {
+                q: "Mục tiêu đến năm 2045 (kỷ niệm 100 năm thành lập nước) được Đại hội XIII xác định là gì?",
+                options: ["Trở thành nước đang phát triển có công nghiệp hiện đại", "Trở thành nước phát triển, thu nhập cao", "Thoát khỏi nhóm thu nhập trung bình", "Trở thành trung tâm tài chính Á châu"],
+                answer: 1,
+                explain: "Đại hội XIII đề ra mục tiêu đưa Việt Nam trở thành nước phát triển, thu nhập cao vào năm 2045.",
+                level: "trungbinh"
+            },
+            {
+                q: "Bản 'Đề cương về văn hóa Việt Nam' - văn kiện chính thức đầu tiên của Đảng về văn hóa ra đời năm nào?",
+                options: ["1930", "1943", "1945", "1954"],
+                answer: 1,
+                explain: "Đề cương về văn hóa Việt Nam do Tổng Bí thư Trường Chinh soạn thảo được Ban Thường vụ TW thông qua năm 1943.",
+                level: "kho"
+            },
+            {
+                q: "Ba nguyên tắc vận động của văn hóa nêu trong 'Đề cương về văn hóa Việt Nam' (1943) là gì?",
+                options: ["Dân tộc hóa, Đại chúng hóa, Khoa học hóa", "Hiện đại hóa, Dân tộc hóa, Toàn cầu hóa", "Tự do, Bình đẳng, Bác ái", "Bảo tồn, Phát triển, Hội nhập"],
+                answer: 0,
+                explain: "Ba nguyên tắc cốt lõi: Dân tộc hóa, Đại chúng hóa và Khoa học hóa.",
+                level: "kho"
+            },
+            {
+                q: "Phong trào 'Vô sản hóa' do Kỳ bộ Bắc Kỳ Hội Việt Nam Cách mạng Thanh niên thực hiện vào năm nào?",
+                options: ["1925", "1928", "1930", "1931"],
+                answer: 1,
+                explain: "Cuối năm 1928, phong trào 'Vô sản hóa' đưa hội viên vào các hầm mỏ, nhà máy để rèn luyện và rải truyền đơn.",
+                level: "kho"
+            },
+            {
+                q: "Tổ chức Cộng sản nào ra đời đầu tiên ở Việt Nam vào tháng 6/1929?",
+                options: ["Đông Dương Cộng sản Đảng", "An Nam Cộng sản Đảng", "Đông Dương Cộng sản Liên đoàn", "Tân Việt Cách mạng Đảng"],
+                answer: 0,
+                explain: "Đông Dương Cộng sản Đảng thành lập tháng 6/1929 tại Hà Nội (số nhà 5D Hàm Long).",
+                level: "trungbinh"
+            },
+            {
+                q: "An Nam Cộng sản Đảng được thành lập vào thời gian nào?",
+                options: ["Tháng 6/1929", "Tháng 8/1929", "Tháng 11/1929", "Tháng 2/1930"],
+                answer: 1,
+                explain: "An Nam Cộng sản Đảng được thành lập vào tháng 8/1929 tại Nam Kỳ.",
+                level: "kho"
+            },
+            {
+                q: "Hội nghị Ban Chấp hành Trung ương Đảng lần thứ nhất (10/1930) đã quyết định đổi tên Đảng thành gì?",
+                options: ["Đảng Cộng sản Việt Nam", "Đảng Cộng sản Đông Dương", "Đảng Lao động Việt Nam", "Mặt trận Việt Minh"],
+                answer: 1,
+                explain: "Theo chỉ thị của Quốc tế Cộng sản, Hội nghị TW tháng 10/1930 đổi tên Đảng thành Đảng Cộng sản Đông Dương.",
+                level: "trungbinh"
+            },
+            {
+                q: "Hội nghị Trung ương lần thứ 6 (11/1939) họp tại Bà Điểm (Hóc Môn) do ai chủ trì?",
+                options: ["Nguyễn Văn Cừ", "Trường Chinh", "Lê Hồng Phong", "Phan Đăng Lưu"],
+                answer: 0,
+                explain: "Tổng Bí thư Nguyễn Văn Cừ chủ trì Hội nghị TW 6 đánh dấu sự chuyển hướng chỉ đạo chiến lược cách mạng.",
+                level: "kho"
+            },
+            {
+                q: "Ngày truyền thống của Quân đội nhân dân Việt Nam là ngày thành lập tổ chức nào?",
+                options: ["Cứu quốc quân", "Đội Việt Nam Tuyên truyền Giải phóng quân", "Du kích Ba Tơ", "Việt Nam Giải phóng quân"],
+                answer: 1,
+                explain: "Ngày 22/12/1944 - ngày thành lập Đội VN Tuyên truyền Giải phóng quân được lấy làm ngày truyền thống QĐND Việt Nam.",
+                level: "de"
+            },
+            {
+                q: "Tác phẩm 'Đạo đức cách mạng' của Chủ tịch Hồ Chí Minh xuất bản lần đầu tiên năm nào?",
+                options: ["1947", "1958", "1960", "1969"],
+                answer: 1,
+                explain: "Tác phẩm 'Đạo đức cách mạng' với bút danh Trần lực được đăng trên Tạp chí Học tập tháng 12/1958.",
+                level: "kho"
+            },
+            {
+                q: "Nghị quyết Trung ương 15 (tháng 1/1959) có ý nghĩa lịch sử gì đối với cách mạng miền Nam?",
+                options: ["Cho phép sử dụng bạo lực cách mạng để giải phóng miền Nam", "Chỉ đấu tranh hòa bình", "Tập trung cải cách ruộng đất", "Rút toàn bộ quân đội"],
+                answer: 0,
+                explain: "NQ 15 mở đường cho phong trào đấu tranh vũ trang kết hợp đấu tranh chính trị, dẫn đến phong trào Đồng Khởi.",
+                level: "trungbinh"
+            },
+            {
+                q: "Bài thơ chúc Tết năm 1969 của Bác Hồ có câu 'Đánh cho Mỹ cút, đánh cho Ngụy nhào' thể hiện tư tưởng gì?",
+                options: ["Giải phóng hoàn toàn miền Nam qua các bước chiến lược", "Đánh nhanh thắng nhanh", "Đầu hàng thương lượng", "Rút quân bảo toàn lực lượng"],
+                answer: 0,
+                explain: "Thể hiện tư tưởng chiến lược đánh từng bước: trước hết đánh gục ý chí xâm lược của Mỹ ('Mỹ cút') rồi đánh sụp chính quyền tay sai ('Ngụy nhào').",
+                level: "trungbinh"
+            },
+            {
+                q: "Ủy ban Thường vụ Quốc hội đã chọn bài hát nào làm Quốc ca chính thức của nước CHXHCN Việt Nam?",
+                options: ["Tiến quân ca", "Diệt phát xít", "Giải phóng miền Nam", "Cùng nhau đi hồng binh"],
+                answer: 0,
+                explain: "Bài hát 'Tiến quân ca' của nhạc sĩ Văn Cao được chọn làm Quốc ca từ năm 1945 và tiếp tục khẳng định tại Kỳ họp Quốc hội 1976.",
+                level: "de"
+            }
+        ];
+
+        /* ==========================================================================
+           2. STATE BÀI THI & BIẾN TOÀN CỤC
+           ========================================================================== */
+        const QUIZ_SIZE = 20;
+        const TOTAL_TIME_SECONDS = 30 * 60; // 30 phút
+
+        let quizQuestions = [];      // 20 câu đã được bốc & xáo trộn
+        let userAnswers = {};        // { qIndex: selectedOptionIndex }
+        let flaggedQuestions = new Set();
+        let currentIndex = 0;
+        let timerInterval = null;
+        let timeRemaining = TOTAL_TIME_SECONDS;
+        let timeSpent = 0;
+
+        /* ==========================================================================
+           3. HELPER FUNCTIONS
+           ========================================================================== */
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function generateQuizSet() {
+            // Lọc theo level để cân đối (nếu có đủ)
+            const easy = QUESTION_BANK.filter(q => q.level === 'de');
+            const med = QUESTION_BANK.filter(q => q.level === 'trungbinh');
+            const hard = QUESTION_BANK.filter(q => q.level === 'kho');
+
+            // Bốc tỉ lệ ~ 8 dễ, 8 trung bình, 4 khó
+            const pickedEasy = shuffleArray(easy).slice(0, 8);
+            const pickedMed = shuffleArray(med).slice(0, 8);
+            const pickedHard = shuffleArray(hard).slice(0, 4);
+
+            let combined = [...pickedEasy, ...pickedMed, ...pickedHard];
+
+            // Nếu chưa đủ 20 (do số lượng mảng lẻ), bốc nốt từ phần còn lại
+            if (combined.length < QUIZ_SIZE) {
+                const remaining = QUESTION_BANK.filter(q => !combined.includes(q));
+                combined = combined.concat(shuffleArray(remaining).slice(0, QUIZ_SIZE - combined.length));
+            }
+
+            // Xáo trộn thứ tự 20 câu
+            combined = shuffleArray(combined).slice(0, QUIZ_SIZE);
+
+            // Xáo trộn đáp án trong từng câu
+            return combined.map((qObj) => {
+                const options = qObj.options.map((text, idx) => ({ text, isCorrect: idx === qObj.answer }));
+                const shuffledOpts = shuffleArray(options);
+                const newAnswerIndex = shuffledOpts.findIndex(o => o.isCorrect);
+
+                return {
+                    q: qObj.q,
+                    options: shuffledOpts.map(o => o.text),
+                    answer: newAnswerIndex,
+                    explain: qObj.explain,
+                    level: qObj.level
+                };
+            });
+        }
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        /* ==========================================================================
+           4. QUIZ LOGIC & RENDER
+           ========================================================================== */
+        function startQuiz() {
+            quizQuestions = generateQuizSet();
+            userAnswers = {};
+            flaggedQuestions.clear();
+            currentIndex = 0;
+            timeRemaining = TOTAL_TIME_SECONDS;
+            timeSpent = 0;
+
+            renderSidebarGrid();
+            renderQuestion(currentIndex);
+            startTimer();
+            switchScreen('screen-quiz');
+        }
+
+        function renderQuestion(index) {
+            const qData = quizQuestions[index];
+            document.getElementById('q-number-badge').innerText = `Câu ${index + 1} / ${QUIZ_SIZE}`;
+            document.getElementById('q-text').innerText = qData.q;
+
+            // Flag status
+            const btnFlag = document.getElementById('btn-flag');
+            if (flaggedQuestions.has(index)) {
+                btnFlag.classList.add('active');
+                document.getElementById('flag-text').innerText = 'Đã đánh dấu';
+            } else {
+                btnFlag.classList.remove('active');
+                document.getElementById('flag-text').innerText = 'Đánh dấu xem lại';
+            }
+
+            // Options
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            const labels = ['A', 'B', 'C', 'D'];
+            qData.options.forEach((optText, optIdx) => {
+                const isSelected = userAnswers[index] === optIdx;
+                const optEl = document.createElement('div');
+                optEl.className = `option-item ${isSelected ? 'selected' : ''}`;
+                optEl.innerHTML = `
+                    <div class="opt-badge">${labels[optIdx]}</div>
+                    <div class="opt-text">${optText}</div>
+                `;
+                optEl.addEventListener('click', () => selectOption(index, optIdx));
+                container.appendChild(optEl);
+            });
+
+            // Nav buttons state
+            document.getElementById('btn-prev').style.visibility = index === 0 ? 'hidden' : 'visible';
+            if (index === QUIZ_SIZE - 1) {
+                document.getElementById('btn-next').style.display = 'none';
+                document.getElementById('btn-submit-quiz').style.display = 'inline-flex';
+            } else {
+                document.getElementById('btn-next').style.display = 'inline-flex';
+                document.getElementById('btn-submit-quiz').style.display = 'none';
+            }
+
+            updateProgress();
+            updateSidebarGrid();
+        }
+
+        function selectOption(qIdx, optIdx) {
+            userAnswers[qIdx] = optIdx;
+            renderQuestion(qIdx);
+        }
+
+        function toggleFlag() {
+            if (flaggedQuestions.has(currentIndex)) {
+                flaggedQuestions.delete(currentIndex);
+            } else {
+                flaggedQuestions.add(currentIndex);
+            }
+            renderQuestion(currentIndex);
+        }
+
+        function updateProgress() {
+            const answeredCount = Object.keys(userAnswers).length;
+            document.getElementById('progress-text-val').innerText = `${answeredCount}/${QUIZ_SIZE}`;
+            document.getElementById('mobile-answered-count').innerText = answeredCount;
+            const pct = (answeredCount / QUIZ_SIZE) * 100;
+            document.getElementById('progress-fill').style.width = `${pct}%`;
+        }
+
+        function renderSidebarGrid() {
+            const grid = document.getElementById('grid-questions');
+            grid.innerHTML = '';
+            for (let i = 0; i < QUIZ_SIZE; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'btn-qnum';
+                btn.id = `grid-btn-${i}`;
+                btn.innerText = i + 1;
+                btn.addEventListener('click', () => {
+                    currentIndex = i;
+                    renderQuestion(currentIndex);
+                    closeDrawer();
+                });
+                grid.appendChild(btn);
+            }
+        }
+
+        function updateSidebarGrid() {
+            for (let i = 0; i < QUIZ_SIZE; i++) {
+                const btn = document.getElementById(`grid-btn-${i}`);
+                if (!btn) continue;
+
+                btn.className = 'btn-qnum';
+                if (i === currentIndex) btn.classList.add('current');
+                if (userAnswers[i] !== undefined) btn.classList.add('answered');
+                if (flaggedQuestions.has(i)) btn.classList.add('flagged');
+            }
+        }
+
+        /* ==========================================================================
+           5. TIMER LOGIC
+           ========================================================================== */
+        function startTimer() {
+            clearInterval(timerInterval);
+            const timerPill = document.getElementById('timer-pill');
+            const timerVal = document.getElementById('timer-val');
+
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                timeSpent++;
+                timerVal.innerText = formatTime(timeRemaining);
+
+                if (timeRemaining <= 300 && timeRemaining > 60) {
+                    timerPill.className = 'timer-pill warning';
+                } else if (timeRemaining <= 60) {
+                    timerPill.className = 'timer-pill danger';
+                } else {
+                    timerPill.className = 'timer-pill';
+                }
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    finishQuiz(true); // Tự nộp bài
+                }
+            }, 1000);
+        }
+
+        /* ==========================================================================
+           6. MODAL & SUBMIT
+           ========================================================================== */
+        function openSubmitModal() {
+            const answeredCount = Object.keys(userAnswers).length;
+            const unAnswered = QUIZ_SIZE - answeredCount;
+            const flaggedCount = flaggedQuestions.size;
+
+            let msg = `Bạn đã hoàn thành <strong>${answeredCount}/${QUIZ_SIZE}</strong> câu hỏi.`;
+            if (unAnswered > 0) {
+                msg += `<br><span style="color: var(--danger);">⚠️ Còn ${unAnswered} câu chưa trả lời.</span>`;
+            }
+            if (flaggedCount > 0) {
+                msg += `<br><span style="color: var(--warning);">🚩 Có ${flaggedCount} câu đang đánh dấu xem lại.</span>`;
+            }
+
+            document.getElementById('modal-msg').innerHTML = msg;
+            document.getElementById('confirm-modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('confirm-modal').classList.remove('active');
+        }
+
+        function finishQuiz(autoSubmitted = false) {
+            clearInterval(timerInterval);
+            closeModal();
+
+            // Tính điểm
+            let correctCount = 0;
+            quizQuestions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.answer) {
+                    correctCount++;
+                }
+            });
+
+            const skippedCount = QUIZ_SIZE - Object.keys(userAnswers).length;
+            const wrongCount = QUIZ_SIZE - correctCount - skippedCount;
+            const score10 = ((correctCount / QUIZ_SIZE) * 10).toFixed(1);
+
+            // Update Screen 3 UI
+            document.getElementById('score-val').innerText = score10;
+            document.getElementById('stat-correct').innerText = correctCount;
+            document.getElementById('stat-wrong').innerText = wrongCount;
+            document.getElementById('stat-skipped').innerText = skippedCount;
+            document.getElementById('stat-time').innerText = formatTime(timeSpent);
+
+            // Score Circle Animation
+            const circle = document.getElementById('score-circle-fill');
+            const circumference = 2 * Math.PI * 70; // r=70 -> ~440
+            const offset = circumference - (score10 / 10) * circumference;
+            setTimeout(() => {
+                circle.style.strokeDashoffset = offset;
+            }, 100);
+
+            // Pass / Fail & Message
+            const isPass = parseFloat(score10) >= 5.0; // Đạt từ 5/10 điểm trở lên
+            const badgeWrap = document.getElementById('result-badge-wrap');
+            const feedbackMsg = document.getElementById('feedback-msg');
+
+            if (isPass) {
+                badgeWrap.innerHTML = `<span class="badge-status pass">🎉 KHÁ / GIỎI - ĐẠT KẾT QUẢ</span>`;
+                feedbackMsg.innerText = autoSubmitted 
+                    ? "Hết giờ làm bài! Tuy nhiên bạn đã hoàn thành xuất sắc bài thi."
+                    : "Chúc mừng bạn đã nắm vững kiến thức Lịch sử Đảng!";
+                circle.style.stroke = "var(--success)";
+            } else {
+                badgeWrap.innerHTML = `<span class="badge-status fail">❌ CHƯA ĐẠT</span>`;
+                feedbackMsg.innerText = "Bạn chưa đạt điểm tối thiểu. Hãy ôn tập kỹ hơn và thử lại nhé!";
+                circle.style.stroke = "var(--danger)";
+            }
+
+            renderReviewList('all');
+            switchScreen('screen-result');
+        }
+
+        /* ==========================================================================
+           7. REVIEW & FILTER
+           ========================================================================== */
+        function renderReviewList(filter = 'all') {
+            const listContainer = document.getElementById('review-list');
+            listContainer.innerHTML = '';
+
+            let cntWrong = 0;
+            let cntSkipped = 0;
+
+            quizQuestions.forEach((q, idx) => {
+                const userAns = userAnswers[idx];
+                const isCorrect = userAns === q.answer;
+                const isSkipped = userAns === undefined;
+
+                if (!isCorrect && !isSkipped) cntWrong++;
+                if (isSkipped) cntSkipped++;
+
+                // Apply filter
+                if (filter === 'wrong' && (isCorrect || isSkipped)) return;
+                if (filter === 'skipped' && !isSkipped) return;
+
+                let itemClass = 'review-item ';
+                if (isCorrect) itemClass += 'correct-item';
+                else if (isSkipped) itemClass += 'skipped-item';
+                else itemClass += 'incorrect-item';
+
+                const item = document.createElement('div');
+                item.className = itemClass;
+
+                let optionsHTML = '';
+                const labels = ['A', 'B', 'C', 'D'];
+
+                q.options.forEach((optText, oIdx) => {
+                    let optClass = 'rev-opt ';
+                    let tag = '';
+
+                    if (oIdx === q.answer) {
+                        optClass += 'actual-correct';
+                        tag = ' <span style="margin-left:auto; font-weight:700;">✓ Đáp án đúng</span>';
+                    }
+                    if (userAns === oIdx) {
+                        if (isCorrect) {
+                            optClass = 'rev-opt user-correct';
+                        } else {
+                            optClass = 'rev-opt user-wrong';
+                            tag = ' <span style="margin-left:auto; font-weight:700;">✗ Bạn chọn</span>';
+                        }
+                    }
+
+                    optionsHTML += `
+                        <div class="${optClass}">
+                            <strong>${labels[oIdx]}.</strong> ${optText} ${tag}
+                        </div>
+                    `;
+                });
+
+                item.innerHTML = `
+                    <div class="rev-q-head">
+                        Câu ${idx + 1}: ${q.q}
+                    </div>
+                    <div class="rev-options">
+                        ${optionsHTML}
+                    </div>
+                    <div class="explanation-box">
+                        💡 <strong>Giải thích:</strong> ${q.explain}
+                    </div>
+                `;
+
+                listContainer.appendChild(item);
+            });
+
+            document.getElementById('cnt-all').innerText = QUIZ_SIZE;
+            document.getElementById('cnt-wrong').innerText = cntWrong;
+            document.getElementById('cnt-skipped').innerText = cntSkipped;
+        }
+
+        /* ==========================================================================
+           8. EVENT LISTENERS & DRAWER
+           ========================================================================== */
+        document.getElementById('btn-start').addEventListener('click', startQuiz);
+        document.getElementById('btn-retry').addEventListener('click', startQuiz);
+
+        document.getElementById('btn-prev').addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion(currentIndex);
+            }
+        });
+
+        document.getElementById('btn-next').addEventListener('click', () => {
+            if (currentIndex < QUIZ_SIZE - 1) {
+                currentIndex++;
+                renderQuestion(currentIndex);
+            }
+        });
+
+        document.getElementById('btn-flag').addEventListener('click', toggleFlag);
+        document.getElementById('btn-trigger-submit').addEventListener('click', openSubmitModal);
+        document.getElementById('btn-submit-quiz').addEventListener('click', openSubmitModal);
+        document.getElementById('btn-modal-cancel').addEventListener('click', closeModal);
+        document.getElementById('btn-modal-confirm').addEventListener('click', () => finishQuiz(false));
+
+        document.getElementById('btn-review-top').addEventListener('click', () => {
+            document.getElementById('review-section').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Mobile drawer toggle
+        const navDrawer = document.getElementById('nav-drawer');
+        document.getElementById('btn-open-drawer').addEventListener('click', () => {
+            navDrawer.classList.add('drawer-open');
+            document.getElementById('btn-close-drawer').style.display = 'block';
+        });
+
+        function closeDrawer() {
+            navDrawer.classList.remove('drawer-open');
+            document.getElementById('btn-close-drawer').style.display = 'none';
+        }
+
+        document.getElementById('btn-close-drawer').addEventListener('click', closeDrawer);
+
+        // Filter tabs
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                renderReviewList(e.target.dataset.filter);
+            });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            const quizScreen = document.getElementById('screen-quiz');
+            if (!quizScreen.classList.contains('active')) return;
+
+            if (e.key === 'ArrowLeft') {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    renderQuestion(currentIndex);
+                }
+            } else if (e.key === 'ArrowRight') {
+                if (currentIndex < QUIZ_SIZE - 1) {
+                    currentIndex++;
+                    renderQuestion(currentIndex);
+                }
+            } else if (['1', '2', '3', '4'].includes(e.key)) {
+                selectOption(currentIndex, parseInt(e.key) - 1);
+            } else if (['a', 'b', 'c', 'd', 'A', 'B', 'C', 'D'].includes(e.key)) {
+                const map = { 'a': 0, 'b': 1, 'c': 2, 'd': 3 };
+                selectOption(currentIndex, map[e.key.toLowerCase()]);
+            }
+        });
+    </script>
+</body>
+</html>
