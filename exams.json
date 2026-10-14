@@ -1,5 +1,13 @@
 [
   {
+    "slug": "trac-nghiem-lich-su-dang-cong-san-viet-nam",
+    "title": "Trắc Nghiệm Lịch Sử Đảng Cộng Sản Việt Nam",
+    "topic": "lịch sử đảng",
+    "questions": 20,
+    "minutes": 30,
+    "createdAt": "2026-10-14T15:14:09.462Z"
+  },
+  {
     "slug": "test",
     "title": "Test",
     "description": "tạo test",
