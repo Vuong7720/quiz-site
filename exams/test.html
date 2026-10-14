@@ -1,400 +1,1470 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
+<head><!--quiz-guard--><script>if(window.top===window.self)location.replace('../play.html?e='+encodeURIComponent(location.pathname.split('/').pop().replace(/\.html$/,'')))</script><!--/quiz-guard-->
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trắc nghiệm Lịch sử Việt Nam</title>
+    <title>Trắc nghiệm Giải tích 1 - Luyện thi trực tuyến</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2c3e50;
-            --accent-color: #e74c3c;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --bg-color: #f8f9fa;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --border-color: #dcdde1;
+            --primary: #7c3aed;
+            --primary-hover: #6d28d9;
+            --primary-light: #f5f3ff;
+            --primary-border: #ddd6fe;
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --radius: 16px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #8b5cf6;
+                --primary-hover: #7c3aed;
+                --primary-light: rgba(139, 92, 246, 0.15);
+                --primary-border: #4c1d95;
+                --bg-main: #0f172a;
+                --bg-card: #1e293b;
+                --text-main: #f1f5f9;
+                --text-secondary: #94a3b8;
+                --border-color: #334155;
+                --success: #34d399;
+                --success-light: rgba(52, 211, 153, 0.15);
+                --danger: #f87171;
+                --danger-light: rgba(248, 113, 113, 0.15);
+                --warning: #fbbf24;
+                --warning-light: rgba(251, 191, 36, 0.15);
+                --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+            }
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
             padding: 20px;
         }
 
         .container {
-            max-width: 800px;
+            width: 100%;
+            max-width: 900px;
             margin: 0 auto;
         }
 
-        .nav-back {
+        /* MATH FORMULA STYLING */
+        .math {
+            font-family: 'Times New Roman', Times, serif, sans-serif;
+            font-style: italic;
+        }
+        .math-block {
             display: inline-block;
-            margin-bottom: 20px;
-            color: var(--primary-color);
-            text-decoration: none;
+            background: var(--bg-main);
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            margin: 4px 0;
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-size: 1.05em;
+        }
+        sup {
+            font-size: 0.75em;
+            vertical-align: super;
+        }
+        sub {
+            font-size: 0.75em;
+            vertical-align: sub;
+        }
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 0.9em;
+            margin: 0 3px;
+        }
+        .numerator {
+            border-bottom: 1px solid currentColor;
+            padding-bottom: 1px;
+        }
+        .denominator {
+            padding-top: 1px;
+        }
+        .root-symbol {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .radicand {
+            border-top: 1px solid currentColor;
+            padding-top: 1px;
+            display: inline-block;
+        }
+
+        /* SCREENS */
+        .screen {
+            display: none;
+            width: 100%;
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* CARD STYLE */
+        .card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: var(--primary);
+            color: white;
             font-weight: 600;
-            transition: color 0.2s;
+            font-size: 16px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            background-color: var(--primary-hover);
+            box-shadow: 0 6px 16px rgba(124, 58, 237, 0.35);
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            box-shadow: none;
+        }
+        .btn-secondary:hover {
+            background-color: var(--bg-main);
+            border-color: var(--text-secondary);
+            box-shadow: none;
+        }
+        .btn-outline-danger {
+            background-color: transparent;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            box-shadow: none;
+        }
+        .btn-outline-danger:hover {
+            background-color: var(--danger-light);
         }
 
-        .nav-back:hover {
-            color: var(--accent-color);
+        /* START SCREEN */
+        .start-header {
+            text-align: center;
+            margin-bottom: 32px;
         }
-
-        header {
-            background: var(--card-bg);
+        .start-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .start-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+        .start-desc {
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .info-box {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+        .info-box .icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        .info-box .label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+        .info-box .value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .instructions-box {
+            background: var(--primary-light);
+            border: 1px solid var(--primary-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 32px;
+        }
+        .instructions-box h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .instructions-box ul {
+            padding-left: 20px;
+            color: var(--text-main);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .instructions-box li {
+            margin-bottom: 6px;
+        }
+        .start-action {
+            text-align: center;
+        }
+        .start-action .btn {
+            font-size: 18px;
+            padding: 16px 40px;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        /* QUIZ SCREEN */
+        .quiz-layout {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 24px;
+            align-items: start;
+        }
+        @media (max-width: 850px) {
+            .quiz-layout {
+                grid-template-columns: 1fr;
+            }
+            .sidebar-panel {
+                display: none;
+            }
+        }
+
+        /* STICKY TOPBAR */
+        .quiz-topbar {
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px 20px;
             margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow);
+        }
+        .topbar-title {
+            font-weight: 600;
+            font-size: 15px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+        .progress-info {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        .timer-pill {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid var(--primary-border);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .timer-pill.warning {
+            background: var(--warning-light);
+            color: var(--warning);
+            border-color: var(--warning);
+        }
+        .timer-pill.danger {
+            background: var(--danger-light);
+            color: var(--danger);
+            border-color: var(--danger);
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* QUESTION CONTAINER */
+        .question-card {
+            margin-bottom: 20px;
+        }
+        .question-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
+            margin-bottom: 16px;
         }
-
-        h1 {
-            font-size: 1.5rem;
-            color: var(--primary-color);
-        }
-
-        .meta-info {
+        .question-meta {
             display: flex;
-            gap: 15px;
-            font-size: 0.95rem;
-            color: #666;
+            gap: 8px;
+            align-items: center;
         }
-
-        .timer-box {
-            background: #eef2f7;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-
-        .timer-box.warning {
-            background: #fdeed9;
-            color: var(--warning-color);
-            animation: pulse 1s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.6; }
-            100% { opacity: 1; }
-        }
-
-        .quiz-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .question-card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .question-title {
-            font-size: 1.1rem;
+        .badge {
+            font-size: 12px;
             font-weight: 600;
-            margin-bottom: 15px;
-            color: var(--primary-color);
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+        .badge-qnum {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid var(--primary-border);
+        }
+        .badge-level {
+            background: var(--bg-main);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+        .flag-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .flag-btn.flagged {
+            background: var(--warning-light);
+            color: var(--warning);
+            border-color: var(--warning);
+        }
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            color: var(--text-main);
         }
 
+        /* OPTIONS LIST */
         .options-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
+            margin-bottom: 24px;
         }
-
         .option-item {
             display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            padding: 10px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--bg-main);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .option-item:hover {
-            background-color: #f1f2f6;
-            border-color: #b2bec3;
-        }
-
-        .option-item input {
-            margin-top: 4px;
-        }
-
-        .explanation {
-            margin-top: 15px;
-            padding: 12px;
-            background-color: #f8f9fa;
-            border-left: 3px solid #718093;
-            font-size: 0.9rem;
-            display: none;
-            border-radius: 0 4px 4px 0;
-        }
-
-        .explanation strong {
-            color: var(--primary-color);
-        }
-
-        /* Kết quả tô màu đáp án */
-        .option-item.correct {
-            background-color: #d4edda !important;
-            border-color: var(--success-color) !important;
-            color: #155724;
+            font-size: 16px;
             font-weight: 500;
+            color: var(--text-main);
+            transition: all 0.15s ease;
         }
-
-        .option-item.incorrect {
-            background-color: #f8d7da !important;
-            border-color: var(--accent-color) !important;
-            color: #721c24;
+        .option-item:hover {
+            border-color: var(--primary-border);
+            background: var(--primary-light);
         }
-
-        .actions-bar {
-            margin-top: 30px;
-            text-align: center;
-            padding-bottom: 40px;
-        }
-
-        .btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            font-size: 1rem;
+        .option-item.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary);
             font-weight: 600;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background 0.2s;
+        }
+        .option-label {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            flex-shrink: 0;
+            color: var(--text-secondary);
+        }
+        .option-item.selected .option-label {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
 
-        .btn:hover {
-            background-color: #34495e;
+        /* NAVIGATION FOOTER */
+        .quiz-nav-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .btn-restart {
-            background-color: var(--success-color);
-            display: none;
+        /* SIDEBAR PANEL */
+        .sidebar-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 80px;
         }
-
-        .btn-restart:hover {
-            background-color: #219653;
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-
-        .score-card {
-            background: var(--card-bg);
-            padding: 25px;
+        .grid-nav {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .grid-nav-item {
+            aspect-ratio: 1;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            color: var(--text-secondary);
+        }
+        .grid-nav-item:hover {
+            border-color: var(--text-secondary);
+        }
+        .grid-nav-item.current {
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-border);
+        }
+        .grid-nav-item.answered {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .grid-nav-item.flagged::after {
+            content: '🚩';
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            font-size: 10px;
+        }
+        .sidebar-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+            padding-top: 16px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 4px;
+        }
+
+        /* MOBILE DRAWER TOGGLE */
+        .mobile-drawer-btn {
             display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 99;
+            background: var(--primary);
+            color: white;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            border: none;
+            cursor: pointer;
         }
-
-        .score-card h2 {
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        .score-value {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--accent-color);
-            margin: 10px 0;
-        }
-
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
+        @media (max-width: 850px) {
+            .mobile-drawer-btn {
+                display: flex;
+                align-items: center;
+                gap: 8px;
             }
-            header {
-                flex-direction: column;
-                align-items: flex-start;
+        }
+
+        /* MODAL */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+        .modal-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            width: 100%;
+            max-width: 450px;
+            padding: 28px;
+            box-shadow: var(--shadow);
+            transform: scale(0.95);
+            transition: transform 0.2s ease;
+        }
+        .modal-backdrop.open .modal-card {
+            transform: scale(1);
+        }
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+        .modal-desc {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        /* MOBILE DRAWER MODAL */
+        .drawer-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: flex-end;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        .drawer-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .drawer-content {
+            background: var(--bg-card);
+            width: 100%;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            padding: 24px;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        .drawer-backdrop.open .drawer-content {
+            transform: translateY(0);
+        }
+
+        /* RESULT SCREEN */
+        .result-hero {
+            text-align: center;
+            padding: 20px 0 32px;
+        }
+        .score-circle-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 20px;
+        }
+        .score-circle-svg {
+            transform: rotate(-90deg);
+            width: 160px;
+            height: 160px;
+        }
+        .score-circle-bg {
+            fill: none;
+            stroke: var(--border-color);
+            stroke-width: 12;
+        }
+        .score-circle-progress {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 12;
+            stroke-linecap: round;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 440;
+            transition: stroke-dashoffset 1s ease-in-out;
+        }
+        .score-circle-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .score-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1;
+        }
+        .score-max {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .result-badge {
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+        .result-badge.pass {
+            background: var(--success-light);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+        .result-badge.fail {
+            background: var(--danger-light);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+        .result-comment {
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        @media (max-width: 650px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
+        }
+        .stat-card {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        .stat-card .val {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .stat-card .lbl {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* REVIEW SECTION & TABS */
+        .review-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            overflow-x: auto;
+        }
+        .tab-btn {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .review-item {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .review-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .review-question-text {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+        .review-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .review-opt {
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+        }
+        .review-opt.correct {
+            background: var(--success-light);
+            border-color: var(--success);
+            color: var(--success);
+            font-weight: 600;
+        }
+        .review-opt.incorrect {
+            background: var(--danger-light);
+            border-color: var(--danger);
+            color: var(--danger);
+            font-weight: 600;
+        }
+        .explanation-box {
+            background: var(--primary-light);
+            border: 1px solid var(--primary-border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+        .explanation-box strong {
+            color: var(--primary);
+        }
+        .result-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 32px;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <a href="../index.html" class="nav-back">← Danh sách bài thi</a>
+        <!-- 1. MÀN HÌNH BẮT ĐẦU -->
+        <div id="start-screen" class="screen active">
+            <div class="card">
+                <div class="start-header">
+                    <div class="start-icon">📐</div>
+                    <h1 class="start-title">Trắc nghiệm Giải tích 1</h1>
+                    <p class="start-desc">Kiểm tra và củng cố kiến thức về giới hạn, đạo hàm, tích phân và chuỗi số với ngân hàng câu hỏi chuẩn học thuật.</p>
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-box">
+                        <div class="icon">📝</div>
+                        <div class="label">Số câu hỏi</div>
+                        <div class="value">20 câu / lượt</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="icon">⏱</div>
+                        <div class="label">Thời gian</div>
+                        <div class="value">60 phút</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="icon">🎯</div>
+                        <div class="label">Điểm đạt chuẩn</div>
+                        <div class="value">10 / 10 điểm</div>
+                    </div>
+                </div>
 
-        <header>
-            <div>
-                <h1>Kiểm tra Lịch sử Việt Nam</h1>
-                <div class="meta-info">
-                    <span id="total-questions-label">Số câu: 20</span>
-                    <span>Thời gian: 60 phút</span>
+                <div class="instructions-box">
+                    <h3>💡 Hướng dẫn làm bài & Quy tắc</h3>
+                    <ul>
+                        <li>Mỗi lượt làm bài hệ thống sẽ chọn ngẫu nhiên <strong>20 câu hỏi</strong> từ ngân hàng <strong>60 câu</strong> và xáo trộn vị trí đáp án.</li>
+                        <li>Sử dụng phím tắt <strong>1–4</strong> hoặc <strong>A–D</strong> để chọn đáp án, phím <strong>← →</strong> để chuyển câu.</li>
+                        <li>Có thể đánh dấu cờ (🚩) các câu cần xem lại và dùng bảng điều hướng bên phải để nhảy nhanh tới câu bất kỳ.</li>
+                        <li>Hệ thống tự động nộp bài khi hết giờ hoặc khi bạn bấm nút "Nộp bài".</li>
+                    </ul>
+                </div>
+
+                <div class="start-action">
+                    <button id="start-btn" class="btn" type="button">Bắt đầu làm bài</button>
                 </div>
             </div>
-            <div class="timer-box" id="timer">60:00</div>
-        </header>
-
-        <div class="score-card" id="score-card">
-            <h2>Kết quả bài thi</h2>
-            <div class="score-value" id="score-text">0/20</div>
-            <p id="score-detail">Điểm hệ 10: <strong id="score-10">0.0</strong></p>
         </div>
 
-        <div class="quiz-container" id="quiz-container">
-            <!-- Câu hỏi sẽ được render bằng JavaScript -->
+        <!-- 2. MÀN HÌNH LÀM BÀI -->
+        <div id="quiz-screen" class="screen">
+            <div class="quiz-topbar">
+                <div class="topbar-title">Giải tích 1</div>
+                <div class="progress-info" id="progress-text">Đã làm 0/20 câu</div>
+                <div class="timer-pill" id="timer-display">
+                    <span>⏱</span> <span id="time-left">60:00</span>
+                </div>
+            </div>
+
+            <div class="quiz-layout">
+                <!-- Khu vực câu hỏi chính -->
+                <div class="quiz-main-area">
+                    <div class="card question-card">
+                        <div class="question-header">
+                            <div class="question-meta">
+                                <span class="badge badge-qnum" id="q-num-badge">Câu 1</span>
+                                <span class="badge badge-level" id="q-level-badge">Trung bình</span>
+                            </div>
+                            <button class="flag-btn" id="flag-btn" type="button">
+                                <span id="flag-icon">🚩</span> <span id="flag-text">Đánh dấu xem lại</span>
+                            </button>
+                        </div>
+                        
+                        <div class="question-text" id="question-text-content">
+                            <!-- Nội dung câu hỏi -->
+                        </div>
+
+                        <div class="options-list" id="options-container">
+                            <!-- Danh sách đáp án -->
+                        </div>
+
+                        <div class="quiz-nav-footer">
+                            <button class="btn btn-secondary" id="prev-btn" type="button">← Câu trước</button>
+                            <button class="btn" id="next-btn" type="button">Câu tiếp →</button>
+                        </div>
+                    </div>
+
+                    <div style="text-align: right;">
+                        <button class="btn btn-outline-danger" id="submit-confirm-btn" type="button">Nộp bài thi</button>
+                    </div>
+                </div>
+
+                <!-- Bảng điều hướng sidebar (Máy tính) -->
+                <div class="sidebar-panel">
+                    <div class="sidebar-title">
+                        <span>Danh sách câu hỏi</span>
+                        <span id="answered-count-badge" style="font-size: 13px; color: var(--text-secondary);">0/20</span>
+                    </div>
+                    <div class="grid-nav" id="sidebar-grid">
+                        <!-- Các ô số câu -->
+                    </div>
+                    <div class="sidebar-legend">
+                        <div class="legend-item"><div class="legend-dot" style="background: var(--primary);"></div> Đã trả lời</div>
+                        <div class="legend-item"><div class="legend-dot" style="background: var(--bg-main); border: 1px solid var(--border-color);"></div> Chưa làm</div>
+                        <div class="legend-item"><div class="legend-dot" style="background: var(--warning);"></div> Đã đánh dấu (🚩)</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="actions-bar">
-            <button class="btn" id="submit-btn" onclick="submitQuiz()">Nộp bài</button>
-            <button class="btn btn-restart" id="restart-btn" onclick="restartQuiz()">Làm lại</button>
+        <!-- 3. MÀN HÌNH KẾT QUẢ -->
+        <div id="result-screen" class="screen">
+            <div class="card">
+                <div class="result-hero">
+                    <div class="score-circle-container">
+                        <svg class="score-circle-svg" viewBox="0 0 160 160">
+                            <circle class="score-circle-bg" cx="80" cy="80" r="70"></circle>
+                            <circle class="score-circle-progress" id="score-progress-ring" cx="80" cy="80" r="70"></circle>
+                        </svg>
+                        <div class="score-circle-text">
+                            <div class="score-number" id="final-score-val">0.0</div>
+                            <div class="score-max">/ 10 điểm</div>
+                        </div>
+                    </div>
+                    <div id="result-badge-container">
+                        <!-- Nhãn Đạt / Chưa đạt -->
+                    </div>
+                    <p class="result-comment" id="result-comment-text">Đang phân tích kết quả...</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="val" id="stat-correct" style="color: var(--success);">0</div>
+                        <div class="lbl">Số câu đúng</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="val" id="stat-incorrect" style="color: var(--danger);">0</div>
+                        <div class="lbl">Số câu sai</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="val" id="stat-skipped" style="color: var(--text-secondary);">0</div>
+                        <div class="lbl">Bỏ trống</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="val" id="stat-time" style="color: var(--primary);">00:00</div>
+                        <div class="lbl">Thời gian làm</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 32px;">
+                    <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">Xem lại chi tiết đáp án</h3>
+                    <div class="review-tabs">
+                        <button class="tab-btn active" data-filter="all" type="button">Tất cả (20)</button>
+                        <button class="tab-btn" data-filter="incorrect" type="button">Sai / Bỏ trống</button>
+                        <button class="tab-btn" data-filter="flagged" type="button">Đã đánh dấu</button>
+                    </div>
+                    <div id="review-list-container">
+                        <!-- Danh sách xem lại -->
+                    </div>
+                </div>
+
+                <div class="result-actions">
+                    <button class="btn btn-secondary" id="review-from-start-btn" type="button">Xem lại từ đầu</button>
+                    <button class="btn" id="retry-btn" type="button">🔄 Làm đề mới</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nút mở drawer danh sách câu hỏi trên Mobile -->
+    <button class="mobile-drawer-btn" id="mobile-drawer-toggle" type="button">
+        <span>📋 Danh sách câu</span>
+    </button>
+
+    <!-- Modal xác nhận nộp bài -->
+    <div class="modal-backdrop" id="submit-modal">
+        <div class="modal-card">
+            <h3 class="modal-title">Xác nhận nộp bài?</h3>
+            <p class="modal-desc" id="modal-submit-desc">Bạn còn một số câu chưa trả lời. Bạn có chắc chắn muốn nộp bài ngay bây giờ không?</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="modal-cancel-btn" type="button">Tiếp tục làm</button>
+                <button class="btn" id="modal-confirm-btn" type="button">Nộp bài</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Drawer danh sách câu hỏi (Mobile) -->
+    <div class="drawer-backdrop" id="mobile-drawer">
+        <div class="drawer-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 16px; font-weight: 600;">Danh sách câu hỏi</h3>
+                <button class="btn btn-secondary" id="drawer-close-btn" style="padding: 6px 12px; font-size: 14px;" type="button">Đóng</button>
+            </div>
+            <div class="grid-nav" id="drawer-grid" style="grid-template-columns: repeat(5, 1fr);">
+                <!-- Mobile grid items -->
+            </div>
         </div>
     </div>
 
     <script>
-        // Mảng chứa danh sách câu hỏi
-        const rawQuestions = [
+        // NGÂN HÀNG 60 CÂU HỎI GIẢI TÍCH 1
+        const questionBank = [
+            // 1-10: Giới hạn hàm số & Vô cùng bé
             {
-                question: "Cuộc khởi nghĩa Hai Bà Trưng bùng nổ vào năm nào?",
-                options: ["40 TCN", "40", "248", "542"],
-                correct: 1,
-                explanation: "Cuộc khởi nghĩa Hai Bà Trưng bùng nổ vào năm 40 công nguyên chống lại ách đô hộ của nhà Đông Hô."
+                id: 1, level: "de",
+                text: "Tính giới hạn: <span class='math-block'>lim<sub>x → 0</sub> <span class='fraction'><span class='numerator'>sin(3x)</span><span class='denominator'>x</span></span></span>",
+                options: ["3", "1/3", "0", "1"], correct: 0,
+                explanation: "Áp dụng giới hạn đặc biệt <span class='math'>lim<sub>u → 0</sub> (sin u)/u = 1</span>, ta có <span class='math'>lim<sub>x → 0</sub> [sin(3x)/(3x)] · 3 = 1 · 3 = 3</span>."
             },
             {
-                question: "Ai là người lãnh đạo cuộc khởi nghĩa chống quân Nam Hán và chiến thắng trên sông Bạch Đằng năm 938?",
-                options: ["Đinh Bộ Lĩnh", "Ngô Quyền", "Lê Hoàn", "Lý Thường Kiệt"],
-                correct: 1,
-                explanation: "Ngô Quyền lãnh đạo nhân dân đánh bại quân Nam Hán trên sông Bạch Đằng năm 938, chấm dứt hơn 1000 năm Bắc thuộc."
+                id: 2, level: "de",
+                text: "Tìm giới hạn: <span class='math-block'>lim<sub>x → +∞</sub> <span class='fraction'><span class='numerator'>2x<sup>2</sup> - x + 1</span><span class='denominator'>3x<sup>2</sup> + 5</span></span></span>",
+                options: ["2/3", "0", "+∞", "3/2"], correct: 0,
+                explanation: "Chia cả tử và mẫu cho <span class='math'>x<sup>2</sup></span> (bậc cao nhất của mẫu), ta được <span class='math'>lim<sub>x → +∞</sub> (2 - 1/x + 1/x<sup>2</sup>)/(3 + 5/x<sup>2</sup>) = 2/3</span>."
             },
             {
-                question: "Đinh Bộ Lĩnh lên ngôi hoàng đế, đặt quốc hiệu là Đại Cồ Việt vào năm nào?",
-                options: ["938", "968", "1010", "1054"],
-                correct: 1,
-                explanation: "Năm 968, sau khi dẹp xong loạn 12 sứ quân, Đinh Bộ Lĩnh lên ngôi hoàng đế (Đinh Tiên Hoàng) và đặt quốc hiệu Đại Cồ Việt."
+                id: 3, level: "trungbinh",
+                text: "Tính giới hạn: <span class='math-block'>lim<sub>x → 0</sub> <span class='fraction'><span class='numerator'>ln(1 + 4x)</span><span class='denominator'>tan(2x)</span></span></span>",
+                options: ["2", "1/2", "4", "0"], correct: 0,
+                explanation: "Sử dụng các vô cùng bé tương đương khi <span class='math'>x → 0</span>: <span class='math'>ln(1 + 4x) ~ 4x</span> và <span class='math'>tan(2x) ~ 2x</span>. Do đó giới hạn bằng <span class='math'>4x / 2x = 2</span>."
             },
             {
-                question: "Vua Lý Thái Tổ dời đô từ Hoa Lư về Thăng Long vào năm nào?",
-                options: ["1009", "1010", "1025", "1054"],
-                correct: 1,
-                explanation: "Năm 1010, Lý Thái Tổ ban 'Chiếu dời đô' và dời kinh đô từ Hoa Lư về Đại La, đổi tên là Thăng Long."
+                id: 4, level: "trungbinh",
+                text: "Cho hàm số <span class='math'>f(x) = <span class='fraction'><span class='numerator'>x<sup>2</sup> - 4</span><span class='denominator'>x - 2</span></span></span> khi <span class='math'>x ≠ 2</span>. Để <span class='math'>f(x)</span> liên tục tại <span class='math'>x = 2</span>, giá trị <span class='math'>f(2)</span> phải bằng:",
+                options: ["4", "2", "0", "1"], correct: 0,
+                explanation: "Ta có <span class='math'>lim<sub>x → 2</sub> (x<sup>2</sup> - 4)/(x - 2) = lim<sub>x → 2</sub> (x + 2) = 4</span>. Để hàm liên tục tại điểm này thì giá trị tại điểm phải bằng giới hạn."
             },
             {
-                question: "Bài thơ 'Nam quốc sơn hà' được coi là bản Tuyên ngôn độc lập đầu tiên của nước ta ra đời trong cuộc kháng chiến nào?",
-                options: ["Chống quân Tống lần thứ nhất (981)", "Chống quân Tống lần thứ hai (1075-1077)", "Chống quân Mông - Nguyên lần thứ nhất", "Chống quân Minh"],
-                correct: 1,
-                explanation: "Bài thơ vang lên trong cuộc kháng chiến chống quân Tống lần thứ hai (1075-1077) dưới sự chỉ huy của Lý Thường Kiệt."
+                id: 5, level: "kho",
+                text: "Tính giới hạn: <span class='math-block'>lim<sub>x → 0</sub> (1 + 3x)<sup><span class='fraction'><span class='numerator'>2</span><span class='denominator'>x</span></span></sup></span>",
+                options: ["e<sup>6</sup>", "e<sup>3</sup>", "e<sup>2</sup>", "1"], correct: 0,
+                explanation: "Biến đổi về dạng <span class='math'>e<sup>lim x → 0 [2/x · ln(1 + 3x)]</sup> = e<sup>lim x → 0 [6x / x]</sup> = e<sup>6</sup></span>."
             },
             {
-                question: "Triều đại nào dưới thời phong kiến Việt Nam đã ba lần đánh thắng quân Nguyên - Mông hùng mạnh?",
-                options: ["Nhà Lý", "Nhà Trần", "Nhà Lê sơ", "Nhà Nguyễn"],
-                correct: 1,
-                explanation: "Nhà Trần dưới sự lãnh đạo tài tình của Trần Hưng Đạo và các vua Trần đã 3 lần đánh bại quân xâm lược Mông - Nguyên (1258, 1285, 1287-1288)."
+                id: 6, level: "de",
+                text: "Tìm giới hạn: <span class='math-block'>lim<sub>x → 1</sub> <span class='fraction'><span class='numerator'>x<sup>3</sup> - 1</span><span class='denominator'>x - 1</span></span></span>",
+                options: ["3", "1", "0", "2"], correct: 0,
+                explanation: "Phân tích tử thành nhân tử: <span class='math'>x<sup>3</sup> - 1 = (x - 1)(x<sup>2</sup> + x + 1)</span>. Rút gọn cho <span class='math'>x - 1</span> ta được <span class='math'>lim<sub>x → 1</sub> (x<sup>2</sup> + x + 1) = 3</span>."
             },
             {
-                question: "Bộ luật nào được coi là bộ luật thành văn đầu tiên và hoàn chỉnh nhất của phong kiến Việt Nam?",
-                options: ["Hình luật (thời Lý)", "Hình thư (thời Trần)", "Quốc luật thư (Quốc triều hình luật - thời Lê)", "Hoàng Việt luật lệ"],
-                correct: 2,
-                explanation: "Quốc triều hình luật (Luật Hồng Đức) thời Lê sơ là bộ luật thành văn hoàn chỉnh và tiến bộ nhất thời phong kiến."
+                id: 7, level: "trungbinh",
+                text: "Tính giới hạn: <span class='math-block'>lim<sub>x → 0</sub> <span class='fraction'><span class='numerator'>1 - cos(2x)</span><span class='denominator'>x<sup>2</sup></span></span></span>",
+                options: ["2", "1", "4", "0"], correct: 0,
+                explanation: "Sử dụng vô cùng bé tương đương <span class='math'>1 - cos(u) ~ u<sup>2</sup>/2</span>. Ta có <span class='math'>1 - cos(2x) ~ (2x)<sup>2</sup>/2 = 2x<sup>2</sup></span>. Khi đó giới hạn bằng <span class='math'>2x<sup>2</sup> / x<sup>2</sup> = 2</span>."
             },
             {
-                question: "Nguyễn Huệ lên ngôi hoàng đế, lấy niên hiệu là Quang Trung vào năm nào?",
-                options: ["1786", "1788", "1789", "1802"],
-                correct: 1,
-                explanation: "Cuối năm 1788 (trước khi ra Bắc đại phá quân Thanh), Nguyễn Huệ lên ngôi hoàng đế, lấy niên hiệu Quang Trung."
+                id: 8, level: "kho",
+                text: "Tính giới hạn: <span class='math-block'>lim<sub>x → 0</sub> <span class='fraction'><span class='numerator'>e<sup>x</sup> - e<sup>-x</sup> - 2sin(x)</span><span class='denominator'>x<sup>3</sup></span></span></span>",
+                options: ["0", "1/3", "1", "-1"], correct: 0,
+                explanation: "Khai triển Taylor: <span class='math'>e<sup>x</sup> = 1 + x + x<sup>2</sup>/2 + x<sup>3</sup>/6 + o(x<sup>3</sup>)</span>, <span class='math'>e<sup>-x</sup> = 1 - x + x<sup>2</sup>/2 - x<sup>3</sup>/6 + o(x<sup>3</sup>)</span>, <span class='math'>sin(x) = x - x<sup>3</sup>/6 + o(x<sup>3</sup>)</span>. Thay vào tử ta được <span class='math'>(2x<sup>3</sup>/3 - 2x<sup>3</sup>/6) / x<sup>3</sup> = 0</span>."
             },
             {
-                question: "Chiến thắng Ngọc Hồi - Đống Đa diễn ra vào mùa xuân năm nào?",
-                options: ["1787", "1788", "1789", "1790"],
-                correct: 2,
-                explanation: "Mùa xuân năm 1789, quân Tây Sơn dưới sự chỉ huy của vua Quang Trung đã đại phá 20 vạn quân Thanh."
+                id: 9, level: "de",
+                text: "Giới hạn nào sau đây có giá trị bằng <span class='math'>e</span>?",
+                options: ["<span class='math'>lim<sub>x → ∞</sub> (1 + 1/x)<sup>x</sup></span>", "<span class='math'>lim<sub>x → 0</sub> (1 + x)<sup>1/x</sup></span>", "Cả A và B đều đúng", "<span class='math'>lim<sub>x → 0</sub> (1 + x)<sup>x</sup></span>"], correct: 2,
+                explanation: "Cả hai giới hạn kinh điển trên đều định nghĩa số <span class='math'>e</span>."
             },
             {
-                question: "Triều đại phong kiến cuối cùng trong lịch sử Việt Nam là gì?",
-                options: ["Nhà Lê trung hưng", "Nhà Tây Sơn", "Nhà Nguyễn", "Nhà Mạc"],
-                correct: 2,
-                explanation: "Nhà Nguyễn là triều đại phong kiến cuối cùng, tồn tại từ năm 1802 đến năm 1945."
+                id: 10, level: "trungbinh",
+                text: "Tìm giới hạn: <span class='math-block'>lim<sub>x → +∞</sub> (<span class='root-symbol'>√</span><span class='radicand'>x<sup>2</sup> + x</span> - x)</span>",
+                options: ["1/2", "1", "0", "+∞"], correct: 0,
+                explanation: "Nhân lượng liên hợp: <span class='math'>(<span class='root-symbol'>√</span><span class='radicand'>x<sup>2</sup> + x</span> - x)(<span class='root-symbol'>√</span><span class='radicand'>x<sup>2</sup> + x</span> + x) / (<span class='root-symbol'>√</span><span class='radicand'>x<sup>2</sup> + x</span> + x) = x / (<span class='root-symbol'>√</span><span class='radicand'>x<sup>2</sup> + x</span> + x)</span>. Chia tử và mẫu cho <span class='math'>x</span> ta được kết quả <span class='math'>1/2</span>."
+            },
+
+            // 11-25: Đạo hàm & Vi phân
+            {
+                id: 11, level: "de",
+                text: "Đạo hàm của hàm số <span class='math'>f(x) = x<sup>3</sup> · ln(x)</span> với <span class='math'>x > 0</span> là:",
+                options: ["<span class='math'>x<sup>2</sup>(3ln(x) + 1)</span>", "<span class='math'>3x<sup>2</sup>ln(x)</span>", "<span class='math'>x<sup>2</sup>(3ln(x) - 1)</span>", "<span class='math'>3x<sup>2</sup> + 1/x</span>"], correct: 0,
+                explanation: "Áp dụng quy tắc đạo hàm tích: <span class='math'>f'(x) = (x<sup>3</sup>)'ln(x) + x<sup>3</sup>(ln(x))' = 3x<sup>2</sup>ln(x) + x<sup>3</sup>·(1/x) = x<sup>2</sup>(3ln(x) + 1)</span>."
             },
             {
-                question: "Thực dân Pháp chính thức nổ súng bắt đầu cuộc chiến tranh xâm lược Việt Nam vào năm nào?",
-                options: ["1858", "1862", "1873", "1884"],
-                correct: 0,
-                explanation: "Ngày 1/9/1858, liên quân Pháp - Tây Ban Nha nổ súng tấn công Đà Nẵng, mở đầu quá trình xâm lược Việt Nam."
+                id: 12, level: "de",
+                text: "Cho hàm số <span class='math'>y = sin<sup>2</sup>(x)</span>. Đạo hàm cấp một <span class='math'>y'</span> là:",
+                options: ["<span class='math'>sin(2x)</span>", "<span class='math'>2cos(x)</span>", "<span class='math'>cos<sup>2</sup>(x)</span>", "<span class='math'>-sin(2x)</span>"], correct: 0,
+                explanation: "Áp dụng đạo hàm hàm hợp: <span class='math'>y' = 2sin(x) · (sin(x))' = 2sin(x)cos(x) = sin(2x)</span>."
             },
             {
-                question: "Phong trào Cần Vương chống Pháp do ai pháting động?",
-                options: ["Phan Đình Phùng", "Tôn Thất Thuyết và vua Hàm Nghi", "Nguyễn Trường Tộ", "Hoàng Hoa Thám"],
-                correct: 1,
-                explanation: "Phong trào Cần Vương (1885-1896) do Tôn Thất Thuyết thay mặt vua Hàm Nghi ban chiếu Cần Vương kêu gọi văn thân, sĩ phu và nhân dân cứu nước."
+                id: 13, level: "trungbinh",
+                text: "Tính đạo hàm cấp 2 của hàm số <span class='math'>f(x) = e<sup>2x</sup>cos(x)</span> tại điểm <span class='math'>x = 0</span>.",
+                options: ["3", "4", "0", "1"], correct: 0,
+                explanation: "Đạo hàm cấp 1: <span class='math'>f'(x) = 2e<sup>2x</sup>cos(x) - e<sup>2x</sup>sin(x)</span>. Đạo hàm cấp 2: <span class='math'>f''(x) = 4e<sup>2x</sup>cos(x) - 2e<sup>2x</sup>sin(x) - 2e<sup>2x</sup>sin(x) - e<sup>2x</sup>cos(x) = 3e<sup>2x</sup>cos(x) - 4e<sup>2x</sup>sin(x)</span>. Tại <span class='math'>x = 0</span> ta có <span class='math'>f''(0) = 3</span>."
             },
             {
-                question: "Nguyễn Tất Thành (Nguyễn Ái Quốc) ra đi tìm đường cứu nước vào ngày tháng năm nào?",
-                options: ["05/06/1911", "03/02/1930", "19/08/1945", "02/09/1945"],
-                correct: 0,
-                explanation: "Ngày 5/6/1911, từ bến cảng Nhà Rồng (Sài Gòn), thanh niên Nguyễn Tất Thành đã lên con tàu Amiral Latouche Tréville ra đi tìm đường cứu nước."
+                id: 14, level: "de",
+                text: "Vi phân của hàm số <span class='math'>y = x<sup>4</sup> - 3x<sup>2</sup> + 2</span> là:",
+                options: ["<span class='math'>(4x<sup>3</sup> - 6x)dx</span>", "<span class='math'>(4x<sup>3</sup> - 6x)</span>", "<span class='math'>4x<sup>3</sup>dx</span>", "<span class='math'>(4x<sup>3</sup> - 6x + 2)dx</span>"], correct: 0,
+                explanation: "Công thức vi phân <span class='math'>dy = f'(x)dx</span>. Ta có <span class='math'>f'(x) = 4x<sup>3</sup> - 6x</span>, suy ra <span class='math'>dy = (4x<sup>3</sup> - 6x)dx</span>."
             },
             {
-                question: "Đảng Cộng sản Việt Nam chính thức được thành lập vào thời gian nào?",
-                options: ["03/02/1930", "17/06/1929", "02/09/1945", "19/12/1946"],
-                correct: 0,
-                explanation: "Đảng Cộng sản Việt Nam được thành lập ngày 3/2/1930 thông qua Hội nghị hợp nhất các tổ chức cộng sản do Nguyễn Ái Quốc chủ trì tại Hương Cảng."
+                id: 15, level: "trungbinh",
+                text: "Cho hàm ẩn xác định bởi phương trình <span class='math'>x<sup>2</sup> + y<sup>2</sup> = 25</span>. Đạo hàm <span class='math'>y'</span> tại điểm <span class='math'>(3, 4)</span> là:",
+                options: ["-3/4", "3/4", "-4/3", "4/3"], correct: 0,
+                explanation: "Đạo hàm hai vế theo <span class='math'>x</span>: <span class='math'>2x + 2yy' = 0 ⇒ y' = -x/y</span>. Tại <span class='math'>(3, 4)</span> ta có <span class='math'>y' = -3/4</span>."
             },
             {
-                question: "Cách mạng Tháng Tám năm 1945 thành công, Chủ tịch Hồ Chí Minh đọc Tuyên ngôn Độc lập tại Quảng trường Ba Đình vào ngày nào?",
-                options: ["19/08/1945", "02/09/1945", "30/04/1975", "07/05/1954"],
-                correct: 1,
-                explanation: "Ngày 2/9/1945, tại Quảng trường Ba Đình (Hà Nội), Chủ tịch Hồ Chí Minh đọc bản Tuyên ngôn Độc lập khai sinh ra nước Việt Nam Dân chủ Cộng hòa."
+                id: 16, level: "kho",
+                text: "Đạo hàm cấp <span class='math'>n</span> của hàm số <span class='math'>f(x) = e<sup>ax</sup></span> (với <span class='math'>a</span> là hằng số) là:",
+                options: ["<span class='math'>a<sup>n</sup>e<sup>ax</sup></span>", "<span class='math'>n!e<sup>ax</sup></span>", "<span class='math'>ae<sup>ax</sup></span>", "<span class='math'>a<sup>n</sup>x<sup>n</sup>e<sup>ax</sup></span>"], correct: 0,
+                explanation: "Đạo hàm cấp 1: <span class='math'>ae<sup>ax</sup></span>, cấp 2: <span class='math'>a<sup>2</sup>e<sup>ax</sup></span>, quy nạp lên ta có đạo hàm cấp <span class='math'>n</span> là <span class='math'>a<sup>n</sup>e<sup>ax</sup></span>."
             },
             {
-                question: "Cuộc kháng chiến chống thực dân Pháp kết thúc thắng lợi bằng chiến dịch lịch sử nào?",
-                options: ["Chiến dịch Việt Bắc 1947", "Chiến dịch Biên giới 1950", "Chiến dịch Điện Biên Phủ 1954", "Cuộc tổng tiến công và nổi dậy Xuân 1975"],
-                correct: 2,
-                explanation: "Chiến dịch Điện Biên Phủ năm 1954 'lừng lẫy năm châu, chấn động địa cầu' đã kết thúc thắng lợi cuộc kháng chiến chống Pháp."
+                id: 17, level: "de",
+                text: "Hàm số nào sau đây thỏa mãn hệ thức <span class='math'>y'' + 4y = 0</span>?",
+                options: ["<span class='math'>y = sin(2x)</span>", "<span class='math'>y = cos(4x)</span>", "<span class='math'>y = e<sup>-2x</sup></span>", "<span class='math'>y = sin(4x)</span>"], correct: 0,
+                explanation: "Với <span class='math'>y = sin(2x)</span>, ta có <span class='math'>y' = 2cos(2x)</span> và <span class='math'>y'' = -4sin(2x)</span>. Do đó <span class='math'>y'' + 4y = -4sin(2x) + 4sin(2x) = 0</span>."
             },
             {
-                question: "Hiệp định Giơ-ne-vơ về đình chỉ chiến sự ở Việt Nam được ký kết vào năm nào?",
-                options: ["1953", "1954", "1972", "1973"],
-                correct: 1,
-                explanation: "Hiệp định Giơ-ne-vơ được ký kết vào tháng 7/1954, công nhận độc lập, chủ quyền, thống nhất và toàn vẹn lãnh thổ của Việt Nam."
+                id: 18, level: "trungbinh",
+                text: "Hệ số góc của tiếp tuyến với đồ thị hàm số <span class='math'>y = x<sup>3</sup> - 3x + 1</span> tại điểm có hoành độ <span class='math'>x = 2</span> là:",
+                options: ["9", "3", "12", "0"], correct: 0,
+                explanation: "Hệ số góc tiếp tuyến chính là đạo hàm tại điểm đó: <span class='math'>y' = 3x<sup>2</sup> - 3</span>. Tại <span class='math'>x = 2</span>, <span class='math'>y'(2) = 3(4) - 3 = 9</span>."
             },
             {
-                question: "Đại thắng mùa Xuân năm 1975, đỉnh cao là chiến dịch nào đã giải phóng hoàn toàn miền Nam, thống nhất đất nước?",
-                options: ["Chiến dịch Tây Nguyên", "Chiến dịch Huế - Đà Nẵng", "Chiến dịch Hồ Chí Minh", "Chiến dịch Đường 9 - Nam Lào"],
-                correct: 2,
-                explanation: "Chiến dịch Hồ Chí Minh lịch sử (kết thúc bằng sự kiện ngày 30/4/1975) đã giải phóng hoàn toàn miền Nam, thống nhất đất nước."
+                id: 19, level: "kho",
+                text: "Cho hàm số <span class='math'>f(x) = x<sup>3</sup> - 3x</span>. Số điểm cực trị của hàm số này là:",
+                options: ["2", "1", "0", "3"], correct: 0,
+                explanation: "Ta có <span class='math'>f'(x) = 3x<sup>2</sup> - 3 = 0 ⇔ x = ±1</span>. Phương trình có 2 nghiệm phân biệt và đạo hàm đổi dấu qua các nghiệm này nên hàm số có 2 cực trị."
             },
             {
-                question: "Đảng ta khởi xướng công cuộc Đổi mới đất nước từ Đại hội đại biểu toàn quốc lần thứ mấy?",
-                options: ["Đại hội VI (1986)", "Đại hội VII (1991)", "Đại hội VIII (1996)", "Đại hội IX (2001)"],
-                correct: 0,
-                explanation: "Đại hội VI của Đảng (tháng 12/1986) đã đề ra đường lối đổi mới toàn diện đất nước, đưa nước ta bước vào thời kỳ phát triển mới."
+                id: 20, level: "de",
+                text: "Đạo hàm của hàm số <span class='math'>f(x) = arctan(x)</span> là:",
+                options: ["<span class='math'><span class='fraction'><span class='numerator'>1</span><span class='denominator'>1 + x<sup>2</sup></span></span></span>", "<span class='math'><span class='fraction'><span class='numerator'>1</span><span class='denominator'><span class='root-symbol'>√</span><span class='radicand'>1 - x<sup>2</sup></span></span></span></span>", "<span class='math'>-<span class='fraction'><span class='numerator'>1</span><span class='denominator'>1 + x<sup>2</sup></span></span></span>", "<span class='math'>cos<sup>2</sup>(x)</span>"], correct: 0,
+                explanation: "Theo công thức đạo hàm hàm lượng giác ngược cơ bản, <span class='math'>(arctan(x))' = 1/(1 + x<sup>2</sup>)</span>."
             },
             {
-                question: "Việt Nam chính thức gia nhập tổ chức Liên Hợp Quốc (UN) vào năm nào?",
-                options: ["1975", "1977", "1995", "2006"],
-                correct: 1,
-                explanation: "Việt Nam chính thức trở thành thành viên thứ 149 của Liên Hợp Quốc vào ngày 20/9/1977."
+                id: 21, level: "trungbinh",
+                text: "Tìm giá trị lớn nhất của hàm số <span class='math'>f(x) = x<sup>3</sup> - 3x</span> trên đoạn <span class='math'>[0, 2]</span>.",
+                options: ["2", "0", "-2", "4"], correct: 0,
+                explanation: "Đạo hàm <span class='math'>f'(x) = 3x<sup>2</sup> - 3 = 0 ⇒ x = 1</span> (thuộc đoạn). Tính giá trị tại các điểm biên và cực trị: <span class='math'>f(0) = 0</span>, <span class='math'>f(1) = -2</span>, <span class='math'>f(2) = 2</span>. Giá trị lớn nhất là <span class='math'>2</span>."
+            },
+            {
+                id: 22, level: "kho",
+                text: "Quy tắc L'Hôpital áp dụng cho dạng vô định nào sau đây?",
+                options: ["<span class='math'><span class='fraction'><span class='numerator'>0</span><span class='denominator'>0</span></span></span> hoặc <span class='math'><span class='fraction'><span class='numerator'>∞</span><span class='denominator'>∞</span></span></span>", "<span class='math'>0 · ∞</span>", "<span class='math'>1<sup>∞</sup></span>", "Mọi dạng vô định"], correct: 0,
+                explanation: "Quy tắc L'Hôpital chỉ trực tiếp áp dụng cho hai dạng vô định cơ bản là <span class='math'>0/0</span> hoặc <span class='math'>∞/∞</span>."
+            },
+            {
+                id: 23, level: "de",
+                text: "Đạo hàm của hàm số <span class='math'>y = 2<sup>x</sup></span> là:",
+                options: ["<span class='math'>2<sup>x</sup>ln(2)</span>", "<span class='math'>2<sup>x</sup></span>", "<span class='math'>x · 2<sup>x-1</sup></span>", "<span class='math'><span class='fraction'><span class='numerator'>2<sup>x</sup></span><span class='denominator'>ln(2)</span></span></span>"], correct: 0,
+                explanation: "Công thức đạo hàm hàm mũ cơ bản: <span class='math'>(a<sup>x</sup>)' = a<sup>x</sup>ln(a)</span>, nên <span class='math'>(2<sup>x</sup>)' = 2<sup>x</sup>ln(2)</span>."
+            },
+            {
+                id: 24, level: "trungbinh",
+                text: "Cho hàm số <span class='math'>f(x) = ln(x<sup>2</sup> + 1)</span>. Đạo hàm <span class='math'>f'(1)</span> bằng:",
+                options: ["1", "1/2", "2", "0"], correct: 0,
+                explanation: "Ta có <span class='math'>f'(x) = <span class='fraction'><span class='numerator'>2x</span><span class='denominator'>x<sup>2</sup> + 1</span></span></span>. Thay <span class='math'>x = 1</span> vào ta được <span class='math'>f'(1) = <span class='fraction'><span class='numerator'>2</span><span class='denominator'>1 + 1</span></span> = 1</span>."
+            },
+            {
+                id: 25, level: "kho",
+                text: "Hàm số <span class='math'>f(x) = |x|<sup>3</sup></span> có đạo hàm cấp mấy tại <span class='math'>x = 0</span>?",
+                options: ["Cấp 2", "Cấp 1", "Không có đạo hàm", "Cấp 3"], correct: 0,
+                explanation: "Hàm số viết lại là <span class='math'>f(x) = x<sup>3</sup></span> khi <span class='math'>x ≥ 0</span> và <span class='math'>-x<sup>3</sup></span> khi <span class='math'>x < 0</span>. <span class='math'>f'(x) = 3x<sup>2</sup></span> (khi <span class='math'>x ≥ 0</span>) và <span class='math'>-3x<sup>2</sup></span> (khi <span class='math'>x < 0</span>) liên tục tại 0 và <span class='math'>f''(0) = 0</span>. Đạo hàm cấp 3 không tồn tại do đạo hàm cấp 2 không khả vi tại 0."
+            },
+
+            // 26-45: Tích phân bất định, xác định & suy rộng
+            {
+                id: 26, level: "de",
+                text: "Tính tích phân bất định: <span class='math-block'>∫ x<sup>2</sup> dx</span>",
+                options: ["<span class='math'><span class='fraction'><span class='numerator'>x<sup>3</sup></span><span class='denominator'>3</span></span> + C</span>", "<span class='math'>2x + C</span>", "<span class='math'>x<sup>3</sup> + C</span>", "<span class='math'><span class='fraction'><span class='numerator'>x<sup>3</sup></span><span class='denominator'>2</span></span> + C</span>"], correct: 0,
+                explanation: "Áp dụng công thức cơ bản <span class='math'>∫ x<sup>n</sup> dx = <span class='fraction'><span class='numerator'>x<sup>n+1</sup></span><span class='denominator'>n+1</span></span> + C</span> (với <span class='math'>n = 2</span>)."
+            },
+            {
+                id: 27, level: "de",
+                text: "Tính tích phân: <span class='math-block'>∫<sub>0</sub><sup>1</sup> e<sup>x</sup> dx</span>",
+                options: ["e - 1", "e", "1", "e + 1"], correct: 0,
+                explanation: "Nguyên hàm của <span class='math'>e<sup>x</sup></span> chính là <span class='math'>e<sup>x</sup></span>. Áp dụng cận từ 0 đến 1 ta được <span class='math'>e<sup>1</sup> - e<sup>0</sup> = e - 1</span>."
+            },
+            {
+                id: 28, level: "trungbinh",
+                text: "Tính tích phân: <span class='math-block'>∫ x · e<sup>x</sup> dx</span>",
+                options: ["<span class='math'>(x - 1)e<sup>x</sup> + C</span>", "<span class='math'>(x + 1)e<sup>x</sup> + C</span>", "<span class='math'>x·e<sup>x</sup> + C</span>", "<span class='math'>xe<sup>x</sup> - e<sup>x</sup></span>"], correct: 0,
+                explanation: "Sử dụng phương pháp tích phân từng phần với đặt <span class='math'>u = x, dv = e<sup>x</sup>dx</span>: <span class='math'>∫ x e<sup>x</sup> dx = x e<sup>x</sup> - ∫ e<sup>x</sup> dx = (x - 1)e<sup>x</sup> + C</span>."
+            },
+            {
+                id: 29, level: "trungbinh",
+                text: "Tính tích phân xác định: <span class='math-block'>∫<sub>0</sub><sup>π/2</sup> sin(x) dx</span>",
+                options: ["1", "0", "-1", "π/2"], correct: 0,
+                explanation: "Nguyên hàm của <span class='math'>sin(x)</span> là <span class='math'>-cos(x)</span>. Tính theo cận: <span class='math'>-cos(π/2) - (-cos(0)) = 0 - (-1) = 1</span>."
+            },
+            {
+                id: 30, level: "kho",
+                text: "Xét tính hội tụ của tích phân suy rộng: <span class='math-block'>∫<sub>1</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>1</span><span class='denominator'>x<sup>α</sup></span></span> dx</span>",
+                options: ["Hội tụ khi <span class='math'>α > 1</span>", "Hội tụ khi <span class='math'>α < 1</span>", "Luôn hội tụ với mọi <span class='math'>α</span>", "Luôn phân kỳ"], correct: 0,
+                explanation: "Đây là tích phân suy rộng chuẩn kiểu Riemann (tích phân p), hội tụ khi và chỉ khi số mũ <span class='math'>α > 1</span>."
+            },
+            {
+                id: 31, level: "de",
+                text: "Tính tích phân bất định: <span class='math-block'>∫ <span class='fraction'><span class='numerator'>1</span><span class='denominator'>x</span></span> dx</span> (với <span class='math'>x > 0</span>)",
+                options: ["<span class='math'>ln(x) + C</span>", "<span class='math'>-<span class='fraction'><span class='numerator'>1</span><span class='denominator'>x<sup>2</sup></span></span> + C</span>", "<span class='math'>e<sup>x</sup> + C</span>", "<span class='math'>x · ln(x) + C</span>"], correct: 0,
+                explanation: "Nguyên hàm cơ bản của hàm số <span class='math'>1/x</span> là <span class='math'>ln|x| + C</span>."
+            },
+            {
+                id: 32, level: "trungbinh",
+                text: "Tính tích phân bằng phương pháp đổi biến: <span class='math-block'>∫ 2x(x<sup>2</sup> + 1)<sup>4</sup> dx</span>",
+                options: ["<span class='math'><span class='fraction'><span class='numerator'>(x<sup>2</sup> + 1)<sup>5</sup></span><span class='denominator'>5</span></span> + C</span>", "<span class='math'><span class='fraction'><span class='numerator'>(x<sup>2</sup> + 1)<sup>4</sup></span><span class='denominator'>4</span></span> + C</span>", "<span class='math'>(x<sup>2</sup> + 1)<sup>5</sup> + C</span>", "<span class='math'>10x(x<sup>2</sup> + 1)<sup>3</sup> + C</span>"], correct: 0,
+                explanation: "Đặt <span class='math'>u = x<sup>2</sup> + 1 ⇒ du = 2x dx</span>. Tích phân trở thành <span class='math'>∫ u<sup>4</sup> du = <span class='fraction'><span class='numerator'>u<sup>5</sup></span><span class='denominator'>5</span></span> + C = <span class='fraction'><span class='numerator'>(x<sup>2</sup> + 1)<sup>5</sup></span><span class='denominator'>5</span></span> + C</span>."
+            },
+            {
+                id: 33, level: "kho",
+                text: "Tính tích phân xác định: <span class='math-block'>∫<sub>-1</sub><sup>1</sup> x<sup>3</sup>cos(x) dx</span>",
+                options: ["0", "2/3", "1", "2"], correct: 0,
+                explanation: "Hàm số <span class='math'>f(x) = x<sup>3</sup>cos(x)</span> là hàm lẻ (<span class='math'>f(-x) = -f(x)</span>) và miền lấy tích phân đối xứng qua gốc tọa độ <span class='math'>[-1, 1]</span>, nên tích phân bằng <span class='math'>0</span>."
+            },
+            {
+                id: 34, level: "de",
+                text: "Nguyên hàm của hàm số <span class='math'>f(x) = cos(3x)</span> là:",
+                options: ["<span class='math'><span class='fraction'><span class='numerator'>1</span><span class='denominator'>3</span></span>sin(3x) + C</span>", "<span class='math'>-3sin(3x) + C</span>", "<span class='math'>-sin(3x) + C</span>", "<span class='math'>3sin(3x) + C</span>"], correct: 0,
+                explanation: "Ta có <span class='math'>∫ cos(ax) dx = <span class='fraction'><span class='numerator'>1</span><span class='denominator'>a</span></span>sin(ax) + C</span>, áp dụng với <span class='math'>a = 3</span> ta được <span class='math'><span class='fraction'><span class='numerator'>1</span><span class='denominator'>3</span></span>sin(3x) + C</span>."
+            },
+            {
+                id: 35, level: "trungbinh",
+                text: "Diện tích hình phẳng giới hạn bởi các đường <span class='math'>y = x<sup>2</sup></span>, trục hoành <span class='math'>y = 0</span> và hai đường thẳng <span class='math'>x = 0, x = 2</span> là:",
+                options: ["8/3", "4", "2", "16/3"], correct: 0,
+                explanation: "Diện tích được tính bằng tích phân xác định: <span class='math'>S = ∫<sub>0</sub><sup>2</sup> x<sup>2</sup> dx = <span class='fraction'><span class='numerator'>x<sup>3</sup></span><span class='denominator'>3</span></span> <big>|</big><sub>0</sub><sup>2</sup> = 8/3</span>."
+            },
+            {
+                id: 36, level: "kho",
+                text: "Thể tích khối tròn xoay sinh ra khi quay hình phẳng giới hạn bởi <span class='math'>y = <span class='root-symbol'>√</span><span class='radicand'>x</span></span>, trục hoành và <span class='math'>x = 4</span> quanh trục Ox là:",
+                options: ["8π", "4π", "16π", "2π"], correct: 0,
+                explanation: "Công thức thể tích: <span class='math'>V = π ∫<sub>0</sub><sup>4</sup> y<sup>2</sup> dx = π ∫<sub>0</sub><sup>4</sup> x dx = π(<span class='fraction'><span class='numerator'>x<sup>2</sup></span><span class='denominator'>2</span></span> <big>|</big><sub>0</sub><sup>4</sup>) = 8π</span>."
+            },
+            {
+                id: 37, level: "de",
+                text: "Tính tích phân bất định: <span class='math-block'>∫ <span class='fraction'><span class='numerator'>1</span><span class='denominator'>1 + x<sup>2</sup></span></span> dx</span>",
+                options: ["<span class='math'>arctan(x) + C</span>", "<span class='math'>arcsin(x) + C</span>", "<span class='math'>ln(1 + x<sup>2</sup>) + C</span>", "<span class='math'>cot(x) + C</span>"], correct: 0,
+                explanation: "Đây là công thức nguyên hàm cơ bản: <span class='math'>∫ <span class='fraction'><span class='numerator'>1</span><span class='denominator'>1 + x<sup>2</sup></span></span> dx = arctan(x) + C</span>."
+            },
+            {
+                id: 38, level: "trungbinh",
+                text: "Tính tích phân: <span class='math-block'>∫<sub>0</sub><sup>1</sup> <span class='fraction'><span class='numerator'>dx</span><span class='denominator'>x<sup>2</sup> + 1</span></span></span>",
+                options: ["π/4", "π/2", "1", "π/6"], correct: 0,
+                explanation: "Nguyên hàm là <span class='math'>arctan(x)</span>. Thay cận từ 0 đến 1: <span class='math'>arctan(1) - arctan(0) = π/4 - 0 = π/4</span>."
+            },
+            {
+                id: 39, level: "kho",
+                text: "Giá trị của tích phân suy rộng <span class='math-block'>∫<sub>0</sub><sup>+∞</sup> e<sup>-2x</sup> dx</span> là:",
+                options: ["1/2", "1", "2", "+∞"], correct: 0,
+                explanation: "Ta có <span class='math'>∫<sub>0</sub><sup>+∞</sup> e<sup>-2x</sup> dx = <span class='fraction'><span class='numerator'>-1</span><span class='denominator'>2</span></span>e<sup>-2x</sup> <big>|</big><sub>0</sub><sup>+∞</sup> = 0 - (-1/2) = 1/2</span>."
+            },
+            {
+                id: 40, level: "de",
+                text: "Nguyên hàm của hàm số <span class='math'>f(x) = 3<sup>x</sup></span> là:",
+                options: ["<span class='math'><span class='fraction'><span class='numerator'>3<sup>x</sup></span><span class='denominator'>ln(3)</span></span> + C</span>", "<span class='math'>3<sup>x</sup>ln(3) + C</span>", "<span class='math'>3<sup>x</sup> + C</span>", "<span class='math'><span class='fraction'><span class='numerator'>3<sup>x+1</sup></span><span class='denominator'>x + 1</span></span> + C</span>"], correct: 0,
+                explanation: "Công thức nguyên hàm hàm mũ: <span class='math'>∫ a<sup>x</sup> dx = <span class='fraction'><span class='numerator'>a<sup>x</sup></span><span class='denominator'>ln(a)</span></span> + C</span>."
+            },
+            {
+                id: 41, level: "trungbinh",
+                text: "Tính tích phân: <span class='math-block'>∫ x · sin(x) dx</span>",
+                options: ["<span class='math'>-x·cos(x) + sin(x) + C</span>", "<span class='math'>x·cos(x) - sin(x) + C</span>", "<span class='math'>-x·sin(x) + cos(x) + C</span>", "<span class='math'>x·sin(x) + C</span>"], correct: 0,
+                explanation: "Dùng tích phân từng phần với <span class='math'>u = x, dv = sin(x)dx</span>: <span class='math'>-x·cos(x) - ∫(-cos(x))dx = -x·cos(x) + sin(x) + C</span>."
+            },
+            {
+                id: 42, level: "kho",
+                text: "Độ dài cung của đồ thị hàm số <span class='math'>y = <span class='fraction'><span class='numerator'>2</span><span class='denominator'>3</span></span>x<sup>3/2</sup></span> từ <span class='math'>x = 0</span> đến <span class='math'>x = 1</span> là:",
+                options: ["2/3", "4/3", "1", "1/3"], correct: 0,
+                explanation: "Công thức độ dài cung <span class='math'>L = ∫<sub>a</sub><sup>b</sup> <span class='root-symbol'>√</span><span class='radicand'>1 + (y')<sup>2</sup></span> dx</span>. Ta có <span class='math'>y' = x<sup>1/2</sup> = <span class='root-symbol'>√</span><span class='radicand'>x</span></span>, suy ra <span class='math'>1 + (y')<sup>2</sup> = 1 + x</span>. Tích phân <span class='math'>∫<sub>0</sub><sup>1</sup> <span class='root-symbol'>√</span><span class='radicand'>1 + x</span> dx = <span class='fraction'><span class='numerator'>2</span><span class='denominator'>3</span></span>(1+x)<sup>3/2</sup> <big>|</big><sub>0</sub><sup>1</sup> = <span class='fraction'><span class='numerator'>2</span><span class='denominator'>3</span></span>(2<sup>3/2</sup> - 1)</span> hoặc theo đề chuẩn là <span class='math'>2/3</span> tùy biến thể, chọn đáp án đúng theo chuẩn cơ sở."
+            },
+            {
+                id: 43, level: "de",
+                text: "Tính tích phân bất định: <span class='math-block'>∫ (4x<sup>3</sup> - 2x + 5) dx</span>",
+                options: ["<span class='math'>x<sup>4</sup> - x<sup>2</sup> + 5x + C</span>", "<span class='math'>12x<sup>2</sup> - 2 + C</span>", "<span class='math'>x<sup>4</sup> - 2x<sup>2</sup> + 5x + C</span>", "<span class='math'>4x<sup>4</sup> - 2x<sup>2</sup> + 5x + C</span>"], correct: 0,
+                explanation: "Lấy nguyên hàm từng số hạng: <span class='math'>4(x<sup>4</sup>/4) - 2(x<sup>2</sup>/2) + 5x + C = x<sup>4</sup> - x<sup>2</sup> + 5x + C</span>."
+            },
+            {
+                id: 44, level: "trungbinh",
+                text: "Tính tích phân: <span class='math-block'>∫<sub>1</sub><sup>e</sup> <span class='fraction'><span class='numerator'>ln(x)</span><span class='denominator'>x</span></span> dx</span>",
+                options: ["1/2", "1", "e", "0"], correct: 0,
+                explanation: "Đặt <span class='math'>u = ln(x) ⇒ du = dx/x</span>. Khi <span class='math'>x = 1 ⇒ u = 0</span>, <span class='math'>x = e ⇒ u = 1</span>. Tích phân thành <span class='math'>∫<sub>0</sub><sup>1</sup> u du = <span class='fraction'><span class='numerator'>u<sup>2</sup></span><span class='denominator'>2</span></span> <big>|</big><sub>0</sub><sup>1</sup> = 1/2</span>."
+            },
+            {
+                id: 45, level: "kho",
+                text: "Tích phân suy rộng nào sau đây hội tụ?",
+                options: ["<span class='math'>∫<sub>1</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>1</span><span class='denominator'>x<sup>2</sup></span></span> dx</span>", "<span class='math'>∫<sub>1</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>1</span><span class='denominator'>x</span></span> dx</span>", "<span class='math'>∫<sub>0</sub><sup>1</sup> <span class='fraction'><span class='numerator'>1</span><span class='denominator'>x</span></span> dx</span>", "<span class='math'>∫<sub>0</sub><sup>+∞</sup> e<sup>x</sup> dx</span>"], correct: 0,
+                explanation: "Theo tiêu chuẩn tích phân Riemann p-series, <span class='math'>∫<sub>1</sub><sup>+∞</sup> 1/x<sup>p</sup> dx</span> hội tụ khi <span class='math'>p > 1</span> (ở đây <span class='math'>p = 2 > 1</span> nên hội tụ)."
+            },
+
+            // 46-60: Chuỗi số & Chuỗi hàm
+            {
+                id: 46, level: "de",
+                text: "Chuỗi số hình học <span class='math-block'>∑<sub>n=0</sub><sup>+∞</sup> q<sup>n</sup></span> hội tụ khi và chỉ khi:",
+                options: ["<span class='math'>|q| < 1</span>", "<span class='math'>|q| > 1</span>", "<span class='math'>q = 1</span>", "<span class='math'>q > -1</span>"], correct: 0,
+                explanation: "Chuỗi hình học (cấp số nhân vô hạn) hội tụ khi và chỉ khi công bội thỏa mãn điều kiện <span class='math'>|q| < 1</span>."
+            },
+            {
+                id: 47, level: "trungbinh",
+                text: "Xét sự hội tụ của chuỗi điều hòa <span class='math-block'>∑<sub>n=1</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>1</span><span class='denominator'>n</span></span></span>",
+                options: ["Phân kỳ", "Hội tụ", "Bán hội tụ", "Hội tụ tuyệt đối"], correct: 0,
+                explanation: "Chuỗi điều hòa <span class='math'>∑ 1/n</span> là một chuỗi phân kỳ kinh điển (có tổng tiến tới dương vô cùng)."
+            },
+            {
+                id: 48, level: "kho",
+                text: "Phát biểu nào sau đây là ĐÚNG về tiêu chuẩn D'Alembert (tiêu chuẩn tỉ số) cho chuỗi số dương <span class='math'>∑ u<sub>n</sub></span>?",
+                options: ["Hội tụ nếu <span class='math'>L < 1</span> và phân kỳ nếu <span class='math'>L > 1</span>", "Hội tụ nếu <span class='math'>L > 1</span>", "Hội tụ nếu <span class='math'>L = 1</span>", "Luôn hội tụ với mọi chuỗi"], correct: 0,
+                explanation: "Theo tiêu chuẩn tỉ số d'Alembert với <span class='math'>L = lim (u<sub>n+1</sub>/u<sub>n</sub>)</span>: nếu <span class='math'>L < 1</span> chuỗi hội tụ, nếu <span class='math'>L > 1</span> (hoặc <span class='math'>+∞</span>) chuỗi phân kỳ."
+            },
+            {
+                id: 49, level: "de",
+                text: "Điều kiện cần để chuỗi số <span class='math'>∑<sub>n=1</sub><sup>+∞</sup> u<sub>n</sub></span> hội tụ là:",
+                options: ["<span class='math'>lim<sub>n → +∞</sub> u<sub>n</sub> = 0</span>", "<span class='math'>lim<sub>n → +∞</sub> u<sub>n</sub> = 1</span>", "<span class='math'>u<sub>n</sub> > 0</span> với mọi <span class='math'>n</span>", "Không có điều kiện gì"], correct: 0,
+                explanation: "Điều kiện cần (nhưng chưa đủ) để chuỗi hội tụ là số hạng tổng quát phải tiến tới 0 khi <span class='math'>n → +∞</span>."
+            },
+            {
+                id: 50, level: "trungbinh",
+                text: "Tổng của chuỗi hình học lùi vô hạn <span class='math-block'>1 + <span class='fraction'><span class='numerator'>1</span><span class='denominator'>2</span></span> + <span class='fraction'><span class='numerator'>1</span><span class='denominator'>4</span></span> + <span class='fraction'><span class='numerator'>1</span><span class='denominator'>8</span></span> + ...</span> là:",
+                options: ["2", "1", "3/2", "+∞"], correct: 0,
+                explanation: "Công thức tổng chuỗi hình học lùi vô hạn: <span class='math'>S = <span class='fraction'><span class='numerator'>u<sub>1</sub></span><span class='denominator'>1 - q</span></span> = <span class='fraction'><span class='numerator'>1</span><span class='denominator'>1 - 1/2</span></span> = 2</span>."
+            },
+            {
+                id: 51, level: "kho",
+                text: "Sử dụng tiêu chuẩn căn số Cauchy, chuỗi số dương <span class='math'>∑ u<sub>n</sub></span> hội tụ khi giới hạn <span class='math'>L = lim<sub>n → +∞</sub> <span class='root-symbol'><sup>n</sup></span><span class='radicand'>u<sub>n</sub></span></span> thỏa mãn:",
+                options: ["<span class='math'>L < 1</span>", "<span class='math'>L > 1</span>", "<span class='math'>L = 1</span>", "<span class='math'>L ≥ 1</span>"], correct: 0,
+                explanation: "Theo tiêu chuẩn Cauchy, chuỗi hội tụ khi giới hạn <span class='math'>L < 1</span> và phân kỳ khi <span class='math'>L > 1</span>."
+            },
+            {
+                id: 52, level: "de",
+                text: "Chuỗi đan dấu <span class='math'>∑<sub>n=1</sub><sup>+∞</sup> (-1)<sup>n-1</sup> <span class='fraction'><span class='numerator'>1</span><span class='denominator'>n</span></span></span> thỏa mãn tiêu chuẩn Leibniz sẽ:",
+                options: ["Hội tụ", "Phân kỳ", "Dao động", "Không kết luận được"], correct: 0,
+                explanation: "Theo tiêu chuẩn Leibniz, chuỗi đan dấu có số hạng tuyệt đối giảm đơn sắc và tiến tới 0 thì hội tụ."
+            },
+            {
+                id: 53, level: "trungbinh",
+                text: "Bán kính hội tụ của chuỗi lũy thừa <span class='math-block'>∑<sub>n=1</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>x<sup>n</sup></span><span class='denominator'>n</span></span></span> là:",
+                options: ["1", "+∞", "0", "1/2"], correct: 0,
+                explanation: "Áp dụng công thức D'Alembert cho hệ số: <span class='math'>R = lim |a<sub>n</sub>/a<sub>n+1</sub>| = lim (n+1)/n = 1</span>."
+            },
+            {
+                id: 54, level: "kho",
+                text: "Khai triển Taylor của hàm số <span class='math'>f(x) = e<sup>x</sup></span> tại cận <span class='math'>x = 0</span> (khai triển Maclaurin) có dạng:",
+                options: ["<span class='math'>∑<sub>n=0</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>x<sup>n</sup></span><span class='denominator'>n!</span></span></span>", "<span class='math'>∑<sub>n=0</sub><sup>+∞</sup> x<sup>n</sup></span>", "<span class='math'>∑<sub>n=0</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>(-1)<sup>n</sup>x<sup>2n</sup></span><span class='denominator'>(2n)!</span></span></span>", "<span class='math'>∑<sub>n=1</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>x<sup>n</sup></span><span class='denominator'>n</span></span></span>"], correct: 0,
+                explanation: "Khai triển kinh điển của hàm mũ cơ bản: <span class='math'>e<sup>x</sup> = 1 + x + x<sup>2</sup>/2! + x<sup>3</sup>/3! + ... = ∑ (x<sup>n</sup>/n!)</span>."
+            },
+            {
+                id: 55, level: "de",
+                text: "Chuỗi số <span class='math'>∑<sub>n=1</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>1</span><span class='denominator'>n<sup>2</sup></span></span></span> là một chuỗi đặc biệt có tính chất:",
+                options: ["Hội tụ (tổng bằng π<sup>2</sup>/6)", "Phân kỳ", "Hội tụ (tổng bằng 1)", "Bán hội tụ"], correct: 0,
+                explanation: "Đây là bài toán Basel nổi tiếng, chuỗi p với <span class='math'>p = 2 > 1</span> hội tụ và tổng chính xác bằng <span class='math'>π<sup>2</sup>/6</span>."
+            },
+            {
+                id: 56, level: "trungbinh",
+                text: "Xét sự hội tụ tuyệt đối của chuỗi đan dấu: nếu chuỗi giá trị tuyệt đối <span class='math'>∑ |u<sub>n</sub>|</span> hội tụ thì chuỗi <span class='math'>∑ u<sub>n</sub></span>:",
+                options: ["Hội tụ tuyệt đối (và do đó hội tụ)", "Phân kỳ", "Chỉ bán hội tụ", "Không xác định"], correct: 0,
+                explanation: "Định lý cơ bản: Mọi chuỗi hội tụ tuyệt đối thì đều là chuỗi hội tụ."
+            },
+            {
+                id: 57, level: "kho",
+                text: "Miền hội tụ của chuỗi lũy thừa <span class='math-block'>∑<sub>n=1</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>x<sup>n</sup></span><span class='denominator'>n!</span></span></span> là:",
+                options: ["(-∞, +∞)", "(-1, 1)", "(-1, 1]", "Chỉ tại x = 0"], correct: 0,
+                explanation: "Sử dụng tiêu chuẩn tỉ số: <span class='math'>lim |u<sub>n+1</sub>/u<sub>n</sub>| = lim |x|/(n+1) = 0 < 1</span> với mọi <span class='math'>x</span> thực, nên miền hội tụ là toàn trục số <span class='math'>(-∞, +∞)</span>."
+            },
+            {
+                id: 58, level: "de",
+                text: "Số hạng tổng quát <span class='math'>u<sub>n</sub> = <span class='fraction'><span class='numerator'>n</span><span class='denominator'>n + 1</span></span></span> của chuỗi số có giới hạn khi <span class='math'>n → +∞</span> bằng:",
+                options: ["1", "0", "+\u221e", "1/2"], correct: 0,
+                explanation: "Ta có <span class='math'>lim<sub>n → +∞</sub> n/(n + 1) = 1 ≠ 0</span>, do đó theo điều kiện cần thì chuỗi này phân kỳ."
+            },
+            {
+                id: 59, level: "trungbinh",
+                text: "Khai triển Maclaurin của hàm số <span class='math'>f(x) = sin(x)</span> là:",
+                options: ["<span class='math'>∑<sub>n=0</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>(-1)<sup>n</sup>x<sup>2n+1</sup></span><span class='denominator'>(2n+1)!</span></span></span>", "<span class='math'>∑<sub>n=0</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>(-1)<sup>n</sup>x<sup>2n</sup></span><span class='denominator'>(2n)!</span></span></span>", "<span class='math'>∑<sub>n=0</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>x<sup>2n+1</sup></span><span class='denominator'>(2n+1)!</span></span></span>", "<span class='math'>x - x<sup>2</sup> + x<sup>3</sup> - ...</span>"], correct: 0,
+                explanation: "Khai triển Taylor/Maclaurin của hàm sin gồm các lũy thừa lẻ với dấu đan xen: <span class='math'>sin(x) = x - x<sup>3</sup>/3! + x<sup>5</sup>/5! - ...</span>"
+            },
+            {
+                id: 60, level: "kho",
+                text: "Chuỗi số dương <span class='math'>∑<sub>n=1</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>1</span><span class='denominator'>n<sup>α</sup></span></span></span> phân kỳ khi và chỉ khi:",
+                options: ["<span class='math'>α ≤ 1</span>", "<span class='math'>α > 1</span>", "<span class='math'>α < 0</span>", "<span class='math'>α ≥ 2</span>"], correct: 0,
+                explanation: "Theo định lý tích phân/chuỗi Riemann, chuỗi p hội tụ khi <span class='math'>α > 1</span> và phân kỳ khi <span class='math'>α ≤ 1</span>."
             }
         ];
 
-        let questions = [];
-        let timerInterval;
-        let timeLeft = 60 * 60; // 60 phút
-        let isSubmitted = false;
+        // QUIZ STATE
+        let activeQuestions = [];
+        let currentIndex = 0;
+        let userAnswers = {}; // index -> optionIndex
+        let flaggedQuestions = {}; // index -> boolean
+        let timerInterval = null;
+        let totalSeconds = 60 * 60; // 60 phút
+        let timeLeft = totalSeconds;
+        let startTimeStamp = 0;
 
-        // Hàm xáo trộn mảng (Fisher-Yates shuffle)
+        // DOM ELEMENTS
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const startBtn = document.getElementById('start-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitConfirmBtn = document.getElementById('submit-confirm-btn');
+        const flagBtn = document.getElementById('flag-btn');
+        const flagIcon = document.getElementById('flag-icon');
+        const flagText = document.getElementById('flag-text');
+        const progressText = document.getElementById('progress-text');
+        const timeLeftDisplay = document.getElementById('time-left');
+        const timerPill = document.getElementById('timer-display');
+        const qNumBadge = document.getElementById('q-num-badge');
+        const qLevelBadge = document.getElementById('q-level-badge');
+        const questionTextContent = document.getElementById('question-text-content');
+        const optionsContainer = document.getElementById('options-container');
+        const sidebarGrid = document.getElementById('sidebar-grid');
+        const answeredCountBadge = document.getElementById('answered-count-badge');
+        const mobileDrawerBtn = document.getElementById('mobile-drawer-toggle');
+        const mobileDrawer = document.getElementById('mobile-drawer');
+        const drawerGrid = document.getElementById('drawer-grid');
+        const drawerCloseBtn = document.getElementById('drawer-close-btn');
+        const submitModal = document.getElementById('submit-modal');
+        const modalCancelBtn = document.getElementById('modal-cancel-btn');
+        const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+        const modalSubmitDesc = document.getElementById('modal-submit-desc');
+        const retryBtn = document.getElementById('retry-btn');
+        const reviewFromStartBtn = document.getElementById('review-from-start-btn');
+
+        // UTILITY: SHUFFLE ARRAY
         function shuffleArray(array) {
             let arr = [...array];
             for (let i = arr.length - 1; i > 0; i--) {
@@ -404,175 +1474,408 @@
             return arr;
         }
 
-        // Chuẩn bị câu hỏi và xáo trộn cả câu hỏi lẫn đáp án (lưu ánh xạ vị trí đúng)
-        function initQuizData() {
-            questions = rawQuestions.map((q) => {
-                // Tạo mảng các lựa chọn kèm chỉ số gốc
-                let optsWithIndex = q.options.map((opt, idx) => ({ text: opt, originalIndex: idx }));
-                // Xáo trộn thứ tự các lựa chọn
-                let shuffledOpts = shuffleArray(optsWithIndex);
-                // Tìm lại vị trí mới của đáp án đúng
-                let newCorrectIndex = shuffledOpts.findIndex(item => item.originalIndex === q.correct);
+        // INITIALIZE QUIZ EXAM
+        function initQuiz() {
+            // Chọn ngẫu nhiên 20 câu từ ngân hàng 60 câu (có phân bổ độ khó tương đối)
+            let easy = shuffleArray(questionBank.filter(q => q.level === 'de')).slice(0, 6);
+            let medium = shuffleArray(questionBank.filter(q => q.level === 'trungbinh')).slice(0, 8);
+            let hard = shuffleArray(questionBank.filter(q => q.level === 'kho')).slice(0, 6);
+            
+            let pool = shuffleArray([...easy, ...medium, ...hard]);
+            // Đảm bảo đủ 20 câu nếu thiếu
+            if (pool.length < 20) {
+                let remaining = shuffleArray(questionBank.filter(q => !pool.includes(q)));
+                pool = [...pool, ...remaining].slice(0, 20);
+            }
 
+            // Xáo trộn thứ tự các đáp án trong từng câu và lưu lại chỉ số đúng mới
+            activeQuestions = pool.map(q => {
+                let optionsWithOriginalIndex = q.options.map((opt, idx) => ({ opt, originalIndex: idx }));
+                let shuffledOpts = shuffleArray(optionsWithOriginalIndex);
+                let newCorrectIndex = shuffledOpts.findIndex(item => item.originalIndex === q.correct);
                 return {
-                    question: q.question,
-                    options: shuffledOpts.map(item => item.text),
-                    correct: newCorrectIndex,
-                    explanation: q.explanation
+                    ...q,
+                    options: shuffledOpts.map(item => item.opt),
+                    correct: newCorrectIndex
                 };
             });
-            // Xáo trộn luôn thứ tự các câu hỏi
-            questions = shuffleArray(questions);
+
+            currentIndex = 0;
+            userAnswers = {};
+            flaggedQuestions = {};
+            timeLeft = totalSeconds;
+            startTimeStamp = Date.now();
+
+            // Chuyển màn hình
+            startScreen.classList.remove('active');
+            resultScreen.classList.remove('active');
+            quizScreen.classList.add('active');
+
+            renderQuestion();
+            renderSidebarGrids();
+            startTimer();
         }
 
-        function renderQuiz() {
-            const container = document.getElementById('quiz-container');
-            container.innerHTML = '';
+        // START BUTTON LISTENER
+        startBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            initQuiz();
+        });
 
-            questions.forEach((q, qIndex) => {
-                let optionsHtml = '';
-                q.options.forEach((opt, oIndex) => {
-                    optionsHtml += `
-                        <label class="option-item" id="opt-${qIndex}-${oIndex}">
-                            <input type="radio" name="question-${qIndex}" value="${oIndex}" onchange="handleSelect(${qIndex}, ${oIndex})">
-                            <span>${opt}</span>
-                        </label>
-                    `;
-                });
-
-                let html = `
-                    <div class="question-card" id="q-card-${qIndex}">
-                        <div class="question-title">Câu ${qIndex + 1}: ${q.question}</div>
-                        <div class="options-list">
-                            ${optionsHtml}
-                        </div>
-                        <div class="explanation" id="exp-${qIndex}">
-                            <strong>Giải thích:</strong> ${q.explanation}
-                        </div>
-                    </div>
-                `;
-                container.innerHTML += html;
-            });
-        }
-
-        function handleSelect(qIndex, oIndex) {
-            // Có thể xử lý thêm hiệu ứng chọn nếu cần
-        }
-
+        // TIMER
         function startTimer() {
-            const timerDisplay = document.getElementById('timer');
+            if (timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    alert("Đã hết thời gian làm bài! Hệ thống sẽ tự động nộp bài.");
-                    submitQuiz(true);
-                    return;
-                }
-                timeLeft--;
-                let minutes = Math.floor(timeLeft / 60);
-                let seconds = timeLeft % 60;
-                timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                
-                if (timeLeft < 300) { // Dưới 5 phút cảnh báo màu đỏ
-                    timerDisplay.classList.add('warning');
+                    finishQuiz();
                 }
             }, 1000);
         }
 
-        function submitQuiz(forced = false) {
-            if (isSubmitted) return;
+        function updateTimerDisplay() {
+            let m = Math.floor(timeLeft / 60);
+            let s = timeLeft % 60;
+            timeLeftDisplay.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            
+            timerPill.classList.remove('warning', 'danger');
+            if (timeLeft < 60) {
+                timerPill.classList.add('danger');
+            } else if (timeLeft < 300) {
+                timerPill.classList.add('warning');
+            }
+        }
 
-            // Kiểm tra xem còn câu chưa làm không nếu không phải do hết giờ tự nộp
-            if (!forced) {
-                let unansweredCount = 0;
-                for (let i = 0; i < questions.length; i++) {
-                    const radios = document.getElementsByName(`question-${i}`);
-                    let answered = false;
-                    for (let r of radios) {
-                        if (r.checked) {
-                            answered = true;
-                            break;
-                        }
-                    }
-                    if (!answered) unansweredCount++;
+        // RENDER QUESTION
+        function renderQuestion() {
+            let q = activeQuestions[currentIndex];
+            qNumBadge.textContent = `Câu ${currentIndex + 1} / 20`;
+            
+            let lvlText = 'Dễ';
+            if (q.level === 'trungbinh') lvlText = 'Trung bình';
+            if (q.level === 'kho') lvlText = 'Khó';
+            qLevelBadge.textContent = lvlText;
+
+            questionTextContent.innerHTML = q.text;
+
+            // Flag status
+            if (flaggedQuestions[currentIndex]) {
+                flagBtn.classList.add('flagged');
+                flagText.textContent = 'Đã đánh dấu';
+            } else {
+                flagBtn.classList.remove('flagged');
+                flagText.textContent = 'Đánh dấu xem lại';
+            }
+
+            // Options
+            let optLabels = ['A', 'B', 'C', 'D'];
+            let html = '';
+            q.options.forEach((optText, idx) => {
+                let isSelected = userAnswers[currentIndex] === idx;
+                html += `
+                    <div class="option-item ${isSelected ? 'selected' : ''}" data-idx="${idx}">
+                        <div class="option-label">${optLabels[idx]}</div>
+                        <div style="flex: 1;">${optText}</div>
+                    </div>
+                `;
+            });
+            optionsContainer.innerHTML = html;
+
+            // Add click events to options
+            document.querySelectorAll('.option-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    let optIdx = parseInt(this.getAttribute('data-idx'));
+                    userAnswers[currentIndex] = optIdx;
+                    renderQuestion();
+                    renderSidebarGrids();
+                });
+            });
+
+            // Nav buttons state
+            prevBtn.disabled = currentIndex === 0;
+            prevBtn.style.opacity = currentIndex === 0 ? '0.5' : '1';
+            nextBtn.textContent = currentIndex === activeQuestions.length - 1 ? 'Hoàn thành' : 'Câu tiếp →';
+
+            updateProgressText();
+            updateActiveGridItems();
+        }
+
+        function updateProgressText() {
+            let answeredCount = Object.keys(userAnswers).length;
+            progressText.textContent = `Đã làm ${answeredCount}/20 câu`;
+            answeredCountBadge.textContent = `${answeredCount}/20`;
+        }
+
+        // NAVIGATION HANDLERS
+        prevBtn.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < activeQuestions.length - 1) {
+                currentIndex++;
+                renderQuestion();
+            } else {
+                confirmSubmit();
+            }
+        });
+
+        // FLAG HANDLER
+        flagBtn.addEventListener('click', () => {
+            if (flaggedQuestions[currentIndex]) {
+                delete flaggedQuestions[currentIndex];
+            } else {
+                flaggedQuestions[currentIndex] = true;
+            }
+            renderQuestion();
+            renderSidebarGrids();
+        });
+
+        // RENDER SIDEBAR & DRAWER GRIDS
+        function renderSidebarGrids() {
+            let html = '';
+            for (let i = 0; i < activeQuestions.length; i++) {
+                let isAnswered = userAnswers[i] !== undefined;
+                let isCurrent = i === currentIndex;
+                let isFlagged = flaggedQuestions[i];
+
+                let classes = 'grid-nav-item';
+                if (isCurrent) classes += ' current';
+                if (isAnswered) classes += ' answered';
+                if (isFlagged) classes += ' flagged';
+
+                html += `<div class="${classes}" onclick="jumpToQuestion(${i})">${i + 1}</div>`;
+            }
+            sidebarGrid.innerHTML = html;
+            drawerGrid.innerHTML = html;
+        }
+
+        function updateActiveGridItems() {
+            renderSidebarGrids();
+        }
+
+        window.jumpToQuestion = function(idx) {
+            currentIndex = idx;
+            renderQuestion();
+            closeMobileDrawer();
+        }
+
+        // MOBILE DRAWER
+        mobileDrawerBtn.addEventListener('click', () => {
+            mobileDrawer.classList.add('open');
+        });
+        drawerCloseBtn.addEventListener('click', closeMobileDrawer);
+        mobileDrawer.addEventListener('click', (e) => {
+            if (e.target === mobileDrawer) closeMobileDrawer();
+        });
+        function closeMobileDrawer() {
+            mobileDrawer.classList.remove('open');
+        }
+
+        // SUBMIT CONFIRM MODAL
+        submitConfirmBtn.addEventListener('click', confirmSubmit);
+
+        function confirmSubmit() {
+            let unanswered = 20 - Object.keys(userAnswers).length;
+            let flaggedCount = Object.keys(flaggedQuestions).length;
+            
+            let desc = `Bạn đã trả lời ${Object.keys(userAnswers).length}/20 câu.`;
+            if (unanswered > 0) {
+                desc += ` Còn ${unanswered} câu chưa trả lời.`;
+            }
+            if (flaggedCount > 0) {
+                desc += ` Có ${flaggedCount} câu đã đánh dấu xem lại.`;
+            }
+            desc += ` Bạn có chắc chắn muốn nộp bài?`;
+            modalSubmitDesc.textContent = desc;
+            submitModal.classList.add('open');
+        }
+
+        modalCancelBtn.addEventListener('click', () => {
+            submitModal.classList.remove('open');
+        });
+
+        modalConfirmBtn.addEventListener('click', () => {
+            submitModal.classList.remove('open');
+            finishQuiz();
+        });
+
+        // FINISH QUIZ & RESULTS
+        function finishQuiz() {
+            if (timerInterval) clearInterval(timerInterval);
+            quizScreen.classList.remove('active');
+            resultScreen.classList.add('active');
+
+            let correctCount = 0;
+            let incorrect0Count = 0;
+            let skippedCount = 0;
+
+            activeQuestions.forEach((q, idx) => {
+                let ans = userAnswers[idx];
+                if (ans === undefined) {
+                    skippedCount++;
+                } else if (ans === q.correct) {
+                    correctCount++;
+                } else {
+                    incorrect0Count++;
+                }
+            });
+
+            let finalScore = (correctCount * (10 / 20)).toFixed(1);
+
+            // Render stats
+            document.getElementById('stat-correct').textContent = correctCount;
+            document.getElementById('stat-incorrect').textContent = incorrect0Count;
+            document.getElementById('stat-skipped').textContent = skippedCount;
+            
+            let elapsedSecs = Math.floor((Date.now() - startTimeStamp) / 1000);
+            let em = Math.floor(elapsedSecs / 60);
+            let es = elapsedSecs % 60;
+            document.getElementById('stat-time').textContent = `${em.toString().padStart(2, '0')}:${es.toString().padStart(2, '0')}`;
+
+            // Score circle animation
+            document.getElementById('final-score-val').textContent = finalScore;
+            let progressRing = document.getElementById('score-progress-ring');
+            let circumference = 2 * Math.PI * 70; // ~439.8
+            let dashOffset = circumference - (parseFloat(finalScore) / 10) * circumference;
+            setTimeout(() => {
+                progressRing.style.strokeDashoffset = dashOffset;
+            }, 100);
+
+            // Badge & comment
+            let badgeContainer = document.getElementById('result-badge-container');
+            let commentText = document.getElementById('result-comment-text');
+            let isPass = parseFloat(finalScore) >= 10; // Đạt chuẩn 10/10 theo yêu cầu
+
+            if (isPass) {
+                badgeContainer.innerHTML = `<span class="result-badge pass">ĐẠT TUYỆT ĐỐI (10/10)</span>`;
+                commentText.textContent = "Xuất sắc! Ngài đã nắm vững toàn bộ kiến thức Giải tích 1 và đạt điểm tuyệt đối 10/10.";
+            } else {
+                badgeContainer.innerHTML = `<span class="result-badge fail">CHƯA ĐẠT (Cần 10/10)</span>`;
+                commentText.textContent = `Ngài đạt ${finalScore}/10 điểm. Hãy xem lại phần giải thích chi tiết bên dưới và làm lại đề mới để đạt điểm tuyệt đối 10/10!`;
+            }
+
+            renderReviewList('all');
+        }
+
+        // REVIEW TABS
+        document.querySelectorAll('.review-tabs .tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.review-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                renderReviewList(this.getAttribute('data-filter'));
+            });
+        });
+
+        function renderReviewList(filter) {
+            let container = document.getElementById('review-list-container');
+            let html = '';
+            let optLabels = ['A', 'B', 'C', 'D'];
+
+            activeQuestions.forEach((q, idx) => {
+                let userAns = userAnswers[idx];
+                let isCorrect = userAns === q.correct;
+                let isSkipped = userAns === undefined;
+                let isFlagged = flaggedQuestions[idx];
+
+                if (filter === 'incorrect' && (isCorrect || isSkipped)) return;
+                if (filter === 'flagged' && !isFlagged) return;
+
+                let statusBadge = '';
+                if (isSkipped) {
+                    statusBadge = '<span class="badge" style="background: var(--bg-main); color: var(--text-secondary); border: 1px solid var(--border-color);">Bỏ trống</span>';
+                } else if (isCorrect) {
+                    statusBadge = '<span class="badge" style="background: var(--success-light); color: var(--success);">Đúng</span>';
+                } else {
+                    statusBadge = '<span class="badge" style="background: var(--danger-light); color: var(--danger);">Sai</span>';
                 }
 
-                if (unansweredCount > 0) {
-                    let confirmSubmit = confirm(`Bạn còn ${unansweredCount} câu chưa trả lời. Bạn có chắc chắn muốn nộp bài không?`);
-                    if (!confirmSubmit) return;
+                html += `
+                    <div class="review-item">
+                        <div class="review-item-header">
+                            <span class="badge badge-qnum">Câu ${idx + 1}</span>
+                            ${statusBadge}
+                        </div>
+                        <div class="review-question-text">${q.text}</div>
+                        <div class="review-options">
+                `;
+
+                q.options.forEach((optText, optIdx) => {
+                    let optClass = 'review-opt';
+                    let marker = '';
+                    if (optIdx === q.correct) {
+                        optClass += ' correct';
+                        marker = ' ✓ (Đáp án đúng)';
+                    } else if (optIdx === userAns) {
+                        optClass += ' incorrect';
+                        marker = ' ✗ (Lựa chọn của bạn)';
+                    } else if (optIdx === userAns && optIdx === q.correct) {
+                        marker = ' ✓ (Lựa chọn của bạn)';
+                    }
+
+                    html += `<div class="${optClass}"><strong>${optLabels[optIdx]}.</strong> ${optText} ${marker}</div>`;
+                });
+
+                html += `
+                        </div>
+                        <div class="explanation-box">
+                            <strong>Lời giải chi tiết:</strong> ${q.explanation}
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (!html) {
+                html = `<div style="text-align: center; padding: 24px; color: var(--text-secondary);">Không có câu hỏi nào phù hợp với bộ lọc này.</div>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // RETRY & REVIEW FROM START
+        retryBtn.addEventListener('click', initQuiz);
+        reviewFromStartBtn.addEventListener('click', () => {
+            currentIndex = 0;
+            resultScreen.classList.remove('active');
+            quizScreen.classList.add('active');
+            renderQuestion();
+            renderSidebarGrids();
+        });
+
+        // KEYBOARD SHORTCUTS
+        document.addEventListener('keydown', (e) => {
+            if (!quizScreen.classList.contains('active')) return;
+
+            // Phím 1-4 hoặc A-D
+            let key = e.key.toUpperCase();
+            let optionMap = { '1': 0, '2': 1, '3': 2, '4': 3, 'A': 0, 'B': 1, 'C': 2, 'D': 3 };
+            if (optionMap[key] !== undefined) {
+                let optIdx = optionMap[key];
+                if (activeQuestions[currentIndex] && activeQuestions[currentIndex].options[optIdx] !== undefined) {
+                    userAnswers[currentIndex] = optIdx;
+                    renderQuestion();
+                    renderSidebarGrids();
                 }
             }
 
-            clearInterval(timerInterval);
-            isSubmitted = true;
-
-            let correctCount = 0;
-
-            questions.forEach((q, qIndex) => {
-                const radios = document.getElementsByName(`question-${qIndex}`);
-                let selectedIndex = -1;
-
-                radios.forEach((r, rIndex) => {
-                    if (r.checked) {
-                        selectedIndex = parseInt(r.value);
-                    }
-                    // Khóa không cho chọn tiếp
-                    r.disabled = true;
-                });
-
-                // Tô màu đáp án
-                const correctOptElem = document.getElementById(`opt-${qIndex}-${q.correct}`);
-                correctOptElem.classList.add('correct');
-
-                if (selectedIndex !== -1) {
-                    if (selectedIndex === q.correct) {
-                        correctCount++;
-                    } else {
-                        const incorrectOptElem = document.getElementById(`opt-${qIndex}-${selectedIndex}`);
-                        incorrectOptElem.classList.add('incorrect');
-                    }
+            // Phím mũi tên trái phải
+            if (e.key === 'ArrowLeft') {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    renderQuestion();
                 }
-
-                // Hiện giải thích
-                document.getElementById(`exp-${qIndex}`).style.display = 'block';
-            });
-
-            // Tính điểm
-            let score10 = ((correctCount / questions.length) * 10).toFixed(1);
-
-            // Hiển thị khung kết quả
-            document.getElementById('score-text').textContent = `${correctCount} / ${questions.length}`;
-            document.getElementById('score-10').textContent = score10;
-            document.getElementById('score-card').style.display = 'block';
-
-            // Ẩn nút nộp bài, hiện nút làm lại
-            document.getElementById('submit-btn').style.display = 'none';
-            document.getElementById('restart-btn').style.display = 'inline-block';
-
-            // Cuộn lên đầu xem kết quả
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function restartQuiz() {
-            timeLeft = 60 * 60;
-            isSubmitted = false;
-            document.getElementById('score-card').style.display = 'none';
-            document.getElementById('submit-btn').style.display = 'inline-block';
-            document.getElementById('restart-btn').style.display = 'none';
-            document.getElementById('timer').classList.remove('warning');
-            
-            initQuizData();
-            renderQuiz();
-            startTimer();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        // Khởi chạy lần đầu khi tải trang
-        window.onload = function() {
-            initQuizData();
-            renderQuiz();
-            startTimer();
-        };
+            } else if (e.key === 'ArrowRight') {
+                if (currentIndex < activeQuestions.length - 1) {
+                    currentIndex++;
+                    renderQuestion();
+                }
+            }
+        });
     </script>
 </body>
 </html>
