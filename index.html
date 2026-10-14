@@ -23,7 +23,7 @@
       </div>
       <div class="actions">
         <button class="btn ghost icon" data-theme-toggle></button>
-        <a class="btn white" href="create.html">+ Tạo bài thi</a>
+        <a class="btn white" id="createBtn" href="create.html" hidden>+ Tạo bài thi</a>
       </div>
     </section>
 
@@ -44,6 +44,13 @@
     const chipsEl = document.getElementById('chips');
     let exams = [];
     let activeTopic = '';
+
+    // Nút "Tạo bài thi" chỉ hiện trên máy đã lưu token (máy của chủ trang)
+    try {
+      if (localStorage.getItem('quiz.owner') || localStorage.getItem('quiz.token') || sessionStorage.getItem('quiz.token')) {
+        document.getElementById('createBtn').hidden = false;
+      }
+    } catch {}
 
     function escapeHtml(s) {
       return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -73,7 +80,7 @@
       emptyEl.hidden = items.length > 0;
       emptyEl.innerHTML = exams.length
         ? '<span class="big">🔍</span>Không tìm thấy bài thi phù hợp.'
-        : '<span class="big">📭</span>Chưa có bài thi nào. Bấm “Tạo bài thi” để thêm.';
+        : '<span class="big">📭</span>Chưa có bài thi nào.';
 
       listEl.innerHTML = items.map(e => {
         const badges = [

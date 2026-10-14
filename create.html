@@ -213,6 +213,7 @@
       const saved = localStorage.getItem('quiz.token');
       $('token').value = saved || sessionStorage.getItem('quiz.token') || '';
       $('remember').checked = !!saved;
+      if ($('token').value) localStorage.setItem('quiz.owner', '1');
       updateSettingsState();
     }
 
@@ -239,6 +240,8 @@
       localStorage.removeItem('quiz.token');
       sessionStorage.removeItem('quiz.token');
       if (c.token) ($('remember').checked ? localStorage : sessionStorage).setItem('quiz.token', c.token);
+      // Đánh dấu máy này là của chủ trang → trang chủ hiện nút "Tạo bài thi"
+      if (c.token) localStorage.setItem('quiz.owner', '1');
       if (updateSettingsState()) {
         $('settingsBox').open = false;
         loadManageList();
@@ -249,6 +252,7 @@
     $('clearToken').onclick = () => {
       localStorage.removeItem('quiz.token');
       sessionStorage.removeItem('quiz.token');
+      localStorage.removeItem('quiz.owner');
       $('token').value = '';
       updateSettingsState();
       showStatus('Đã xóa token khỏi trình duyệt.', 'info');
