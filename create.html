@@ -4,13 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tạo bài thi</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
+  <script src="theme.js"></script>
 </head>
 <body>
   <div class="container stack">
     <header class="top">
       <h1>Tạo bài thi</h1>
-      <a class="btn" href="index.html">← Danh sách bài thi</a>
+      <div class="actions">
+        <button class="btn icon" data-theme-toggle></button>
+        <a class="btn" href="index.html">← Danh sách bài thi</a>
+      </div>
     </header>
 
     <!-- Cấu hình GitHub -->
@@ -20,7 +26,7 @@
         <div class="row">
           <div>
             <label for="owner">Tài khoản GitHub (owner)</label>
-            <input id="owner" type="text" placeholder="vd: vuongpq">
+            <input id="owner" type="text" placeholder="vd: Vuong7720">
           </div>
           <div>
             <label for="repo">Tên repo</label>
@@ -36,7 +42,7 @@
           <input id="token" type="password" placeholder="github_pat_...">
           <div class="hint">Token chỉ lưu trên trình duyệt của bạn, không được đưa lên repo.</div>
         </div>
-        <label style="font-weight:400"><input id="remember" type="checkbox"> Ghi nhớ token trên máy này (nếu không, token sẽ mất khi đóng tab)</label>
+        <label class="inline"><input id="remember" type="checkbox"> Ghi nhớ token trên máy này (nếu không, token sẽ mất khi đóng tab)</label>
         <div class="actions">
           <button class="btn primary" id="saveSettings">Lưu cấu hình</button>
           <button class="btn danger" id="clearToken">Xóa token</button>
@@ -44,26 +50,95 @@
       </div>
     </details>
 
+    <!-- Tạo prompt cho Gemini -->
+    <details class="card" id="promptBox">
+      <summary>✨ Tạo prompt nhờ Gemini / ChatGPT soạn bài</summary>
+      <div class="stack">
+        <div class="row">
+          <div>
+            <label for="pSource">Nguồn câu hỏi</label>
+            <select id="pSource">
+              <option value="ai">AI tự soạn câu hỏi</option>
+              <option value="own">Tôi có sẵn câu hỏi</option>
+            </select>
+          </div>
+          <div>
+            <label for="pTopic">Chủ đề</label>
+            <input id="pTopic" type="text" placeholder="vd: JavaScript cơ bản">
+          </div>
+          <div class="ai-only">
+            <label for="pCount">Số câu</label>
+            <input id="pCount" type="number" min="1" max="100" value="20">
+          </div>
+          <div class="ai-only">
+            <label for="pLevel">Độ khó</label>
+            <select id="pLevel">
+              <option>trộn lẫn dễ, trung bình và khó</option>
+              <option>dễ</option>
+              <option>trung bình</option>
+              <option>khó</option>
+            </select>
+          </div>
+          <div>
+            <label for="pMinutes">Thời gian (phút)</label>
+            <input id="pMinutes" type="number" min="0" placeholder="0 = không giới hạn">
+          </div>
+        </div>
+        <textarea id="pOutput" readonly style="min-height:200px"></textarea>
+        <div class="actions">
+          <button class="btn primary" id="copyPrompt">📋 Copy prompt</button>
+          <a class="btn" href="https://gemini.google.com/app" target="_blank" rel="noopener">Mở Gemini ↗</a>
+        </div>
+        <div class="hint">Copy prompt → dán vào Gemini → copy mã HTML Gemini trả về → dán vào ô bên dưới.</div>
+      </div>
+    </details>
+
     <!-- Form tạo bài -->
     <div class="card stack">
       <div class="row">
-        <div>
+        <div class="span-2">
           <label for="title">Tên bài thi *</label>
-          <input id="title" type="text" placeholder="vd: Kiểm tra JavaScript cơ bản">
+          <input id="title" type="text" placeholder="Tự điền từ HTML, hoặc tự nhập">
         </div>
         <div>
           <label for="slug">Tên file</label>
-          <input id="slug" type="text" placeholder="tu-dong-tao-tu-ten-bai">
-          <div class="hint">Link bài thi: exams/<b id="slugPreview">...</b>.html</div>
+          <input id="slug" type="text" placeholder="tu-dong-tao">
+          <div class="hint">exams/<b id="slugPreview">...</b>.html</div>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="topic">Chủ đề</label>
+          <input id="topic" type="text" list="topicList" placeholder="vd: JavaScript">
+          <datalist id="topicList"></datalist>
+        </div>
+        <div>
+          <label for="icon">Icon</label>
+          <input id="icon" type="text" maxlength="4" placeholder="📝">
+        </div>
+        <div>
+          <label for="questions">Số câu</label>
+          <input id="questions" type="number" min="1" placeholder="vd: 20">
+        </div>
+        <div>
+          <label for="minutes">Thời gian (phút)</label>
+          <input id="minutes" type="number" min="1" placeholder="vd: 15">
         </div>
       </div>
       <div>
         <label for="description">Mô tả ngắn</label>
-        <input id="description" type="text" placeholder="vd: 20 câu, 15 phút">
+        <input id="description" type="text" placeholder="vd: Ôn tập chương 1">
       </div>
       <div>
-        <label for="html">Mã HTML bài thi *</label>
-        <textarea id="html" placeholder="Dán toàn bộ mã HTML của bài trắc nghiệm vào đây..."></textarea>
+        <div class="actions" style="justify-content:space-between;align-items:end;margin-bottom:6px">
+          <label for="html" style="margin:0">Mã HTML bài thi *</label>
+          <button class="btn small" id="pickFile">📂 Chọn file .html</button>
+          <input id="fileInput" type="file" accept=".html,.htm,text/html" hidden>
+        </div>
+        <div class="dropzone" id="dropzone">
+          <textarea id="html" placeholder="Dán mã HTML bài thi vào đây, hoặc kéo thả file .html vào ô này..."></textarea>
+          <div class="drop-label">📥 Thả file vào đây</div>
+        </div>
       </div>
       <div class="actions">
         <button class="btn" id="previewBtn">👁 Xem trước</button>
@@ -86,6 +161,13 @@
   <script>
     const $ = id => document.getElementById(id);
     const MANIFEST = 'exams.json';
+    // Đoạn script chèn vào mỗi bài thi: nếu ai mở thẳng file bài thi thì chuyển sang play.html (khung cô lập)
+    // (ghép chuỗi để trình duyệt không hiểu nhầm "<!--" / "<script" bên trong thẻ script này)
+    const LT = '<';
+    const GUARD_START = LT + '!--quiz-guard-->';
+    const GUARD_END = LT + '!--/quiz-guard-->';
+    const GUARD = GUARD_START + LT + 'script>if(window.top===window.self)location.replace(\'../play.html?e=\'+encodeURIComponent(location.pathname.split(\'/\').pop().replace(/\\.html$/,\'\')))' + LT + '/script>' + GUARD_END;
+    const GUARD_RE = new RegExp(GUARD_START + '[\\s\\S]*?' + GUARD_END + '\\n?', 'g');
 
     // ---------- Cấu hình ----------
     function loadSettings() {
@@ -160,6 +242,7 @@
       const url = `https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path.split('/').map(encodeURIComponent).join('/')}`;
       const res = await fetch(options.method ? url : `${url}?ref=${encodeURIComponent(c.branch)}`, {
         ...options,
+        cache: 'no-store',
         headers: {
           Authorization: `Bearer ${c.token}`,
           Accept: 'application/vnd.github+json',
@@ -208,6 +291,17 @@
       return `<!doctype html>\n<html lang="vi">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>${title.replace(/</g, '&lt;')}</title>\n</head>\n<body>\n${html}\n</body>\n</html>\n`;
     }
 
+    function stripGuard(html) {
+      return html.replace(GUARD_RE, '');
+    }
+
+    function addGuard(html) {
+      html = stripGuard(html);
+      if (/<head[^>]*>/i.test(html)) return html.replace(/<head[^>]*>/i, m => `${m}${GUARD}\n`);
+      if (/<html[^>]*>/i.test(html)) return html.replace(/<html[^>]*>/i, m => `${m}${GUARD}\n`);
+      return `${GUARD}\n${html}`;
+    }
+
     function showStatus(msg, type = 'info') {
       const el = $('status');
       el.innerHTML = msg;
@@ -218,26 +312,136 @@
       return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     }
 
+    function posInt(v) {
+      const n = parseInt(v, 10);
+      return n > 0 ? n : undefined;
+    }
+
+    // ---------- Tên bài & tên file ----------
     let slugTouched = false;
+    let titleTouched = false;
+
+    function setTitle(t) {
+      $('title').value = t;
+      if (!slugTouched) $('slug').value = slugify(t);
+      $('slugPreview').textContent = slugify($('slug').value) || '...';
+    }
     $('title').addEventListener('input', () => {
-      if (!slugTouched) $('slug').value = slugify($('title').value);
-      $('slugPreview').textContent = $('slug').value || '...';
+      titleTouched = $('title').value !== '';
+      setTitle($('title').value);
     });
     $('slug').addEventListener('input', () => {
       slugTouched = $('slug').value !== '';
       $('slugPreview').textContent = slugify($('slug').value) || '...';
     });
 
+    // Tự lấy tên bài từ <title> hoặc <h1> của HTML vừa dán (DOMParser không chạy script)
+    function autoTitle() {
+      if (titleTouched) return;
+      const doc = new DOMParser().parseFromString($('html').value, 'text/html');
+      const t = (doc.querySelector('title')?.textContent || doc.querySelector('h1')?.textContent || '').replace(/\s+/g, ' ').trim();
+      if (t) setTitle(t);
+    }
+    $('html').addEventListener('input', autoTitle);
+
+    // ---------- Chọn file / kéo thả ----------
+    async function loadFile(file) {
+      if (!file) return;
+      if (!/\.html?$/i.test(file.name) && file.type !== 'text/html') return showStatus('Chỉ nhận file .html', 'err');
+      $('html').value = await file.text();
+      autoTitle();
+      if (!$('title').value) setTitle(file.name.replace(/\.html?$/i, ''));
+      showStatus(`Đã nạp file <b>${escapeHtml(file.name)}</b>.`, 'ok');
+    }
+    $('pickFile').onclick = () => $('fileInput').click();
+    $('fileInput').onchange = e => { loadFile(e.target.files[0]); e.target.value = ''; };
+
+    const dz = $('dropzone');
+    ['dragenter', 'dragover'].forEach(t => dz.addEventListener(t, e => { e.preventDefault(); dz.classList.add('drag'); }));
+    ['dragleave', 'drop'].forEach(t => dz.addEventListener(t, e => { e.preventDefault(); dz.classList.remove('drag'); }));
+    dz.addEventListener('drop', e => loadFile(e.dataTransfer.files[0]));
+
+    // ---------- Prompt cho Gemini ----------
+    function buildPrompt() {
+      const own = $('pSource').value === 'own';
+      const topic = $('pTopic').value.trim() || '[chủ đề]';
+      const minutes = posInt($('pMinutes').value);
+      const time = minutes ? `${minutes} phút` : 'không giới hạn';
+      const content = own
+        ? `NỘI DUNG:
+- Chủ đề: ${topic}
+- Thời gian làm bài: ${time}
+- Dưới đây là danh sách câu hỏi của tôi. Giữ nguyên nội dung câu hỏi và đáp án, không tự thêm hay bớt câu nào. Đáp án đúng được đánh dấu [*]. Nếu câu nào không có giải thích thì tự viết giải thích ngắn.
+
+[DÁN CÂU HỎI VÀO ĐÂY]`
+        : `NỘI DUNG:
+- Chủ đề: ${topic}
+- Số câu: ${posInt($('pCount').value) || 20}
+- Độ khó: ${$('pLevel').value}
+- Mỗi câu có 4 đáp án, chỉ 1 đáp án đúng, kèm 1 câu giải thích ngắn.
+- Thời gian làm bài: ${time}`;
+
+      return `Hãy tạo cho tôi một bài thi trắc nghiệm dưới dạng MỘT file HTML duy nhất.
+
+YÊU CẦU KỸ THUẬT:
+- Chỉ dùng HTML, CSS, JavaScript thuần, viết hết trong 1 file (CSS trong <style>, JS trong <script>).
+- Không dùng thư viện ngoài, không gọi API, không fetch dữ liệu từ bên ngoài.
+- Không đọc/ghi localStorage, sessionStorage hay cookie.
+- Không dùng location.reload() hay chuyển trang; nút "Làm lại" phải reset bằng JavaScript.
+- Không cần thêm link quay lại hay header website (trang của tôi đã có sẵn).
+- Đặt tên bài thi trong thẻ <title> và một thẻ <h1>.
+- Toàn bộ câu hỏi để trong một mảng JavaScript ở đầu thẻ <script> để tôi dễ sửa.
+- Giao diện tiếng Việt, hiện đại, gọn gàng, hiển thị tốt trên cả điện thoại.
+- Chỉ trả về mã HTML hoàn chỉnh trong một khối code, không giải thích thêm. Trả về đầy đủ, không viết tắt hay bỏ bớt câu nào.
+
+CHỨC NĂNG:
+- Hiển thị tên bài thi, số câu, thời gian.
+- Có đồng hồ đếm ngược (nếu có giới hạn thời gian), hết giờ tự nộp bài.
+- Có nút "Nộp bài"; nếu còn câu chưa làm thì hỏi xác nhận.
+- Sau khi nộp: hiện điểm (số câu đúng / tổng và điểm hệ 10), tô xanh đáp án đúng, tô đỏ đáp án sai đã chọn, hiện giải thích từng câu.
+- Có nút "Làm lại", khi làm lại thì xáo trộn thứ tự câu hỏi và đáp án.
+
+${content}`;
+    }
+
+    function updatePrompt() {
+      document.querySelectorAll('.ai-only').forEach(el => el.hidden = $('pSource').value === 'own');
+      $('pOutput').value = buildPrompt();
+    }
+    ['pSource', 'pTopic', 'pCount', 'pLevel', 'pMinutes'].forEach(id => $(id).addEventListener('input', updatePrompt));
+
+    $('copyPrompt').onclick = async () => {
+      try {
+        await navigator.clipboard.writeText($('pOutput').value);
+      } catch {
+        $('pOutput').select();
+        document.execCommand('copy');
+      }
+      // Điền sẵn thông tin vào form tạo bài
+      if (!$('topic').value && $('pTopic').value.trim()) $('topic').value = $('pTopic').value.trim();
+      if (!$('minutes').value && posInt($('pMinutes').value)) $('minutes').value = posInt($('pMinutes').value);
+      if (!$('questions').value && $('pSource').value === 'ai') $('questions').value = posInt($('pCount').value) || '';
+      $('copyPrompt').textContent = '✅ Đã copy';
+      setTimeout(() => $('copyPrompt').textContent = '📋 Copy prompt', 1500);
+    };
+
     // ---------- Xem trước ----------
     $('previewBtn').onclick = () => {
       const html = $('html').value.trim();
       if (!html) return showStatus('Bạn chưa dán mã HTML.', 'err');
       $('preview').hidden = false;
-      $('preview').srcdoc = wrapHtml(html, $('title').value || 'Xem trước');
+      $('preview').srcdoc = wrapHtml(stripGuard(html), $('title').value || 'Xem trước');
       $('preview').scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
 
     // ---------- Đăng bài ----------
+    function resetForm() {
+      ['title', 'slug', 'description', 'topic', 'icon', 'questions', 'minutes', 'html'].forEach(id => $(id).value = '');
+      $('slugPreview').textContent = '...';
+      slugTouched = titleTouched = false;
+      $('preview').hidden = true;
+    }
+
     $('publishBtn').onclick = async () => {
       if (!updateSettingsState()) return showStatus('Hãy nhập cấu hình GitHub trước.', 'err');
       const title = $('title').value.trim();
@@ -256,21 +460,28 @@
         if (existing && !confirm(`Bài thi "${slug}" đã tồn tại. Ghi đè?`)) return showStatus('Đã hủy.', 'info');
 
         showStatus('Đang tải bài thi lên GitHub...', 'info');
-        await putFile(path, wrapHtml(html, title), `${existing ? 'Cập nhật' : 'Thêm'} bài thi: ${title}`, existing?.sha);
+        await putFile(path, addGuard(wrapHtml(html, title)), `${existing ? 'Cập nhật' : 'Thêm'} bài thi: ${title}`, existing?.sha);
 
         showStatus('Đang cập nhật danh sách bài thi...', 'info');
         const m = await getManifest();
         const old = m.list.find(e => e.slug === slug);
-        const entry = { slug, title, description: $('description').value.trim(), createdAt: old?.createdAt || new Date().toISOString() };
+        const entry = {
+          slug,
+          title,
+          description: $('description').value.trim() || undefined,
+          topic: $('topic').value.trim() || undefined,
+          icon: $('icon').value.trim() || undefined,
+          questions: posInt($('questions').value),
+          minutes: posInt($('minutes').value),
+          createdAt: old?.createdAt || new Date().toISOString(),
+          updatedAt: old ? new Date().toISOString() : undefined,
+        };
         const list = [entry, ...m.list.filter(e => e.slug !== slug)];
         await putFile(MANIFEST, JSON.stringify(list, null, 2) + '\n', `Cập nhật danh sách: ${title}`, m.sha);
 
-        const link = new URL(path, location.href).href;
+        const link = new URL(`play.html?e=${slug}`, location.href).href;
         showStatus(`✅ Đăng thành công! Khoảng 1 phút nữa GitHub Pages cập nhật xong.<br>Link bài thi: <a href="${link}" target="_blank" rel="noopener">${escapeHtml(link)}</a>`, 'ok');
-        $('title').value = $('slug').value = $('description').value = $('html').value = '';
-        $('slugPreview').textContent = '...';
-        slugTouched = false;
-        $('preview').hidden = true;
+        resetForm();
         renderManage(list);
       } catch (e) {
         showStatus('❌ ' + escapeHtml(e.message), 'err');
@@ -280,23 +491,28 @@
     };
 
     // ---------- Quản lý ----------
+    let manageList = [];
+
     function renderManage(list) {
+      manageList = list;
+      const topics = [...new Set(list.map(e => e.topic).filter(Boolean))];
+      $('topicList').innerHTML = topics.map(t => `<option value="${escapeHtml(t)}">`).join('');
+
       const box = $('manageList');
-      if (!list.length) { box.textContent = 'Chưa có bài thi nào.'; return; }
+      if (!list.length) { box.className = 'hint'; box.textContent = 'Chưa có bài thi nào.'; return; }
       box.className = '';
       box.innerHTML = list.map(e => `
         <div class="manage-item">
           <div>
-            <div class="name">${escapeHtml(e.title)}</div>
-            <div class="slug">exams/${escapeHtml(e.slug)}.html</div>
+            <div class="name">${escapeHtml(e.icon || '📝')} ${escapeHtml(e.title)}</div>
+            <div class="slug">exams/${escapeHtml(e.slug)}.html${e.topic ? ' · ' + escapeHtml(e.topic) : ''}</div>
           </div>
           <div class="actions">
-            <a class="btn small" href="exams/${encodeURIComponent(e.slug)}.html" target="_blank" rel="noopener">Mở</a>
+            <a class="btn small" href="play.html?e=${encodeURIComponent(e.slug)}" target="_blank" rel="noopener">Mở</a>
             <button class="btn small" data-edit="${escapeHtml(e.slug)}">Sửa</button>
             <button class="btn small danger" data-del="${escapeHtml(e.slug)}">Xóa</button>
           </div>
         </div>`).join('');
-      box.dataset.list = JSON.stringify(list);
     }
 
     async function loadManageList() {
@@ -315,19 +531,22 @@
     $('manageList').addEventListener('click', async ev => {
       const editSlug = ev.target.dataset.edit;
       const delSlug = ev.target.dataset.del;
-      const list = JSON.parse($('manageList').dataset.list || '[]');
 
       if (editSlug) {
-        const e = list.find(x => x.slug === editSlug);
+        const e = manageList.find(x => x.slug === editSlug) || {};
         try {
           showStatus('Đang tải nội dung bài thi...', 'info');
           const f = await getFile(`exams/${editSlug}.html`);
-          $('title').value = e?.title || '';
+          $('title').value = e.title || '';
           $('slug').value = editSlug;
-          slugTouched = true;
           $('slugPreview').textContent = editSlug;
-          $('description').value = e?.description || '';
-          $('html').value = f?.text || '';
+          slugTouched = titleTouched = true;
+          $('description').value = e.description || '';
+          $('topic').value = e.topic || '';
+          $('icon').value = e.icon || '';
+          $('questions').value = e.questions || '';
+          $('minutes').value = e.minutes || '';
+          $('html').value = stripGuard(f?.text || '');
           showStatus('Đã nạp bài thi để sửa. Sửa xong bấm “Đăng bài thi” để ghi đè.', 'info');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (err) {
@@ -354,6 +573,7 @@
     });
 
     loadSettings();
+    updatePrompt();
     loadManageList();
   </script>
 </body>

@@ -1,8 +1,17 @@
 [
   {
+    "slug": "test",
+    "title": "Test",
+    "description": "tạo test",
+    "createdAt": "2026-10-14T07:17:01.222Z"
+  },
+  {
     "slug": "bai-mau",
     "title": "Bài mẫu: Kiến thức web cơ bản",
     "description": "3 câu hỏi mẫu, có thể xóa sau",
+    "topic": "Web",
+    "icon": "🌐",
+    "questions": 3,
     "createdAt": "2026-10-14T00:00:00.000Z"
   }
 ]

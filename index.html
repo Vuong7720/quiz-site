@@ -4,52 +4,118 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Bài thi trắc nghiệm</title>
+  <meta name="description" content="Kho bài thi trắc nghiệm trực tuyến — chọn bài và làm ngay, không cần đăng nhập.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="📝 Bài thi trắc nghiệm">
+  <meta property="og:description" content="Kho bài thi trắc nghiệm trực tuyến — chọn bài và làm ngay, không cần đăng nhập.">
+  <meta property="og:image" content="https://vuong7720.github.io/quiz-site/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
+  <script src="theme.js"></script>
 </head>
 <body>
   <div class="container">
-    <header class="top">
-      <h1>📝 Bài thi trắc nghiệm</h1>
-      <a class="btn primary" href="create.html">+ Tạo bài thi</a>
-    </header>
+    <section class="hero">
+      <div>
+        <h1>📝 Bài thi trắc nghiệm</h1>
+        <p id="summary">Chọn một bài thi để bắt đầu.</p>
+      </div>
+      <div class="actions">
+        <button class="btn ghost icon" data-theme-toggle></button>
+        <a class="btn white" href="create.html">+ Tạo bài thi</a>
+      </div>
+    </section>
 
-    <input id="search" class="search" type="text" placeholder="Tìm bài thi...">
+    <div class="toolbar">
+      <input id="search" class="search" type="search" placeholder="Tìm bài thi...">
+      <div id="chips" class="chips"></div>
+    </div>
+
     <div id="list" class="grid"></div>
-    <div id="empty" class="empty" hidden>Chưa có bài thi nào. Bấm “Tạo bài thi” để thêm.</div>
+    <div id="empty" class="empty" hidden></div>
   </div>
 
   <script>
+    const ACCENTS = ['#2f6fed', '#7a5af8', '#ee46bc', '#f04438', '#f79009', '#12b76a', '#06aed4', '#6172f3'];
     const listEl = document.getElementById('list');
     const emptyEl = document.getElementById('empty');
     const searchEl = document.getElementById('search');
+    const chipsEl = document.getElementById('chips');
     let exams = [];
+    let activeTopic = '';
 
     function escapeHtml(s) {
       return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     }
+    function accent(s) {
+      let h = 0;
+      for (const c of s) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+      return ACCENTS[h % ACCENTS.length];
+    }
+
+    function renderChips() {
+      const counts = {};
+      exams.forEach(e => { if (e.topic) counts[e.topic] = (counts[e.topic] || 0) + 1; });
+      const topics = Object.keys(counts).sort((a, b) => a.localeCompare(b, 'vi'));
+      chipsEl.hidden = topics.length === 0;
+      chipsEl.innerHTML = [['', 'Tất cả', exams.length], ...topics.map(t => [t, t, counts[t]])]
+        .map(([value, label, n]) => `<button class="chip${value === activeTopic ? ' active' : ''}" data-topic="${escapeHtml(value)}">${escapeHtml(label)}<span class="count">${n}</span></button>`)
+        .join('');
+    }
 
     function render() {
       const q = searchEl.value.trim().toLowerCase();
-      const items = exams.filter(e => !q || (e.title + ' ' + (e.description || '')).toLowerCase().includes(q));
+      const items = exams.filter(e =>
+        (!activeTopic || e.topic === activeTopic) &&
+        (!q || [e.title, e.description, e.topic].join(' ').toLowerCase().includes(q)));
+
       emptyEl.hidden = items.length > 0;
-      emptyEl.textContent = exams.length ? 'Không tìm thấy bài thi phù hợp.' : 'Chưa có bài thi nào. Bấm “Tạo bài thi” để thêm.';
-      listEl.innerHTML = items.map(e => `
-        <a class="card exam-card" href="exams/${encodeURIComponent(e.slug)}.html">
-          <h3>${escapeHtml(e.title)}</h3>
-          ${e.description ? `<p>${escapeHtml(e.description)}</p>` : ''}
-          <div class="meta">${e.createdAt ? new Date(e.createdAt).toLocaleDateString('vi-VN') : ''}</div>
-        </a>`).join('');
+      emptyEl.innerHTML = exams.length
+        ? '<span class="big">🔍</span>Không tìm thấy bài thi phù hợp.'
+        : '<span class="big">📭</span>Chưa có bài thi nào. Bấm “Tạo bài thi” để thêm.';
+
+      listEl.innerHTML = items.map(e => {
+        const badges = [
+          e.topic && `<span class="badge topic">${escapeHtml(e.topic)}</span>`,
+          e.questions && `<span class="badge">${escapeHtml(e.questions)} câu</span>`,
+          e.minutes && `<span class="badge">⏱ ${escapeHtml(e.minutes)} phút</span>`,
+          e.createdAt && `<span class="badge">${new Date(e.createdAt).toLocaleDateString('vi-VN')}</span>`,
+        ].filter(Boolean).join('');
+        return `
+          <a class="card exam-card" style="--accent:${accent(e.slug)}" href="play.html?e=${encodeURIComponent(e.slug)}">
+            <div class="exam-head">
+              <div class="exam-icon">${escapeHtml(e.icon || '📝')}</div>
+              <div>
+                <h3>${escapeHtml(e.title)}</h3>
+                ${e.description ? `<p>${escapeHtml(e.description)}</p>` : ''}
+              </div>
+            </div>
+            <div class="badges">${badges}</div>
+          </a>`;
+      }).join('');
     }
+
+    chipsEl.addEventListener('click', ev => {
+      const chip = ev.target.closest('.chip');
+      if (!chip) return;
+      activeTopic = chip.dataset.topic;
+      renderChips();
+      render();
+    });
+    searchEl.addEventListener('input', render);
 
     fetch('exams.json?t=' + Date.now())
       .then(r => r.ok ? r.json() : [])
       .catch(() => [])
       .then(data => {
         exams = (Array.isArray(data) ? data : []).sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+        document.getElementById('summary').textContent = exams.length
+          ? `${exams.length} bài thi · chọn một bài để bắt đầu.`
+          : 'Chưa có bài thi nào.';
+        renderChips();
         render();
       });
-
-    searchEl.addEventListener('input', render);
   </script>
 </body>
 </html>

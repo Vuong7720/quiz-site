@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Làm bài thi</title>
+  <meta name="description" content="Bấm vào để làm bài thi trắc nghiệm trực tuyến.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="📝 Mời bạn làm bài thi trắc nghiệm">
+  <meta property="og:description" content="Bấm vào để làm bài ngay, không cần đăng nhập.">
+  <meta property="og:image" content="https://vuong7720.github.io/quiz-site/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script src="theme.js"></script>
+</head>
+<body class="play">
+  <div class="playbar">
+    <a class="btn small" href="index.html" title="Về danh sách bài thi">←<span class="lbl"> Danh sách</span></a>
+    <div class="play-title" id="title">Đang tải…</div>
+    <div class="actions">
+      <button class="btn small" id="copyBtn" title="Copy link bài thi">🔗<span class="lbl"> Copy link</span></button>
+      <button class="btn small" id="fsBtn" title="Toàn màn hình">⛶<span class="lbl"> Toàn màn hình</span></button>
+      <button class="btn small icon" data-theme-toggle></button>
+    </div>
+  </div>
+
+  <!-- Bài thi chạy trong iframe bị cô lập: không đọc được dữ liệu/token của trang -->
+  <iframe id="frame" class="play-frame" hidden
+          sandbox="allow-scripts allow-forms allow-modals allow-popups allow-downloads"
+          allow="fullscreen; clipboard-write"></iframe>
+  <div id="notfound" class="empty" hidden>
+    <span class="big">😕</span>Không tìm thấy bài thi này.<br><br>
+    <a class="btn primary" href="index.html">Về danh sách bài thi</a>
+  </div>
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const slug = new URLSearchParams(location.search).get('e') || '';
+    const $ = id => document.getElementById(id);
+
+    function toast(msg) {
+      $('toast').textContent = msg;
+      $('toast').classList.add('show');
+      clearTimeout(toast.t);
+      toast.t = setTimeout(() => $('toast').classList.remove('show'), 1800);
+    }
+    function notFound() {
+      $('title').textContent = 'Không tìm thấy';
+      $('frame').hidden = true;
+      $('notfound').hidden = false;
+    }
+
+    async function init() {
+      if (!/^[a-z0-9-]+$/.test(slug)) return notFound();
+      const path = `exams/${slug}.html`;
+      const [exists, list] = await Promise.all([
+        fetch(path, { method: 'HEAD', cache: 'no-store' }).then(r => r.ok).catch(() => true),
+        fetch('exams.json?t=' + Date.now()).then(r => r.ok ? r.json() : []).catch(() => []),
+      ]);
+      if (!exists) return notFound();
+      const info = (Array.isArray(list) ? list : []).find(e => e.slug === slug);
+      const title = info?.title || slug;
+      $('title').textContent = `${info?.icon ? info.icon + ' ' : ''}${title}`;
+      document.title = title;
+      $('frame').src = path;
+      $('frame').hidden = false;
+    }
+
+    $('copyBtn').onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(location.href);
+        toast('Đã copy link bài thi');
+      } catch {
+        prompt('Copy link bài thi:', location.href);
+      }
+    };
+
+    if (!document.fullscreenEnabled) $('fsBtn').hidden = true;
+    $('fsBtn').onclick = () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+
+    init();
+  </script>
+</body>
+</html>
