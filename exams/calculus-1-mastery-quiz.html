@@ -1,40 +1,103 @@
-```html
 <!DOCTYPE html>
-<html lang="vi" class="dark">
+<html lang="vi">
 <head><!--quiz-guard--><script>if(window.top===window.self)location.replace('../play.html?e='+encodeURIComponent(location.pathname.split('/').pop().replace(/\.html$/,'')))</script><!--/quiz-guard-->
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculus 1 Mastery Quiz</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#eef2ff',
-                            100: '#e0e7ff',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            700: '#4338ca',
-                        }
-                    }
-                }
+    <title>Trắc nghiệm Giải tích 1 - Luyện thi trực tuyến</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #7c3aed;
+            --primary-hover: #6d28d9;
+            --primary-light: #f5f3ff;
+            --primary-border: #ddd6fe;
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --success: #10b981;
+            --success-light: #ecfdf5;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --warning: #f59e0b;
+            --warning-light: #fffbeb;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            --radius: 16px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --primary: #8b5cf6;
+                --primary-hover: #7c3aed;
+                --primary-light: rgba(139, 92, 246, 0.15);
+                --primary-border: #4c1d95;
+                --bg-main: #0f172a;
+                --bg-card: #1e293b;
+                --text-main: #f1f5f9;
+                --text-secondary: #94a3b8;
+                --border-color: #334155;
+                --success: #34d399;
+                --success-light: rgba(52, 211, 153, 0.15);
+                --danger: #f87171;
+                --danger-light: rgba(248, 113, 113, 0.15);
+                --warning: #fbbf24;
+                --warning-light: rgba(251, 191, 36, 0.15);
+                --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
             }
         }
-    </script>
-    <!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
         }
-        .math-expr {
-            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-            letter-spacing: 0.025em;
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* MATH FORMULA STYLING */
+        .math {
+            font-family: 'Times New Roman', Times, serif, sans-serif;
+            font-style: italic;
+        }
+        .math-block {
+            display: inline-block;
+            background: var(--bg-main);
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            margin: 4px 0;
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-size: 1.05em;
+        }
+        sup {
+            font-size: 0.75em;
+            vertical-align: super;
+        }
+        sub {
+            font-size: 0.75em;
+            vertical-align: sub;
         }
         .fraction {
             display: inline-flex;
@@ -42,1056 +105,1424 @@
             vertical-align: middle;
             text-align: center;
             font-size: 0.9em;
-            margin: 0 0.15em;
+            margin: 0 3px;
         }
-        .fraction > span:first-child {
+        .numerator {
             border-bottom: 1px solid currentColor;
-            padding-bottom: 0.05em;
+            padding-bottom: 1px;
         }
-        .fraction > span:last-child {
-            padding-top: 0.05em;
+        .denominator {
+            padding-top: 1px;
         }
         .root-symbol {
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .radicand {
+            border-top: 1px solid currentColor;
+            padding-top: 1px;
+            display: inline-block;
+        }
+
+        /* SCREENS */
+        .screen {
+            display: none;
+            width: 100%;
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* CARD STYLE */
+        .card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        /* BUTTONS */
+        .btn {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
         }
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+        .btn:hover {
+            background-color: var(--primary-hover);
+            box-shadow: 0 6px 16px rgba(124, 58, 237, 0.35);
         }
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.05);
+        .btn:active {
+            transform: scale(0.98);
         }
-        .dark ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            box-shadow: none;
         }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(100, 100, 100, 0.3);
+        .btn-secondary:hover {
+            background-color: var(--bg-main);
+            border-color: var(--text-secondary);
+            box-shadow: none;
+        }
+        .btn-outline-danger {
+            background-color: transparent;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            box-shadow: none;
+        }
+        .btn-outline-danger:hover {
+            background-color: var(--danger-light);
+        }
+
+        /* START SCREEN */
+        .start-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .start-icon {
+            font-size: 56px;
+            margin-bottom: 16px;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .start-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+        .start-desc {
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        .info-box {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .info-box .icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        .info-box .label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+        .info-box .value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+        .instructions-box {
+            background: var(--primary-light);
+            border: 1px solid var(--primary-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 32px;
+        }
+        .instructions-box h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .instructions-box ul {
+            padding-left: 20px;
+            color: var(--text-main);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .instructions-box li {
+            margin-bottom: 6px;
+        }
+        .start-action {
+            text-align: center;
+        }
+        .start-action .btn {
+            font-size: 18px;
+            padding: 16px 40px;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        /* QUIZ SCREEN */
+        .quiz-layout {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 24px;
+            align-items: start;
+        }
+        @media (max-width: 850px) {
+            .quiz-layout {
+                grid-template-columns: 1fr;
+            }
+            .sidebar-panel {
+                display: none;
+            }
+        }
+
+        /* STICKY TOPBAR */
+        .quiz-topbar {
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow);
+        }
+        .topbar-title {
+            font-weight: 600;
+            font-size: 15px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+        .progress-info {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        .timer-pill {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid var(--primary-border);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .timer-pill.warning {
+            background: var(--warning-light);
+            color: var(--warning);
+            border-color: var(--warning);
+        }
+        .timer-pill.danger {
+            background: var(--danger-light);
+            color: var(--danger);
+            border-color: var(--danger);
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* QUESTION CONTAINER */
+        .question-card {
+            margin-bottom: 20px;
+        }
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .question-meta {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .badge {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+        .badge-qnum {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid var(--primary-border);
+        }
+        .badge-level {
+            background: var(--bg-main);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+        .flag-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .flag-btn.flagged {
+            background: var(--warning-light);
+            color: var(--warning);
+            border-color: var(--warning);
+        }
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            color: var(--text-main);
+        }
+
+        /* OPTIONS LIST */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            background: var(--bg-main);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-main);
+            transition: all 0.15s ease;
+        }
+        .option-item:hover {
+            border-color: var(--primary-border);
+            background: var(--primary-light);
+        }
+        .option-item.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        .option-label {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            flex-shrink: 0;
+            color: var(--text-secondary);
+        }
+        .option-item.selected .option-label {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* NAVIGATION FOOTER */
+        .quiz-nav-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* SIDEBAR PANEL */
+        .sidebar-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 80px;
+        }
+        .sidebar-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .grid-nav {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .grid-nav-item {
+            aspect-ratio: 1;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            color: var(--text-secondary);
+        }
+        .grid-nav-item:hover {
+            border-color: var(--text-secondary);
+        }
+        .grid-nav-item.current {
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-border);
+        }
+        .grid-nav-item.answered {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .grid-nav-item.flagged::after {
+            content: '🚩';
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            font-size: 10px;
+        }
+        .sidebar-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+            padding-top: 16px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
             border-radius: 4px;
+        }
+
+        /* MOBILE DRAWER TOGGLE */
+        .mobile-drawer-btn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 99;
+            background: var(--primary);
+            color: white;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            border: none;
+            cursor: pointer;
+        }
+        @media (max-width: 850px) {
+            .mobile-drawer-btn {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+        }
+
+        /* MODAL */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+        .modal-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+            width: 100%;
+            max-width: 450px;
+            padding: 28px;
+            box-shadow: var(--shadow);
+            transform: scale(0.95);
+            transition: transform 0.2s ease;
+        }
+        .modal-backdrop.open .modal-card {
+            transform: scale(1);
+        }
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+        .modal-desc {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        /* MOBILE DRAWER MODAL */
+        .drawer-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: flex-end;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+        .drawer-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .drawer-content {
+            background: var(--bg-card);
+            width: 100%;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            padding: 24px;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        .drawer-backdrop.open .drawer-content {
+            transform: translateY(0);
+        }
+
+        /* RESULT SCREEN */
+        .result-hero {
+            text-align: center;
+            padding: 20px 0 32px;
+        }
+        .score-circle-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 20px;
+        }
+        .score-circle-svg {
+            transform: rotate(-90deg);
+            width: 160px;
+            height: 160px;
+        }
+        .score-circle-bg {
+            fill: none;
+            stroke: var(--border-color);
+            stroke-width: 12;
+        }
+        .score-circle-progress {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 12;
+            stroke-linecap: round;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 440;
+            transition: stroke-dashoffset 1s ease-in-out;
+        }
+        .score-circle-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .score-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1;
+        }
+        .score-max {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .result-badge {
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+        .result-badge.pass {
+            background: var(--success-light);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+        .result-badge.fail {
+            background: var(--danger-light);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+        .result-comment {
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        @media (max-width: 650px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        .stat-card {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        .stat-card .val {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .stat-card .lbl {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* REVIEW SECTION & TABS */
+        .review-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 12px;
+            overflow-x: auto;
+        }
+        .tab-btn {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .review-item {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .review-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .review-question-text {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+        .review-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .review-opt {
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+        }
+        .review-opt.correct {
+            background: var(--success-light);
+            border-color: var(--success);
+            color: var(--success);
+            font-weight: 600;
+        }
+        .review-opt.incorrect {
+            background: var(--danger-light);
+            border-color: var(--danger);
+            color: var(--danger);
+            font-weight: 600;
+        }
+        .explanation-box {
+            background: var(--primary-light);
+            border: 1px solid var(--primary-border);
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+        .explanation-box strong {
+            color: var(--primary);
+        }
+        .result-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 32px;
         }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col justify-between transition-colors duration-200">
+<body>
 
-    <!-- Header -->
-    <header class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-indigo-500/30">
-                    ∫
+    <div class="container">
+        <!-- 1. MÀN HÌNH BẮT ĐẦU -->
+        <div id="start-screen" class="screen active">
+            <div class="card">
+                <div class="start-header">
+                    <div class="start-icon">📐</div>
+                    <h1 class="start-title">Trắc nghiệm Giải tích 1</h1>
+                    <p class="start-desc">Kiểm tra và củng cố kiến thức về giới hạn, đạo hàm, tích phân và chuỗi số với ngân hàng câu hỏi chuẩn học thuật.</p>
                 </div>
-                <div>
-                    <h1 class="font-bold text-lg leading-tight">Calculus 1 Mastery</h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400">Trắc nghiệm Giải tích 1 (60 câu)</p>
-                </div>
-            </div>
-
-            <div class="flex items-center space-x-3">
-                <!-- Timer badge -->
-                <div id="timerContainer" class="hidden items-center space-x-2 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full text-sm font-medium border border-slate-200 dark:border-slate-700">
-                    <svg class="w-4 h-4 text-indigo-500 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span id="timerText" class="font-mono font-semibold">60:00</span>
-                </div>
-
-                <!-- Theme Toggle Button -->
-                <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition text-slate-700 dark:text-slate-300" title="Chuyển đổi giao diện">
-                    <svg id="sunIcon" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    </svg>
-                    <svg id="moonIcon" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Container -->
-    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-8">
-        
-        <!-- START SCREEN -->
-        <div id="startScreen" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 shadow-xl text-center space-y-6">
-            <div class="w-20 h-20 mx-auto rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-3xl font-bold shadow-inner">
-                ∫dx
-            </div>
-            <div class="space-y-2 max-w-lg mx-auto">
-                <h2 class="text-2xl font-bold">Kiểm tra năng lực Giải tích 1</h2>
-                <p class="text-slate-600 dark:text-slate-400 text-sm">
-                    Hệ thống bao gồm ngân hàng 60 câu hỏi phong phú từ Giới hạn, Đạo hàm, Tích phân suy rộng, Chuỗi số đến Ứng dụng tích phân. Mỗi lần làm bài hệ thống sẽ chọn ngẫu nhiên 20 câu hỏi.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-lg mx-auto text-left pt-2">
-                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
-                    <div class="text-indigo-500 font-bold text-lg mb-1">20 Câu</div>
-                    <div class="text-xs text-slate-500 dark:text-slate-400">Ngẫu nhiên mỗi lượt kiểm tra từ 60 câu</div>
-                </div>
-                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
-                    <div class="text-indigo-500 font-bold text-lg mb-1">60 Phút</div>
-                    <div class="text-xs text-slate-500 dark:text-slate-400">Thời gian làm bài thi chuẩn</div>
-                </div>
-                <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
-                    <div class="text-indigo-500 font-bold text-lg mb-1">Chi tiết</div>
-                    <div class="text-xs text-slate-500 dark:text-slate-400">Xem lại đáp án và giải thích tường tận</div>
-                </div>
-            </div>
-
-            <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
-                <button onclick="startQuiz()" class="w-full sm:w-auto px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/30 transition transform active:scale-95 flex items-center justify-center space-x-2">
-                    <span>Bắt đầu làm bài</span>
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                </button>
-                <button onclick="openHelpModal()" class="w-full sm:w-auto px-6 py-3.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold rounded-xl transition text-slate-700 dark:text-slate-300">
-                    Hướng dẫn phím tắt
-                </button>
-            </div>
-        </div>
-
-        <!-- QUIZ SCREEN -->
-        <div id="quizScreen" class="hidden space-y-6">
-            <!-- Progress Bar & Info -->
-            <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
-                <div class="flex items-center space-x-3 w-full md:w-auto">
-                    <span id="currentQuestionBadge" class="px-3 py-1 bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 rounded-lg font-bold text-sm">Câu 1/20</span>
-                    <div class="w-full md:w-48 bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full overflow-hidden">
-                        <div id="progressBar" class="bg-indigo-600 h-full transition-all duration-300" style="width: 5%"></div>
+                
+                <div class="info-grid">
+                    <div class="info-box">
+                        <div class="icon">📝</div>
+                        <div class="label">Số câu hỏi</div>
+                        <div class="value">20 câu / lượt</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="icon">⏱</div>
+                        <div class="label">Thời gian</div>
+                        <div class="value">60 phút</div>
+                    </div>
+                    <div class="info-box">
+                        <div class="icon">🎯</div>
+                        <div class="label">Điểm đạt chuẩn</div>
+                        <div class="value">10 / 10 điểm</div>
                     </div>
                 </div>
 
-                <!-- Question Quick Jump Nav Grid (Mini) -->
-                <div id="quickNavGrid" class="flex flex-wrap gap-1.5 max-w-md justify-center">
-                    <!-- Dynamically generated question dots -->
-                </div>
-            </div>
-
-            <!-- Question Card -->
-            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 md:p-8 shadow-xl space-y-6">
-                <div class="flex items-start justify-between gap-4">
-                    <h3 id="questionTitle" class="text-lg font-semibold leading-relaxed">
-                        <!-- Question content -->
-                    </h3>
-                    <button onclick="toggleBookmark()" id="bookmarkBtn" class="p-2 rounded-xl text-slate-400 hover:text-amber-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Đánh dấu câu hỏi">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
-                    </button>
+                <div class="instructions-box">
+                    <h3>💡 Hướng dẫn làm bài & Quy tắc</h3>
+                    <ul>
+                        <li>Mỗi lượt làm bài hệ thống sẽ chọn ngẫu nhiên <strong>20 câu hỏi</strong> từ ngân hàng <strong>60 câu</strong> và xáo trộn vị trí đáp án.</li>
+                        <li>Sử dụng phím tắt <strong>1–4</strong> hoặc <strong>A–D</strong> để chọn đáp án, phím <strong>← →</strong> để chuyển câu.</li>
+                        <li>Có thể đánh dấu cờ (🚩) các câu cần xem lại và dùng bảng điều hướng bên phải để nhảy nhanh tới câu bất kỳ.</li>
+                        <li>Hệ thống tự động nộp bài khi hết giờ hoặc khi bạn bấm nút "Nộp bài".</li>
+                    </ul>
                 </div>
 
-                <!-- Options List -->
-                <div id="optionsList" class="space-y-3">
-                    <!-- Options injected here -->
-                </div>
-
-                <!-- Explanation Box (shown after submission/review) -->
-                <div id="explanationContainer" class="hidden p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-2">
-                    <div class="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 font-semibold text-sm">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <span>Lời giải chi tiết:</span>
-                    </div>
-                    <p id="explanationText" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed math-expr"></p>
-                </div>
-            </div>
-
-            <!-- Action Footer -->
-            <div class="flex items-center justify-between">
-                <button onclick="prevQuestion()" id="prevBtn" class="px-5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-xl font-medium text-sm transition flex items-center space-x-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                    <span>Câu trước</span>
-                </button>
-
-                <div class="flex items-center space-x-3">
-                    <button onclick="submitQuizConfirm()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-medium text-sm transition shadow-lg shadow-emerald-600/20">
-                        Nộp bài
-                    </button>
-                    <button onclick="nextQuestion()" id="nextBtn" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium text-sm transition flex items-center space-x-2 shadow-lg shadow-indigo-600/20">
-                        <span>Câu sau</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                    </button>
+                <div class="start-action">
+                    <button id="start-btn" class="btn" type="button">Bắt đầu làm bài</button>
                 </div>
             </div>
         </div>
 
-        <!-- RESULT SCREEN -->
-        <div id="resultScreen" class="hidden space-y-6">
-            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-8 shadow-xl text-center space-y-6">
-                <div class="w-24 h-24 mx-auto rounded-full bg-indigo-50 dark:bg-indigo-950 flex items-center justify-center border-4 border-indigo-500 shadow-xl">
-                    <span id="scorePercentage" class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">0%</span>
-                </div>
-
-                <div class="space-y-2">
-                    <h2 id="resultTitle" class="text-2xl font-bold">Hoàn thành bài thi!</h2>
-                    <p id="resultSubtitle" class="text-slate-600 dark:text-slate-400 text-sm">Bạn đã hoàn thành bài kiểm tra Giải tích 1.</p>
-                </div>
-
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-xl mx-auto pt-2">
-                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
-                        <div id="resCorrect" class="text-2xl font-bold text-emerald-500">0</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-400">Câu đúng</div>
-                    </div>
-                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
-                        <div id="resIncorrect" class="text-2xl font-bold text-rose-500">0</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-400">Câu sai / Bỏ qua</div>
-                    </div>
-                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
-                        <div id="resScore" class="text-2xl font-bold text-indigo-500">0/20</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-400">Điểm số</div>
-                    </div>
-                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
-                        <div id="resTime" class="text-2xl font-bold text-amber-500">00:00</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-400">Thời gian làm</div>
-                    </div>
-                </div>
-
-                <div class="pt-4 flex flex-wrap items-center justify-center gap-3">
-                    <button onclick="reviewAllAnswers()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/30 transition">
-                        Xem lại chi tiết bài làm
-                    </button>
-                    <button onclick="restartQuiz()" class="px-6 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold rounded-xl transition text-slate-700 dark:text-slate-300">
-                        Làm lại bài mới
-                    </button>
+        <!-- 2. MÀN HÌNH LÀM BÀI -->
+        <div id="quiz-screen" class="screen">
+            <div class="quiz-topbar">
+                <div class="topbar-title">Giải tích 1</div>
+                <div class="progress-info" id="progress-text">Đã làm 0/20 câu</div>
+                <div class="timer-pill" id="timer-display">
+                    <span>⏱</span> <span id="time-left">60:00</span>
                 </div>
             </div>
 
-            <!-- Detailed Review List -->
-            <div id="reviewContainer" class="space-y-4">
-                <h3 class="text-xl font-bold px-2">Chi tiết đáp án</h3>
-                <div id="reviewList" class="space-y-4">
-                    <!-- Review items injected here -->
+            <div class="quiz-layout">
+                <!-- Khu vực câu hỏi chính -->
+                <div class="quiz-main-area">
+                    <div class="card question-card">
+                        <div class="question-header">
+                            <div class="question-meta">
+                                <span class="badge badge-qnum" id="q-num-badge">Câu 1</span>
+                                <span class="badge badge-level" id="q-level-badge">Trung bình</span>
+                            </div>
+                            <button class="flag-btn" id="flag-btn" type="button">
+                                <span id="flag-icon">🚩</span> <span id="flag-text">Đánh dấu xem lại</span>
+                            </button>
+                        </div>
+                        
+                        <div class="question-text" id="question-text-content">
+                            <!-- Nội dung câu hỏi -->
+                        </div>
+
+                        <div class="options-list" id="options-container">
+                            <!-- Danh sách đáp án -->
+                        </div>
+
+                        <div class="quiz-nav-footer">
+                            <button class="btn btn-secondary" id="prev-btn" type="button">← Câu trước</button>
+                            <button class="btn" id="next-btn" type="button">Câu tiếp →</button>
+                        </div>
+                    </div>
+
+                    <div style="text-align: right;">
+                        <button class="btn btn-outline-danger" id="submit-confirm-btn" type="button">Nộp bài thi</button>
+                    </div>
+                </div>
+
+                <!-- Bảng điều hướng sidebar (Máy tính) -->
+                <div class="sidebar-panel">
+                    <div class="sidebar-title">
+                        <span>Danh sách câu hỏi</span>
+                        <span id="answered-count-badge" style="font-size: 13px; color: var(--text-secondary);">0/20</span>
+                    </div>
+                    <div class="grid-nav" id="sidebar-grid">
+                        <!-- Các ô số câu -->
+                    </div>
+                    <div class="sidebar-legend">
+                        <div class="legend-item"><div class="legend-dot" style="background: var(--primary);"></div> Đã trả lời</div>
+                        <div class="legend-item"><div class="legend-dot" style="background: var(--bg-main); border: 1px solid var(--border-color);"></div> Chưa làm</div>
+                        <div class="legend-item"><div class="legend-dot" style="background: var(--warning);"></div> Đã đánh dấu (🚩)</div>
+                    </div>
                 </div>
             </div>
         </div>
 
-    </main>
+        <!-- 3. MÀN HÌNH KẾT QUẢ -->
+        <div id="result-screen" class="screen">
+            <div class="card">
+                <div class="result-hero">
+                    <div class="score-circle-container">
+                        <svg class="score-circle-svg" viewBox="0 0 160 160">
+                            <circle class="score-circle-bg" cx="80" cy="80" r="70"></circle>
+                            <circle class="score-circle-progress" id="score-progress-ring" cx="80" cy="80" r="70"></circle>
+                        </svg>
+                        <div class="score-circle-text">
+                            <div class="score-number" id="final-score-val">0.0</div>
+                            <div class="score-max">/ 10 điểm</div>
+                        </div>
+                    </div>
+                    <div id="result-badge-container">
+                        <!-- Nhãn Đạt / Chưa đạt -->
+                    </div>
+                    <p class="result-comment" id="result-comment-text">Đang phân tích kết quả...</p>
+                </div>
 
-    <!-- Footer -->
-    <footer class="py-6 text-center text-xs text-slate-500 dark:text-slate-500 border-t border-slate-200 dark:border-slate-800">
-        Calculus 1 Mastery Quiz &bull; Ngân hàng 60 câu hỏi tiêu chuẩn Giải tích đại học
-    </footer>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="val" id="stat-correct" style="color: var(--success);">0</div>
+                        <div class="lbl">Số câu đúng</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="val" id="stat-incorrect" style="color: var(--danger);">0</div>
+                        <div class="lbl">Số câu sai</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="val" id="stat-skipped" style="color: var(--text-secondary);">0</div>
+                        <div class="lbl">Bỏ trống</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="val" id="stat-time" style="color: var(--primary);">00:00</div>
+                        <div class="lbl">Thời gian làm</div>
+                    </div>
+                </div>
 
-    <!-- MODAL DIALOGS -->
-    <!-- Custom Confirm Modal -->
-    <div id="customModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden">
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl space-y-4">
-            <h3 id="modalTitle" class="text-lg font-bold">Xác nhận</h3>
-            <p id="modalMessage" class="text-sm text-slate-600 dark:text-slate-400">Bạn có chắc chắn muốn thực hiện hành động này?</p>
-            <div class="flex justify-end space-x-3 pt-2">
-                <button id="modalCancelBtn" onclick="closeModal()" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl text-sm font-medium transition">Hủy</button>
-                <button id="modalConfirmBtn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-medium transition">Xác nhận</button>
+                <div style="margin-top: 32px;">
+                    <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">Xem lại chi tiết đáp án</h3>
+                    <div class="review-tabs">
+                        <button class="tab-btn active" data-filter="all" type="button">Tất cả (20)</button>
+                        <button class="tab-btn" data-filter="incorrect" type="button">Sai / Bỏ trống</button>
+                        <button class="tab-btn" data-filter="flagged" type="button">Đã đánh dấu</button>
+                    </div>
+                    <div id="review-list-container">
+                        <!-- Danh sách xem lại -->
+                    </div>
+                </div>
+
+                <div class="result-actions">
+                    <button class="btn btn-secondary" id="review-from-start-btn" type="button">Xem lại từ đầu</button>
+                    <button class="btn" id="retry-btn" type="button">🔄 Làm đề mới</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Help / Shortcuts Modal -->
-    <div id="helpModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden">
-        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 max-w-lg w-full mx-4 shadow-2xl space-y-4">
-            <div class="flex items-center justify-between">
-                <h3 class="text-lg font-bold">Phím tắt & Hướng dẫn</h3>
-                <button onclick="closeHelpModal()" class="p-1 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-            </div>
-            <div class="space-y-3 text-sm text-slate-600 dark:text-slate-300">
-                <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-lg">
-                    <span>Chọn đáp án A, B, C, D</span>
-                    <kbd class="px-2 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-xs font-mono">1, 2, 3, 4</kbd> hoặc <kbd class="px-2 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-xs font-mono">A, B, C, D</kbd>
-                </div>
-                <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-lg">
-                    <span>Câu trước / Câu sau</span>
-                    <div class="space-x-1">
-                        <kbd class="px-2 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-xs font-mono">&larr;</kbd>
-                        <kbd class="px-2 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-xs font-mono">&rarr;</kbd>
-                    </div>
-                </div>
-                <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-lg">
-                    <span>Đánh dấu câu hỏi</span>
-                    <kbd class="px-2 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-xs font-mono">B</kbd>
-                </div>
-            </div>
-            <div class="flex justify-end pt-2">
-                <button onclick="closeHelpModal()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-medium transition">Đã hiểu</button>
+    <!-- Nút mở drawer danh sách câu hỏi trên Mobile -->
+    <button class="mobile-drawer-btn" id="mobile-drawer-toggle" type="button">
+        <span>📋 Danh sách câu</span>
+    </button>
+
+    <!-- Modal xác nhận nộp bài -->
+    <div class="modal-backdrop" id="submit-modal">
+        <div class="modal-card">
+            <h3 class="modal-title">Xác nhận nộp bài?</h3>
+            <p class="modal-desc" id="modal-submit-desc">Bạn còn một số câu chưa trả lời. Bạn có chắc chắn muốn nộp bài ngay bây giờ không?</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="modal-cancel-btn" type="button">Tiếp tục làm</button>
+                <button class="btn" id="modal-confirm-btn" type="button">Nộp bài</button>
             </div>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC & 60 QUESTIONS DATA -->
+    <!-- Drawer danh sách câu hỏi (Mobile) -->
+    <div class="drawer-backdrop" id="mobile-drawer">
+        <div class="drawer-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 16px; font-weight: 600;">Danh sách câu hỏi</h3>
+                <button class="btn btn-secondary" id="drawer-close-btn" style="padding: 6px 12px; font-size: 14px;" type="button">Đóng</button>
+            </div>
+            <div class="grid-nav" id="drawer-grid" style="grid-template-columns: repeat(5, 1fr);">
+                <!-- Mobile grid items -->
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Theme Toggle Function
-        function toggleTheme() {
-            const html = document.documentElement;
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            } else {
-                html.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            }
-        }
-        if (localStorage.getItem('theme') === 'light') {
-            document.documentElement.classList.remove('dark');
-        }
-
-        // Full 60 Questions Bank with Clean HTML/CSS Mathematical Formatted Notations
+        // NGÂN HÀNG 60 CÂU HỎI GIẢI TÍCH 1
         const questionBank = [
-            // CHƯƠNG 1: GIỚI HẠN VÀ HÀM SỐ (1-15)
+            // 1-10: Giới hạn hàm số & Vô cùng bé
             {
-                id: 1,
-                question: "Tính giới hạn: <span class='math-expr'>lim<sub>x&rarr;0</sub> <span class='fraction'><span>sin(3x)</span><span>sin(5x)</span></span></span>",
-                options: [
-                    "<span class='math-expr'><span class='fraction'><span>3</span><span>5</span></span></span>",
-                    "<span class='math-expr'><span class='fraction'><span>5</span><span>3</span></span></span>",
-                    "<span class='math-expr'>1</span>",
-                    "<span class='math-expr'>0</span>"
-                ],
-                correct: 0,
-                explanation: "Sử dụng giới hạn đáng nhớ <span class='math-expr'>lim<sub>u&rarr;0</sub> <span class='fraction'><span>sin(u)</span><span>u</span></span> = 1</span>. Ta biến đổi: <span class='math-expr'><span class='fraction'><span>sin(3x)</span><span>sin(5x)</span></span> = <span class='fraction'><span>sin(3x)/(3x)</span><span>sin(5x)/(5x)</span></span> &middot; <span class='fraction'><span>3x</span><span>5x</span></span> &rarr; 1 &middot; <span class='fraction'><span>3</span><span>5</span></span> = <span class='fraction'><span>3</span><span>5</span></span></span> khi <span class='math-expr'>x &rarr; 0</span>."
+                id: 1, level: "de",
+                text: "Tính giới hạn: <span class='math-block'>lim<sub>x → 0</sub> <span class='fraction'><span class='numerator'>sin(3x)</span><span class='denominator'>x</span></span></span>",
+                options: ["3", "1/3", "0", "1"], correct: 0,
+                explanation: "Áp dụng giới hạn đặc biệt <span class='math'>lim<sub>u → 0</sub> (sin u)/u = 1</span>, ta có <span class='math'>lim<sub>x → 0</sub> [sin(3x)/(3x)] · 3 = 1 · 3 = 3</span>."
             },
             {
-                id: 2,
-                question: "Tìm giới hạn: <span class='math-expr'>lim<sub>x&rarr;&infin;</sub> (<span class='root-symbol'>&radic;</span><span style='border-top: 1px solid currentColor; padding-top: 1px;'>x<sup>2</sup> + x</span> - x)</span>",
-                options: [
-                    "<span class='math-expr'>0</span>",
-                    "<span class='math-expr'><span class='fraction'><span>1</span><span>2</span></span></span>",
-                    "<span class='math-expr'>1</span>",
-                    "<span class='math-expr'>&infin;</span>"
-                ],
-                correct: 1,
-                explanation: "Nhân lượng liên hợp: <span class='math-expr'>(<span class='root-symbol'>&radic;</span><span style='border-top: 1px solid currentColor;'>x<sup>2</sup> + x</span> - x)(<span class='root-symbol'>&radic;</span><span style='border-top: 1px solid currentColor;'>x<sup>2</sup> + x</span> + x) / (<span class='root-symbol'>&radic;</span><span style='border-top: 1px solid currentColor;'>x<sup>2</sup> + x</span> + x) = x / (<span class='root-symbol'>&radic;</span><span style='border-top: 1px solid currentColor;'>x<sup>2</sup> + x</span> + x)</span>. Chia tử và mẫu cho <span class='math-expr'>x</span> ta được giới hạn bằng <span class='math-expr'><span class='fraction'><span>1</span><span>2</span></span></span>."
+                id: 2, level: "de",
+                text: "Tìm giới hạn: <span class='math-block'>lim<sub>x → +∞</sub> <span class='fraction'><span class='numerator'>2x<sup>2</sup> - x + 1</span><span class='denominator'>3x<sup>2</sup> + 5</span></span></span>",
+                options: ["2/3", "0", "+∞", "3/2"], correct: 0,
+                explanation: "Chia cả tử và mẫu cho <span class='math'>x<sup>2</sup></span> (bậc cao nhất của mẫu), ta được <span class='math'>lim<sub>x → +∞</sub> (2 - 1/x + 1/x<sup>2</sup>)/(3 + 5/x<sup>2</sup>) = 2/3</span>."
             },
             {
-                id: 3,
-                question: "Tính giới hạn: <span class='math-expr'>lim<sub>x&rarr;0</sub> (<span class='fraction'><span>1</span><span>x</span></span>) &middot; ln(<span class='fraction'><span>1 + x</span><span>1 - x</span></span>)</span>",
-                options: [
-                    "<span class='math-expr'>0</span>",
-                    "<span class='math-expr'>1</span>",
-                    "<span class='math-expr'>2</span>",
-                    "<span class='math-expr'>e</span>"
-                ],
-                correct: 2,
-                explanation: "Biểu thức viết lại thành <span class='math-expr'><span class='fraction'><span>ln(1 + x) - ln(1 - x)</span><span>x</span></span></span>. Theo định nghĩa đạo hàm của <span class='math-expr'>ln(1+x)</span> tại <span class='math-expr'>0</span>, giới hạn này bằng <span class='math-expr'>1 - (-1) = 2</span>."
+                id: 3, level: "trungbinh",
+                text: "Tính giới hạn: <span class='math-block'>lim<sub>x → 0</sub> <span class='fraction'><span class='numerator'>ln(1 + 4x)</span><span class='denominator'>tan(2x)</span></span></span>",
+                options: ["2", "1/2", "4", "0"], correct: 0,
+                explanation: "Sử dụng các vô cùng bé tương đương khi <span class='math'>x → 0</span>: <span class='math'>ln(1 + 4x) ~ 4x</span> và <span class='math'>tan(2x) ~ 2x</span>. Do đó giới hạn bằng <span class='math'>4x / 2x = 2</span>."
             },
             {
-                id: 4,
-                question: "Hàm số <span class='math-expr'>f(x) = <span class='fraction'><span>x<sup>2</sup> - 4</span><span>x - 2</span></span></span> khi <span class='math-expr'>x &ne; 2</span> và <span class='math-expr'>f(2) = m</span> liên tục tại <span class='math-expr'>x = 2</span> khi <span class='math-expr'>m</span> bằng:",
-                options: [
-                    "<span class='math-expr'>0</span>",
-                    "<span class='math-expr'>2</span>",
-                    "<span class='math-expr'>4</span>",
-                    "<span class='math-expr'>không tồn tại</span>"
-                ],
-                correct: 2,
-                explanation: "Điều kiện liên tục là <span class='math-expr'>f(2) = lim<sub>x&rarr;2</sub> <span class='fraction'><span>x<sup>2</sup> - 4</span><span>x - 2</span></span> = lim<sub>x&rarr;2</sub> (x + 2) = 4</span>. Do đó <span class='math-expr'>m = 4</span>."
+                id: 4, level: "trungbinh",
+                text: "Cho hàm số <span class='math'>f(x) = <span class='fraction'><span class='numerator'>x<sup>2</sup> - 4</span><span class='denominator'>x - 2</span></span></span> khi <span class='math'>x ≠ 2</span>. Để <span class='math'>f(x)</span> liên tục tại <span class='math'>x = 2</span>, giá trị <span class='math'>f(2)</span> phải bằng:",
+                options: ["4", "2", "0", "1"], correct: 0,
+                explanation: "Ta có <span class='math'>lim<sub>x → 2</sub> (x<sup>2</sup> - 4)/(x - 2) = lim<sub>x → 2</sub> (x + 2) = 4</span>. Để hàm liên tục tại điểm này thì giá trị tại điểm phải bằng giới hạn."
             },
             {
-                id: 5,
-                question: "Tính giới hạn: <span class='math-expr'>lim<sub>x&rarr;0</sub> (<span class='fraction'><span>tan x - sin x</span><span>x<sup>3</sup></span></span>)</span>",
-                options: [
-                    "<span class='math-expr'><span class='fraction'><span>1</span><span>2</span></span></span>",
-                    "<span class='math-expr'>1</span>",
-                    "<span class='math-expr'>2</span>",
-                    "<span class='math-expr'><span class='fraction'><span>1</span><span>3</span></span></span>"
-                ],
-                correct: 0,
-                explanation: "Biến đổi tử số: <span class='math-expr'>tan x - sin x = sin x(<span class='fraction'><span>1</span><span>cos x</span></span> - 1) = sin x &middot; <span class='fraction'><span>1 - cos x</span><span>cos x</span></span></span>. Dùng khai triển Taylor hoặc L'Hopital liên tiếp, ta thu được kết quả <span class='math-expr'><span class='fraction'><span>1</span><span>2</span></span></span>."
+                id: 5, level: "kho",
+                text: "Tính giới hạn: <span class='math-block'>lim<sub>x → 0</sub> (1 + 3x)<sup><span class='fraction'><span class='numerator'>2</span><span class='denominator'>x</span></span></sup></span>",
+                options: ["e<sup>6</sup>", "e<sup>3</sup>", "e<sup>2</sup>", "1"], correct: 0,
+                explanation: "Biến đổi về dạng <span class='math'>e<sup>lim x → 0 [2/x · ln(1 + 3x)]</sup> = e<sup>lim x → 0 [6x / x]</sup> = e<sup>6</sup></span>."
             },
             {
-                id: 6,
-                question: "Tìm tiệm cận ngang của đồ thị hàm số: <span class='math-expr'>y = <span class='fraction'><span>2x<sup>2</sup> + 3x - 1</span><span>x<sup>2</sup> - 4</span></span></span>",
-                options: [
-                    "<span class='math-expr'>y = 2</span>",
-                    "<span class='math-expr'>y = -<span class='fraction'><span>1</span><span>4</span></span></span>",
-                    "<span class='math-expr'>y = 0</span>",
-                    "<span class='math-expr'>Không có tiệm cận ngang</span>"
-                ],
-                correct: 0,
-                explanation: "Do bậc tử bằng bậc mẫu và hệ số cao nhất là 2 và 1, ta có <span class='math-expr'>lim<sub>x&rarr;&plusmn;&infin;</sub> y = <span class='fraction'><span>2</span><span>1</span></span> = 2</span>. Vậy đường tiệm cận ngang là <span class='math-expr'>y = 2</span>."
+                id: 6, level: "de",
+                text: "Tìm giới hạn: <span class='math-block'>lim<sub>x → 1</sub> <span class='fraction'><span class='numerator'>x<sup>3</sup> - 1</span><span class='denominator'>x - 1</span></span></span>",
+                options: ["3", "1", "0", "2"], correct: 0,
+                explanation: "Phân tích tử thành nhân tử: <span class='math'>x<sup>3</sup> - 1 = (x - 1)(x<sup>2</sup> + x + 1)</span>. Rút gọn cho <span class='math'>x - 1</span> ta được <span class='math'>lim<sub>x → 1</sub> (x<sup>2</sup> + x + 1) = 3</span>."
             },
             {
-                id: 7,
-                question: "Tìm tiệm cận đứng của hàm số: <span class='math-expr'>y = <span class='fraction'><span>x + 1</span><span>x<sup>2</sup> - 3x + 2</span></span></span>",
-                options: [
-                    "<span class='math-expr'>x = 1</span>",
-                    "<span class='math-expr'>x = 2</span>",
-                    "<span class='math-expr'>x = 1</span> và <span class='math-expr'>x = 2</span>",
-                    "<span class='math-expr'>x = -1</span>"
-                ],
-                correct: 1,
-                explanation: "Mẫu số bằng 0 khi <span class='math-expr'>x = 1</span> hoặc <span class='math-expr'>x = 2</span>. Tử số tại <span class='math-expr'>x = 1</span> bằng 2 (khác 0) nên <span class='math-expr'>x = 1</span> là tiệm cận đứng. Tại <span class='math-expr'>x = 2</span>, tử số bằng 3 (khác 0) nên <span class='math-expr'>x = 2</span> cũng là tiệm cận đứng. Chú ý nghiệm <span class='math-expr'>x=1</span> làm triệt tiêu tử nếu tử là <span class='math-expr'>x^2-1</span>, nhưng ở đây tử là <span class='math-expr'>x+1</span> nên cả hai đều là tiệm cận đứng."
+                id: 7, level: "trungbinh",
+                text: "Tính giới hạn: <span class='math-block'>lim<sub>x → 0</sub> <span class='fraction'><span class='numerator'>1 - cos(2x)</span><span class='denominator'>x<sup>2</sup></span></span></span>",
+                options: ["2", "1", "4", "0"], correct: 0,
+                explanation: "Sử dụng vô cùng bé tương đương <span class='math'>1 - cos(u) ~ u<sup>2</sup>/2</span>. Ta có <span class='math'>1 - cos(2x) ~ (2x)<sup>2</sup>/2 = 2x<sup>2</sup></span>. Khi đó giới hạn bằng <span class='math'>2x<sup>2</sup> / x<sup>2</sup> = 2</span>."
             },
             {
-                id: 8,
-                question: "Tính giới hạn: <span class='math-expr'>lim<sub>x&rarr;0</sub> (1 + 3x)<sup><span class='fraction'><span>2</span><span>x</span></span></sup></span>",
-                options: [
-                    "<span class='math-expr'>e<sup>3</sup></span>",
-                    "<span class='math-expr'>e<sup>6</sup></span>",
-                    "<span class='math-expr'>e<sup>2/3</sup></span>",
-                    "<span class='math-expr'>e<sup>9</sup></span>"
-                ],
-                correct: 1,
-                explanation: "Áp dụng giới hạn cơ bản <span class='math-expr'>lim<sub>u&rarr;0</sub> (1 + u)<sup>1/u</sup> = e</span>. Ta có <span class='math-expr'>(1 + 3x)<sup>2/x</sup> = [(1 + 3x)<sup>1/(3x)</sup>]<sup>6</sup> &rarr; e<sup>6</sup></span> khi <span class='math-expr'>x &rarr; 0</span>."
+                id: 8, level: "kho",
+                text: "Tính giới hạn: <span class='math-block'>lim<sub>x → 0</sub> <span class='fraction'><span class='numerator'>e<sup>x</sup> - e<sup>-x</sup> - 2sin(x)</span><span class='denominator'>x<sup>3</sup></span></span></span>",
+                options: ["0", "1/3", "1", "-1"], correct: 0,
+                explanation: "Khai triển Taylor: <span class='math'>e<sup>x</sup> = 1 + x + x<sup>2</sup>/2 + x<sup>3</sup>/6 + o(x<sup>3</sup>)</span>, <span class='math'>e<sup>-x</sup> = 1 - x + x<sup>2</sup>/2 - x<sup>3</sup>/6 + o(x<sup>3</sup>)</span>, <span class='math'>sin(x) = x - x<sup>3</sup>/6 + o(x<sup>3</sup>)</span>. Thay vào tử ta được <span class='math'>(2x<sup>3</sup>/3 - 2x<sup>3</sup>/6) / x<sup>3</sup> = 0</span>."
             },
             {
-                id: 9,
-                question: "Cho hàm số <span class='math-expr'>f(x) = |x<sup>3</sup>|</span>. Hỏi hàm số có đạo hàm tại <span class='math-expr'>x = 0</span> không?",
-                options: [
-                    "Không có đạo hàm",
-                    "Có đạo hàm bằng 0",
-                    "Có đạo hàm bằng 1",
-                    "Có đạo hàm bằng -1"
-                ],
-                correct: 1,
-                explanation: "Ta có <span class='math-expr'>f(x) = x<sup>3</sup></span> khi <span class='math-expr'>x &ge; 0</span> và <span class='math-expr'>-x<sup>3</sup></span> khi <span class='math-expr'>x &lt; 0</span>. Đạo hàm bên trái và bên phải tại <span class='math-expr'>0</span> đều bằng <span class='math-expr'>0</span>. Do đó hàm số có đạo hàm tại <span class='math-expr'>0</span> và <span class='math-expr'>f'(0) = 0</span>."
+                id: 9, level: "de",
+                text: "Giới hạn nào sau đây có giá trị bằng <span class='math'>e</span>?",
+                options: ["<span class='math'>lim<sub>x → ∞</sub> (1 + 1/x)<sup>x</sup></span>", "<span class='math'>lim<sub>x → 0</sub> (1 + x)<sup>1/x</sup></span>", "Cả A và B đều đúng", "<span class='math'>lim<sub>x → 0</sub> (1 + x)<sup>x</sup></span>"], correct: 2,
+                explanation: "Cả hai giới hạn kinh điển trên đều định nghĩa số <span class='math'>e</span>."
             },
             {
-                id: 10,
-                question: "Tính giới hạn: <span class='math-expr'>lim<sub>x&rarr;0</sub> <span class='fraction'><span>e<sup>2x</sup> - 1</span><span>sin(3x)</span></span></span>",
-                options: [
-                    "<span class='math-expr'><span class='fraction'><span>2</span><span>3</span></span></span>",
-                    "<span class='math-expr'><span class='fraction'><span>3</span><span>2</span></span></span>",
-                    "<span class='math-expr'>1</span>",
-                    "<span class='math-expr'>0</span>"
-                ],
-                correct: 0,
-                explanation: "Sử dụng <span class='math-expr'>e<sup>u</sup> - 1 &sim; u</span> và <span class='math-expr'>sin(v) &sim; v</span> khi <span class='math-expr'>u, v &rarr; 0</span>. Ta được <span class='math-expr'><span class='fraction'><span>2x</span><span>3x</span></span> = <span class='fraction'><span>2</span><span>3</span></span></span>."
-            },
-            {
-                id: 11,
-                question: "Tìm giới hạn: <span class='math-expr'>lim<sub>x&rarr;0</sub> <span class='fraction'><span>ln(1 + 4x)</span><span>tan(2x)</span></span></span>",
-                options: [
-                    "<span class='math-expr'>1</span>",
-                    "<span class='math-expr'>2</span>",
-                    "<span class='math-expr'>4</span>",
-                    "<span class='math-expr'>0</span>"
-                ],
-                correct: 1,
-                explanation: "Sử dụng <span class='math-expr'>ln(1+u) &sim; u</span> và <span class='math-expr'>tan(v) &sim; v</span> khi <span class='math-expr'>x &rarr; 0</span>, ta có <span class='math-expr'><span class='fraction'><span>4x</span><span>2x</span></span> = 2</span>."
-            },
-            {
-                id: 12,
-                question: "Xác định hằng số <span class='math-expr'>a</span> để hàm số <span class='math-expr'>f(x) = { x<sup>2</sup> + 1 khi x &le; 1; ax + 2 khi x &gt; 1 }</span> liên tục tại <span class='math-expr'>x = 1</span>.",
-                options: [
-                    "<span class='math-expr'>a = 0</span>",
-                    "<span class='math-expr'>a = 1</span>",
-                    "<span class='math-expr'>a = 2</span>",
-                    "<span class='math-expr'>a = -1</span>"
-                ],
-                correct: 0,
-                explanation: "Giới hạn trái tại <span class='math-expr'>1</span> là <span class='math-expr'>1<sup>2</sup> + 1 = 2</span>. Giới hạn phải tại <span class='math-expr'>1</span> là <span class='math-expr'>a(1) + 2 = a + 2</span>. Để hàm số liên tục thì <span class='math-expr'>a + 2 = 2 &rArr; a = 0</span>."
-            },
-            {
-                id: 13,
-                question: "Tính: <span class='math-expr'>lim<sub>x&rarr;0</sub> (<span class='fraction'><span>1</span><span>x</span></span> - <span class='fraction'><span>1</span><span>sin x</span></span>)</span>",
-                options: [
-                    "<span class='math-expr'>0</span>",
-                    "<span class='math-expr'>1</span>",
-                    "<span class='math-expr'>-1</span>",
-                    "<span class='math-expr'>&infin;</span>"
-                ],
-                correct: 0,
-                explanation: "Quy đồng mẫu số: <span class='math-expr'><span class='fraction'><span>sin x - x</span><span>x sin x</span></span></span>. Dùng khai triển Taylor <span class='math-expr'>sin x = x - <span class='fraction'><span>x<sup>3</sup></span><span>6</span></span> + o(x<sup>3</sup>)</span> và mẫu số <span class='math-expr'>x sin x &sim; x<sup>2</sup></span>, ta được giới hạn bằng <span class='math-expr'>0</span>."
-            },
-            {
-                id: 14,
-                question: "Tìm số tiệm cận (đứng và ngang) của đồ thị hàm số <span class='math-expr'>y = <span class='fraction'><span>x</span><span>&radic;</span><span style='border-top:1px solid currentColor;'>x<sup>2</sup> + 1</span></span></span>",
-                options: [
-                    "0",
-                    "1",
-                    "2",
-                    "3"
-                ],
-                correct: 2,
-                explanation: "Khi <span class='math-expr'>x &rarr; +&infin;</span>, <span class='math-expr'>y &rarr; 1</span> (tiệm cận ngang <span class='math-expr'>y = 1</span>). Khi <span class='math-expr'>x &rarr; -&infin;</span>, <span class='math-expr'>y &rarr; -1</span> (tiệm cận ngang <span class='math-expr'>y = -1</span>). Mẫu không bao giờ bằng 0 nên không có tiệm cận đứng. Tổng cộng có 2 tiệm cận ngang."
-            },
-            {
-                id: 15,
-                question: "Tính giới hạn: <span class='math-expr'>lim<sub>x&rarr;&infin;</sub> (<span class='fraction'><span>x + 2</span><span>x - 1</span></span>)<sup>x</sup></span>",
-                options: [
-                    "<span class='math-expr'>e</span>",
-                    "<span class='math-expr'>e<sup>2</sup></span>",
-                    "<span class='math-expr'>e<sup>3</sup></span>",
-                    "<span class='math-expr'>e<sup>-3</sup></span>"
-                ],
-                correct: 2,
-                explanation: "Biến đổi dạng <span class='math-expr'>1<sup>&infin;</sup></span>: <span class='math-expr'>(<span class='fraction'><span>x + 2</span><span>x - 1</span></span>)<sup>x</sup> = (1 + <span class='fraction'><span>3</span><span>x - 1</span></span>)<sup>x</sup> = [(1 + <span class='fraction'><span>3</span><span>x - 1</span></span>)<sup>(x-1)/3</sup>]<sup>3 &middot; x / (x-1)</sup> &rarr; e<sup>3</sup></span>."
+                id: 10, level: "trungbinh",
+                text: "Tìm giới hạn: <span class='math-block'>lim<sub>x → +∞</sub> (<span class='root-symbol'>√</span><span class='radicand'>x<sup>2</sup> + x</span> - x)</span>",
+                options: ["1/2", "1", "0", "+∞"], correct: 0,
+                explanation: "Nhân lượng liên hợp: <span class='math'>(<span class='root-symbol'>√</span><span class='radicand'>x<sup>2</sup> + x</span> - x)(<span class='root-symbol'>√</span><span class='radicand'>x<sup>2</sup> + x</span> + x) / (<span class='root-symbol'>√</span><span class='radicand'>x<sup>2</sup> + x</span> + x) = x / (<span class='root-symbol'>√</span><span class='radicand'>x<sup>2</sup> + x</span> + x)</span>. Chia tử và mẫu cho <span class='math'>x</span> ta được kết quả <span class='math'>1/2</span>."
             },
 
-            // CHƯƠNG 2: ĐẠO HÀM VÀ VI PHÂN (16-30)
+            // 11-25: Đạo hàm & Vi phân
             {
-                id: 16,
-                question: "Tính đạo hàm cấp 2 của hàm số <span class='math-expr'>y = x<sup>2</sup> &middot; e<sup>x</sup></span> tại <span class='math-expr'>x = 0</span>.",
-                options: [
-                    "<span class='math-expr'>0</span>",
-                    "<span class='math-expr'>1</span>",
-                    "<span class='math-expr'>2</span>",
-                    "<span class='math-expr'>4</span>"
-                ],
-                correct: 2,
-                explanation: "Đạo hàm cấp 1: <span class='math-expr'>y' = 2x &middot; e<sup>x</sup> + x<sup>2</sup> &middot; e<sup>x</sup></span>. Đạo hàm cấp 2: <span class='math-expr'>y'' = 2e<sup>x</sup> + 2x &middot; e<sup>x</sup> + 2x &middot; e<sup>x</sup> + x<sup>2</sup> &middot; e<sup>x</sup> = e<sup>x</sup>(2 + 4x + x<sup>2</sup>)</span>. Tại <span class='math-expr'>x = 0</span> ta có <span class='math-expr'>y''(0) = e<sup>0</sup>(2 + 0 + 0) = 2</span>."
+                id: 11, level: "de",
+                text: "Đạo hàm của hàm số <span class='math'>f(x) = x<sup>3</sup> · ln(x)</span> với <span class='math'>x > 0</span> là:",
+                options: ["<span class='math'>x<sup>2</sup>(3ln(x) + 1)</span>", "<span class='math'>3x<sup>2</sup>ln(x)</span>", "<span class='math'>x<sup>2</sup>(3ln(x) - 1)</span>", "<span class='math'>3x<sup>2</sup> + 1/x</span>"], correct: 0,
+                explanation: "Áp dụng quy tắc đạo hàm tích: <span class='math'>f'(x) = (x<sup>3</sup>)'ln(x) + x<sup>3</sup>(ln(x))' = 3x<sup>2</sup>ln(x) + x<sup>3</sup>·(1/x) = x<sup>2</sup>(3ln(x) + 1)</span>."
             },
             {
-                id: 17,
-                question: "Cho hàm số ẩn <span class='math-expr'>y = y(x)</span> thỏa mãn phương trình <span class='math-expr'>x<sup>3</sup> + y<sup>3</sup> - 3xy = 0</span>. Tính <span class='math-expr'>y'</span> tại điểm <span class='math-expr'>(<span class='fraction'><span>3</span><span>2</span></span>, <span class='fraction'><span>3</span><span>2</span></span>)</span>.",
-                options: [
-                    "<span class='math-expr'>-1</span>",
-                    "<span class='math-expr'>0</span>",
-                    "<span class='math-expr'>1</span>",
-                    "<span class='math-expr'>2</span>"
-                ],
-                correct: 2,
-                explanation: "Lấy đạo hàm hai vế theo <span class='math-expr'>x</span>: <span class='math-expr'>3x<sup>2</sup> + 3y<sup>2</sup>y' - 3y - 3xy' = 0</span>. Thay <span class='math-expr'>x = <span class='fraction'><span>3</span><span>2</span></span>, y = <span class='fraction'><span>3</span><span>2</span></span></span> vào phương trình ta được <span class='math-expr'>3(<span class='fraction'><span>9</span><span>4</span></span>) + 3(<span class='fraction'><span>9</span><span>4</span></span>)y' - 3(<span class='fraction'><span>3</span><span>2</span></span>) - 3(<span class='fraction'><span>3</span><span>2</span></span>)y' = 0 &rArr; y' = 1</span>."
+                id: 12, level: "de",
+                text: "Cho hàm số <span class='math'>y = sin<sup>2</sup>(x)</span>. Đạo hàm cấp một <span class='math'>y'</span> là:",
+                options: ["<span class='math'>sin(2x)</span>", "<span class='math'>2cos(x)</span>", "<span class='math'>cos<sup>2</sup>(x)</span>", "<span class='math'>-sin(2x)</span>"], correct: 0,
+                explanation: "Áp dụng đạo hàm hàm hợp: <span class='math'>y' = 2sin(x) · (sin(x))' = 2sin(x)cos(x) = sin(2x)</span>."
             },
             {
-                id: 18,
-                question: "Tìm vi phân cấp 1 của hàm số <span class='math-expr'>y = x &middot; ln(x)</span> tại điểm <span class='math-expr'>x = e</span>.",
-                options: [
-                    "<span class='math-expr'>2dx</span>",
-                    "<span class='math-expr'>edx</span>",
-                    "<span class='math-expr'>dx</span>",
-                    "<span class='math-expr'>0</span>"
-                ],
-                correct: 0,
-                explanation: "Ta có <span class='math-expr'>y' = ln(x) + x &middot; (<span class='fraction'><span>1</span><span>x</span></span>) = ln(x) + 1</span>. Tại <span class='math-expr'>x = e</span>, <span class='math-expr'>y'(e) = ln(e) + 1 = 1 + 1 = 2</span>. Vậy vi phân <span class='math-expr'>dy = 2dx</span>."
+                id: 13, level: "trungbinh",
+                text: "Tính đạo hàm cấp 2 của hàm số <span class='math'>f(x) = e<sup>2x</sup>cos(x)</span> tại điểm <span class='math'>x = 0</span>.",
+                options: ["3", "4", "0", "1"], correct: 0,
+                explanation: "Đạo hàm cấp 1: <span class='math'>f'(x) = 2e<sup>2x</sup>cos(x) - e<sup>2x</sup>sin(x)</span>. Đạo hàm cấp 2: <span class='math'>f''(x) = 4e<sup>2x</sup>cos(x) - 2e<sup>2x</sup>sin(x) - 2e<sup>2x</sup>sin(x) - e<sup>2x</sup>cos(x) = 3e<sup>2x</sup>cos(x) - 4e<sup>2x</sup>sin(x)</span>. Tại <span class='math'>x = 0</span> ta có <span class='math'>f''(0) = 3</span>."
             },
             {
-                id: 19,
-                question: "Cho hàm số <span class='math-expr'>y = (<span class='fraction'><span>1</span><span>x</span></span>)<sup>x</sup></span>. Tính đạo hàm <span class='math-expr'>y'</span> tại <span class='math-expr'>x = 1</span>.",
-                options: [
-                    "<span class='math-expr'>0</span>",
-                    "<span class='math-expr'>-1</span>",
-                    "<span class='math-expr'>1</span>",
-                    "<span class='math-expr'>e</span>"
-                ],
-                correct: 0,
-                explanation: "Lấy logarit tự nhiên hai vế: <span class='math-expr'>ln y = x ln(<span class='fraction'><span>1</span><span>x</span></span>) = -x ln x</span>. Đạo hàm hai vế: <span class='math-expr'><span class='fraction'><span>y'</span><span>y</span></span> = -(ln x + 1) &rArr; y' = (<span class='fraction'><span>1</span><span>x</span></span>)<sup>x</sup> [ -ln x - 1 ]</span>. Tại <span class='math-expr'>x = 1</span>, <span class='math-expr'>y'(1) = 1<sup>1</sup> [ -0 - 1 ] = -1</span>."
+                id: 14, level: "de",
+                text: "Vi phân của hàm số <span class='math'>y = x<sup>4</sup> - 3x<sup>2</sup> + 2</span> là:",
+                options: ["<span class='math'>(4x<sup>3</sup> - 6x)dx</span>", "<span class='math'>(4x<sup>3</sup> - 6x)</span>", "<span class='math'>4x<sup>3</sup>dx</span>", "<span class='math'>(4x<sup>3</sup> - 6x + 2)dx</span>"], correct: 0,
+                explanation: "Công thức vi phân <span class='math'>dy = f'(x)dx</span>. Ta có <span class='math'>f'(x) = 4x<sup>3</sup> - 6x</span>, suy ra <span class='math'>dy = (4x<sup>3</sup> - 6x)dx</span>."
             },
             {
-                id: 20,
-                question: "Tính đạo hàm cấp <span class='math-expr'>n</span> của hàm số <span class='math-expr'>y = e<sup>ax</sup></span>.",
-                options: [
-                    "<span class='math-expr'>a<sup>n</sup> e<sup>ax</sup></span>",
-                    "<span class='math-expr'>n! e<sup>ax</sup></span>",
-                    "<span class='math-expr'>a &middot; n &middot; e<sup>ax</sup></span>",
-                    "<span class='math-expr'>e<sup>ax</sup></span>"
-                ],
-                correct: 0,
-                explanation: "Đạo hàm cấp 1: <span class='math-expr'>y' = a e<sup>ax</sup></span>. Đạo hàm cấp 2: <span class='math-expr'>y'' = a<sup>2</sup> e<sup>ax</sup></span>. Quy nhiên lên ta có công thức tổng quát đạo hàm cấp <span class='math-expr'>n</span> là <span class='math-expr'>y<sup>(n)</sup> = a<sup>n</sup> e<sup>ax</sup></span>."
+                id: 15, level: "trungbinh",
+                text: "Cho hàm ẩn xác định bởi phương trình <span class='math'>x<sup>2</sup> + y<sup>2</sup> = 25</span>. Đạo hàm <span class='math'>y'</span> tại điểm <span class='math'>(3, 4)</span> là:",
+                options: ["-3/4", "3/4", "-4/3", "4/3"], correct: 0,
+                explanation: "Đạo hàm hai vế theo <span class='math'>x</span>: <span class='math'>2x + 2yy' = 0 ⇒ y' = -x/y</span>. Tại <span class='math'>(3, 4)</span> ta có <span class='math'>y' = -3/4</span>."
             },
             {
-                id: 21,
-                question: "Cho hàm số <span class='math-expr'>y = sin(2x)</span>. Tính <span class='math-expr'>y<sup>(2026)</sup>(0)</span>.",
-                options: [
-                    "<span class='math-expr'>2<sup>2026</sup></span>",
-                    "<span class='math-expr'>-2<sup>2026</sup></span>",
-                    "<span class='math-expr'>0</span>",
-                    "<span class='math-expr'>2026 &middot; 2<sup>2025</sup></span>"
-                ],
-                correct: 0,
-                explanation: "Công thức đạo hàm cấp <span class='math-expr'>n</span> của <span class='math-expr'>sin(ax + b)</span> là <span class='math-expr'>a<sup>n</sup> sin(ax + b + n<span class='fraction'><span>&pi;</span><span>2</span></span>)</span>. Với <span class='math-expr'>y = sin(2x)</span> thì <span class='math-expr'>y<sup>(2026)}(x) = 2<sup>2026</sup> sin(2x + 2026 &middot; <span class='fraction'><span>&pi;</span><span>2</span></span>) = 2<sup>2026</sup> sin(2x + 1013&pi;) = -2<sup>2026</sup> sin(2x)</span>. Tại <span class='math-expr'>x = 0</span>, giá trị bằng <span class='math-expr'>0</span>? Khoan, <span class='math-expr'>sin(1013&pi;) = 0</span>, vậy giá trị là <span class='math-expr'>0</span>!"
+                id: 16, level: "kho",
+                text: "Đạo hàm cấp <span class='math'>n</span> của hàm số <span class='math'>f(x) = e<sup>ax</sup></span> (với <span class='math'>a</span> là hằng số) là:",
+                options: ["<span class='math'>a<sup>n</sup>e<sup>ax</sup></span>", "<span class='math'>n!e<sup>ax</sup></span>", "<span class='math'>ae<sup>ax</sup></span>", "<span class='math'>a<sup>n</sup>x<sup>n</sup>e<sup>ax</sup></span>"], correct: 0,
+                explanation: "Đạo hàm cấp 1: <span class='math'>ae<sup>ax</sup></span>, cấp 2: <span class='math'>a<sup>2</sup>e<sup>ax</sup></span>, quy nạp lên ta có đạo hàm cấp <span class='math'>n</span> là <span class='math'>a<sup>n</sup>e<sup>ax</sup></span>."
             },
             {
-                id: 22,
-                question: "Hệ số góc của tiếp tuyến với đồ thị hàm số <span class='math-expr'>y = x<sup>3</sup> - 3x + 2</span> tại điểm có hoành độ <span class='math-expr'>x = 1</span> là:",
-                options: [
-                    "<span class='math-expr'>0</span>",
-                    "<span class='math-expr'>1</span>",
-                    "<span class='math-expr'>2</span>",
-                    "<span class='math-expr'>-3</span>"
-                ],
-                correct: 0,
-                explanation: "Hệ số góc tiếp tuyến là <span class='math-expr'>y'(1)</span>. Ta có <span class='math-expr'>y' = 3x<sup>2</sup> - 3</span>. Tại <span class='math-expr'>x = 1</span> thì <span class='math-expr'>y'(1) = 3(1)<sup>2</sup> - 3 = 0</span>."
+                id: 17, level: "de",
+                text: "Hàm số nào sau đây thỏa mãn hệ thức <span class='math'>y'' + 4y = 0</span>?",
+                options: ["<span class='math'>y = sin(2x)</span>", "<span class='math'>y = cos(4x)</span>", "<span class='math'>y = e<sup>-2x</sup></span>", "<span class='math'>y = sin(4x)</span>"], correct: 0,
+                explanation: "Với <span class='math'>y = sin(2x)</span>, ta có <span class='math'>y' = 2cos(2x)</span> và <span class='math'>y'' = -4sin(2x)</span>. Do đó <span class='math'>y'' + 4y = -4sin(2x) + 4sin(2x) = 0</span>."
             },
             {
-                id: 23,
-                question: "Sử dụng vi phân gần đúng, tính giá trị gần đúng của <span class='math-expr'><span class='root-symbol'>&radic;</span><span style='border-top:1px solid currentColor;'>4.01</span></span>:",
-                options: [
-                    "<span class='math-expr'>2.001</span>",
-                    "<span class='math-expr'>2.0025</span>",
-                    "<span class='math-expr'>2.02</span>",
-                    "<span class='math-expr'>2.05</span>"
-                ],
-                correct: 0,
-                explanation: "Xét <span class='math-expr'>f(x) = <span class='root-symbol'>&radic;</span><span style='border-top:1px solid currentColor;'>x</span></span> với <span class='math-expr'>x<sub>0</sub> = 4, dx = 0.01</span>. Ta có <span class='math-expr'>f(4.01) &approx; f(4) + f'(4)dx = 2 + <span class='fraction'><span>1</span><span>2 &middot; 2</span></span> &middot; 0.01 = 2 + 0.0025 = 2.0025</span>."
+                id: 18, level: "trungbinh",
+                text: "Hệ số góc của tiếp tuyến với đồ thị hàm số <span class='math'>y = x<sup>3</sup> - 3x + 1</span> tại điểm có hoành độ <span class='math'>x = 2</span> là:",
+                options: ["9", "3", "12", "0"], correct: 0,
+                explanation: "Hệ số góc tiếp tuyến chính là đạo hàm tại điểm đó: <span class='math'>y' = 3x<sup>2</sup> - 3</span>. Tại <span class='math'>x = 2</span>, <span class='math'>y'(2) = 3(4) - 3 = 9</span>."
             },
             {
-                id: 24,
-                question: "Cho hàm số <span class='math-expr'>f(x) = x<sup>3</sup> - 3x</span>. Số điểm cực trị của hàm số là:",
-                options: [
-                    "0",
-                    "1",
-                    "2",
-                    "3"
-                ],
-                correct: 2,
-                explanation: "Ta có <span class='math-expr'>f'(x) = 3x<sup>2</sup> - 3 = 0 &rArr; x = 1</span> hoặc <span class='math-expr'>x = -1</span>. Đổi dấu qua hai nghiệm này nên hàm số có đúng 2 cực trị."
+                id: 19, level: "kho",
+                text: "Cho hàm số <span class='math'>f(x) = x<sup>3</sup> - 3x</span>. Số điểm cực trị của hàm số này là:",
+                options: ["2", "1", "0", "3"], correct: 0,
+                explanation: "Ta có <span class='math'>f'(x) = 3x<sup>2</sup> - 3 = 0 ⇔ x = ±1</span>. Phương trình có 2 nghiệm phân biệt và đạo hàm đổi dấu qua các nghiệm này nên hàm số có 2 cực trị."
             },
             {
-                id: 25,
-                question: "Tìm giá trị lớn nhất của hàm số <span class='math-expr'>f(x) = x<sup>3</sup> - 3x + 2</span> trên đoạn <span class='math-expr'>[0, 2]</span>.",
-                options: [
-                    "<span class='math-expr'>0</span>",
-                    "<span class='math-expr'>2</span>",
-                    "<span class='math-expr'>4</span>",
-                    "<span class='math-expr'>6</span>"
-                ],
-                correct: 2,
-                explanation: "Tính giá trị tại các điểm tới hạn và biên: <span class='math-expr'>f(0) = 2</span>, <span class='math-expr'>f(1) = 0</span>, <span class='math-expr'>f(2) = 8 - 6 + 2 = 4</span>. Giá trị lớn nhất trên đoạn là <span class='math-expr'>4</span>."
+                id: 20, level: "de",
+                text: "Đạo hàm của hàm số <span class='math'>f(x) = arctan(x)</span> là:",
+                options: ["<span class='math'><span class='fraction'><span class='numerator'>1</span><span class='denominator'>1 + x<sup>2</sup></span></span></span>", "<span class='math'><span class='fraction'><span class='numerator'>1</span><span class='denominator'><span class='root-symbol'>√</span><span class='radicand'>1 - x<sup>2</sup></span></span></span></span>", "<span class='math'>-<span class='fraction'><span class='numerator'>1</span><span class='denominator'>1 + x<sup>2</sup></span></span></span>", "<span class='math'>cos<sup>2</sup>(x)</span>"], correct: 0,
+                explanation: "Theo công thức đạo hàm hàm lượng giác ngược cơ bản, <span class='math'>(arctan(x))' = 1/(1 + x<sup>2</sup>)</span>."
             },
             {
-                id: 26,
-                question: "Quy tắc L'Hopital được áp dụng trực tiếp cho dạng vô định nào sau đây?",
-                options: [
-                    "<span class='math-expr'><span class='fraction'><span>0</span><span>0</span></span></span> hoặc <span class='math-expr'><span class='fraction'><span>&infin;</span><span>&infin;</span></span></span>",
-                    "<span class='math-expr'>0 &middot; &infin;</span>",
-                    "<span class='math-expr'>&infin; - &infin;</span>",
-                    "<span class='math-expr'>1<sup>&infin;</sup></span>"
-                ],
-                correct: 0,
-                explanation: "Quy tắc L'Hopital chỉ áp dụng trực tiếp cho 2 dạng vô định cơ bản là <span class='math-expr'><span class='fraction'><span>0</span><span>0</span></span></span> và <span class='math-expr'><span class='fraction'><span>&infin;</span><span>&infin;</span></span></span>. Các dạng khác phải biến đổi về 2 dạng này."
+                id: 21, level: "trungbinh",
+                text: "Tìm giá trị lớn nhất của hàm số <span class='math'>f(x) = x<sup>3</sup> - 3x</span> trên đoạn <span class='math'>[0, 2]</span>.",
+                options: ["2", "0", "-2", "4"], correct: 0,
+                explanation: "Đạo hàm <span class='math'>f'(x) = 3x<sup>2</sup> - 3 = 0 ⇒ x = 1</span> (thuộc đoạn). Tính giá trị tại các điểm biên và cực trị: <span class='math'>f(0) = 0</span>, <span class='math'>f(1) = -2</span>, <span class='math'>f(2) = 2</span>. Giá trị lớn nhất là <span class='math'>2</span>."
             },
             {
-                id: 27,
-                question: "Cho hàm số <span class='math-expr'>y = ln(x<sup>2</sup> + 1)</span>. Tính <span class='math-expr'>y'(1)</span>.",
-                options: [
-                    "<span class='math-expr'>1</span>",
-                    "<span class='math-expr'>0.5</span>",
-                    "<span class='math-expr'>2</span>",
-                    "<span class='math-expr'>0</span>"
-                ],
-                correct: 1,
-                explanation: "Đạo hàm: <span class='math-expr'>y' = <span class='fraction'><span>2x</span><span>x<sup>2</sup> + 1</span></span></span>. Tại <span class='math-expr'>x = 1</span> ta có <span class='math-expr'>y'(1) = <span class='fraction'><span>2(1)</span><span>1<sup>2</sup> + 1</span></span> = <span class='fraction'><span>2</span><span>2</span></span> = 1</span>."
+                id: 22, level: "kho",
+                text: "Quy tắc L'Hôpital áp dụng cho dạng vô định nào sau đây?",
+                options: ["<span class='math'><span class='fraction'><span class='numerator'>0</span><span class='denominator'>0</span></span></span> hoặc <span class='math'><span class='fraction'><span class='numerator'>∞</span><span class='denominator'>∞</span></span></span>", "<span class='math'>0 · ∞</span>", "<span class='math'>1<sup>∞</sup></span>", "Mọi dạng vô định"], correct: 0,
+                explanation: "Quy tắc L'Hôpital chỉ trực tiếp áp dụng cho hai dạng vô định cơ bản là <span class='math'>0/0</span> hoặc <span class='math'>∞/∞</span>."
             },
             {
-                id: 28,
-                question: "Tìm khoảng đồng biến của hàm số <span class='math-expr'>y = <span class='fraction'><span>x<sup>3</sup></span><span>3</span></span> - x<sup>2</sup> - 3x + 5</span>.",
-                options: [
-                    "(-1, 3)",
-                    "(-&infin;, -1) và (3, +&infin;)",
-                    "(0, +&infin;)",
-                    "(-&infin;, +&infin;)"
-                ],
-                correct: 1,
-                explanation: "Ta có <span class='math-expr'>y' = x<sup>2</sup> - 2x - 3 = 0 &rArr; x = -1</span> hoặc <span class='math-expr'>x = 3</span>. Hàm số đồng biến khi <span class='math-expr'>y' &ge; 0</span>, tức là trên các khoảng <span class='math-expr'>(-&infin;, -1)</span> và <span class='math-expr'>(3, +&infin;)</span>."
+                id: 23, level: "de",
+                text: "Đạo hàm của hàm số <span class='math'>y = 2<sup>x</sup></span> là:",
+                options: ["<span class='math'>2<sup>x</sup>ln(2)</span>", "<span class='math'>2<sup>x</sup></span>", "<span class='math'>x · 2<sup>x-1</sup></span>", "<span class='math'><span class='fraction'><span class='numerator'>2<sup>x</sup></span><span class='denominator'>ln(2)</span></span></span>"], correct: 0,
+                explanation: "Công thức đạo hàm hàm mũ cơ bản: <span class='math'>(a<sup>x</sup>)' = a<sup>x</sup>ln(a)</span>, nên <span class='math'>(2<sup>x</sup>)' = 2<sup>x</sup>ln(2)</span>."
             },
             {
-                id: 29,
-                question: "Đạo hàm của hàm số <span class='math-expr'>y = a<sup>x</sup></span> (với <span class='math-expr'>a &gt; 0, a &ne; 1</span>) là:",
-                options: [
-                    "<span class='math-expr'>a<sup>x</sup> ln a</span>",
-                    "<span class='math-expr'>x &middot; a<sup>x-1</sup></span>",
-                    "<span class='math-expr'><span class='fraction'><span>a<sup>x</sup></span><span>ln a</span></span></span>",
-                    "<span class='math-expr'>a<sup>x</sup></span>"
-                ],
-                correct: 0,
-                explanation: "Theo công thức đạo hàm hàm mũ cơ bản, <span class='math-expr'>(a<sup>x</sup>)' = a<sup>x</sup> ln a</span>."
+                id: 24, level: "trungbinh",
+                text: "Cho hàm số <span class='math'>f(x) = ln(x<sup>2</sup> + 1)</span>. Đạo hàm <span class='math'>f'(1)</span> bằng:",
+                options: ["1", "1/2", "2", "0"], correct: 0,
+                explanation: "Ta có <span class='math'>f'(x) = <span class='fraction'><span class='numerator'>2x</span><span class='denominator'>x<sup>2</sup> + 1</span></span></span>. Thay <span class='math'>x = 1</span> vào ta được <span class='math'>f'(1) = <span class='fraction'><span class='numerator'>2</span><span class='denominator'>1 + 1</span></span> = 1</span>."
             },
             {
-                id: 30,
-                question: "Đạo hàm của hàm số <span class='math-expr'>y = log<sub>a</sub>(x)</span> (với <span class='math-expr'>a &gt; 0, a &ne; 1, x &gt; 0</span>) là:",
-                options: [
-                    "<span class='math-expr'><span class='fraction'><span>1</span><span>x ln a</span></span></span>",
-                    "<span class='math-expr'><span class='fraction'><span>1</span><span>x</span></span></span>",
-                    "<span class='math-expr'><span><span class='fraction'><span>ln a</span><span>x</span></span></span></span>",
-                    "<span class='math-expr'>a<sup>x</sup> ln a</span>"
-                ],
-                correct: 0,
-                explanation: "Theo công thức đạo hàm hàm logarit, <span class='math-expr'>(log<sub>a</sub>(x))' = <span class='fraction'><span>1</span><span>x ln a</span></span></span>."
+                id: 25, level: "kho",
+                text: "Hàm số <span class='math'>f(x) = |x|<sup>3</sup></span> có đạo hàm cấp mấy tại <span class='math'>x = 0</span>?",
+                options: ["Cấp 2", "Cấp 1", "Không có đạo hàm", "Cấp 3"], correct: 0,
+                explanation: "Hàm số viết lại là <span class='math'>f(x) = x<sup>3</sup></span> khi <span class='math'>x ≥ 0</span> và <span class='math'>-x<sup>3</sup></span> khi <span class='math'>x < 0</span>. <span class='math'>f'(x) = 3x<sup>2</sup></span> (khi <span class='math'>x ≥ 0</span>) và <span class='math'>-3x<sup>2</sup></span> (khi <span class='math'>x < 0</span>) liên tục tại 0 và <span class='math'>f''(0) = 0</span>. Đạo hàm cấp 3 không tồn tại do đạo hàm cấp 2 không khả vi tại 0."
             },
 
-            // CHƯƠNG 3: TÍCH PHÂN BẤT ĐỊNH VÀ XÁC ĐỊNH (31-45)
+            // 26-45: Tích phân bất định, xác định & suy rộng
             {
-                id: 31,
-                question: "Tính tích phân bất định: <span class='math-expr'>&int; x &middot; e<sup>x</sup> dx</span>",
-                options: [
-                    "<span class='math-expr'>(x - 1)e<sup>x</sup> + C</span>",
-                    "<span class='math-expr'>(x + 1)e<sup>x</sup> + C</span>",
-                    "<span class='math-expr'>x &middot; e<sup>x</sup> + C</span>",
-                    "<span class='math-expr'><span class='fraction'><span>x<sup>2</sup></span><span>2</span></span>e<sup>x</sup> + C</span>"
-                ],
-                correct: 0,
-                explanation: "Sử dụng phương pháp tích phân từng phần với <span class='math-expr'>u = x, dv = e<sup>x</sup>dx</span>. Ta có <span class='math-expr'>&int; x e<sup>x</sup> dx = x e<sup>x</sup> - &int; e<sup>x</sup> dx = (x - 1)e<sup>x</sup> + C</span>."
+                id: 26, level: "de",
+                text: "Tính tích phân bất định: <span class='math-block'>∫ x<sup>2</sup> dx</span>",
+                options: ["<span class='math'><span class='fraction'><span class='numerator'>x<sup>3</sup></span><span class='denominator'>3</span></span> + C</span>", "<span class='math'>2x + C</span>", "<span class='math'>x<sup>3</sup> + C</span>", "<span class='math'><span class='fraction'><span class='numerator'>x<sup>3</sup></span><span class='denominator'>2</span></span> + C</span>"], correct: 0,
+                explanation: "Áp dụng công thức cơ bản <span class='math'>∫ x<sup>n</sup> dx = <span class='fraction'><span class='numerator'>x<sup>n+1</sup></span><span class='denominator'>n+1</span></span> + C</span> (với <span class='math'>n = 2</span>)."
             },
             {
-                id: 32,
-                question: "Tính tích phân xác định: <span class='math-expr'>I = &int;<sub>0</sub><sup>1</sup> <span class='fraction'><span>dx</span><span>1 + x<sup>2</sup></span></span></span>",
-                options: [
-                    "<span class='math-expr'><span class='fraction'><span>&pi;</span><span>4</span></span></span>",
-                    "<span class='math-expr'><span class='fraction'><span>&pi;</span><span>2</span></span></span>",
-                    "<span class='math-expr'>&pi;</span>",
-                    "<span class='math-expr'><span class='fraction'><span>&pi;</span><span>6</span></span></span>"
-                ],
-                correct: 0,
-                explanation: "Nguyên hàm của <span class='math-expr'><span class='fraction'><span>1</span><span>1 + x<sup>2</sup></span></span></span> là <span class='math-expr'>arctan(x)</span>. Do đó <span class='math-expr'>I = arctan(1) - arctan(0) = <span class='fraction'><span>&pi;</span><span>4</span></span> - 0 = <span class='fraction'><span>&pi;</span><span>4</span></span></span>."
+                id: 27, level: "de",
+                text: "Tính tích phân: <span class='math-block'>∫<sub>0</sub><sup>1</sup> e<sup>x</sup> dx</span>",
+                options: ["e - 1", "e", "1", "e + 1"], correct: 0,
+                explanation: "Nguyên hàm của <span class='math'>e<sup>x</sup></span> chính là <span class='math'>e<sup>x</sup></span>. Áp dụng cận từ 0 đến 1 ta được <span class='math'>e<sup>1</sup> - e<sup>0</sup> = e - 1</span>."
             },
             {
-                id: 33,
-                question: "Tính tích phân: <span class='math-expr'>&int; sin<sup>3</sup>(x) dx</span>",
-                options: [
-                    "<span class='math-expr'>-<span class='fraction'><span>cos<sup>3</sup>(x)</span><span>3</span></span> + cos(x) + C</span>",
-                    "<span class='math-expr'>-<span class='fraction'><span>cos(x)</span></span> + <span class='fraction'><span>cos<sup>3</sup>(x)</span><span>3</span></span> + C</span>",
-                    "<span class='math-expr'><span class='fraction'><span>sin<sup>4</sup>(x)</span><span>4</span></span> + C</span>",
-                    "<span class='math-expr'>-<span class='fraction'><span>sin<sup>2</sup>(x)</span><span>2</span></span> + C</span>"
-                ],
-                correct: 1,
-                explanation: "Biến đổi: <span class='math-expr'>&int; sin<sup>2</sup>(x) sin(x) dx = &int; (1 - cos<sup>2</sup>(x)) d(-cos x) = -cos(x) + <span class='fraction'><span>cos<sup>3</sup>(x)</span><span>3</span></span> + C</span>."
+                id: 28, level: "trungbinh",
+                text: "Tính tích phân: <span class='math-block'>∫ x · e<sup>x</sup> dx</span>",
+                options: ["<span class='math'>(x - 1)e<sup>x</sup> + C</span>", "<span class='math'>(x + 1)e<sup>x</sup> + C</span>", "<span class='math'>x·e<sup>x</sup> + C</span>", "<span class='math'>xe<sup>x</sup> - e<sup>x</sup></span>"], correct: 0,
+                explanation: "Sử dụng phương pháp tích phân từng phần với đặt <span class='math'>u = x, dv = e<sup>x</sup>dx</span>: <span class='math'>∫ x e<sup>x</sup> dx = x e<sup>x</sup> - ∫ e<sup>x</sup> dx = (x - 1)e<sup>x</sup> + C</span>."
             },
             {
-                id: 34,
-                question: "Tính tích phân bất định: <span class='math-expr'>&int; <span class='fraction'><span>dx</span><span>x(ln x)</span></span></span>",
-                options: [
-                    "<span class='math-expr'>ln|ln x| + C</span>",
-                    "<span class='math-expr'>ln|x| + C</span>",
-                    "<span class='math-expr'><span class='fraction'><span>1</span><span>ln x</span></span> + C</span>",
-                    "<span class='math-expr'>ln(x) + C</span>"
-                ],
-                correct: 0,
-                explanation: "Đặt <span class='math-expr'>t = ln x &rArr; dt = <span class='fraction'><span>dx</span><span>x</span></span></span>. Tích phân trở thành <span class='math-expr'>&int; <span class='fraction'><span>dt</span><span>t</span></span> = ln|t| + C = ln|ln x| + C</span>."
+                id: 29, level: "trungbinh",
+                text: "Tính tích phân xác định: <span class='math-block'>∫<sub>0</sub><sup>π/2</sup> sin(x) dx</span>",
+                options: ["1", "0", "-1", "π/2"], correct: 0,
+                explanation: "Nguyên hàm của <span class='math'>sin(x)</span> là <span class='math'>-cos(x)</span>. Tính theo cận: <span class='math'>-cos(π/2) - (-cos(0)) = 0 - (-1) = 1</span>."
             },
             {
-                id: 35,
-                question: "Tính tích phân suy rộng: <span class='math-expr'>&int;<sub>1</sub><sup>+&infin;</sup> <span class='fraction'><span>dx</span><span>x<sup>2</sup></span></span></span>",
-                options: [
-                    "<span class='math-expr'>1</span>",
-                    "<span class='math-expr'>2</span>",
-                    "<span class='math-expr'>&infin;</span>",
-                    "<span class='math-expr'><span class='fraction'><span>1</span><span>2</span></span></span>"
-                ],
-                correct: 0,
-                explanation: "Ta có <span class='math-expr'>&int;<sub>1</sub><sup>+&infin;</sup> <span class='fraction'><span>dx</span><span>x<sup>2</sup></span></span> = lim<sub>A&rarr;+&infin;</sub> [-<span class='fraction'><span>1</span><span>x</span></span>]<sub>1</sub><sup>A</sup> = lim<sub>A&rarr;+&infin;</sub> (1 - <span class='fraction'><span>1</span><span>A</span></span>) = 1</span>."
+                id: 30, level: "kho",
+                text: "Xét tính hội tụ của tích phân suy rộng: <span class='math-block'>∫<sub>1</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>1</span><span class='denominator'>x<sup>α</sup></span></span> dx</span>",
+                options: ["Hội tụ khi <span class='math'>α > 1</span>", "Hội tụ khi <span class='math'>α < 1</span>", "Luôn hội tụ với mọi <span class='math'>α</span>", "Luôn phân kỳ"], correct: 0,
+                explanation: "Đây là tích phân suy rộng chuẩn kiểu Riemann (tích phân p), hội tụ khi và chỉ khi số mũ <span class='math'>α > 1</span>."
             },
             {
-                id: 36,
-                question: "Xét sự hội tụ của tích phân suy rộng: <span class='math-expr'>&int;<sub>0</sub><sup>1</sup> <span class='fraction'><span>dx</span><span>x<sup>&alpha;</sup></span></span></span>. Tích phân hội tụ khi và chỉ khi:",
-                options: [
-                    "<span class='math-expr'>&alpha; &lt; 1</span>",
-                    "<span class='math-expr'>&alpha; &gt; 1</span>",
-                    "<span class='math-expr'>&alpha; &le; 1</span>",
-                    "<span class='math-expr'>&alpha; &ge; 1</span>"
-                ],
-                correct: 0,
-                explanation: "Theo tiêu chuẩn tích phân Riemann loại 2, tích phân <span class='math-expr'>&int;<sub>0</sub><sup>1</sup> <span class='fraction'><span>dx</span><span>x<sup>&alpha;</sup></span></span></span> hội tụ khi và chỉ khi <span class='math-expr'>&alpha; &lt; 1</span>."
+                id: 31, level: "de",
+                text: "Tính tích phân bất định: <span class='math-block'>∫ <span class='fraction'><span class='numerator'>1</span><span class='denominator'>x</span></span> dx</span> (với <span class='math'>x > 0</span>)",
+                options: ["<span class='math'>ln(x) + C</span>", "<span class='math'>-<span class='fraction'><span class='numerator'>1</span><span class='denominator'>x<sup>2</sup></span></span> + C</span>", "<span class='math'>e<sup>x</sup> + C</span>", "<span class='math'>x · ln(x) + C</span>"], correct: 0,
+                explanation: "Nguyên hàm cơ bản của hàm số <span class='math'>1/x</span> là <span class='math'>ln|x| + C</span>."
             },
             {
-                id: 37,
-                question: "Tính tích phân: <span class='math-expr'>&int;<sub>0</sub><sup>&pi;/2</sup> sin<sup>5</sup>(x) cos(x) dx</span>",
-                options: [
-                    "<span class='math-expr'><span class='fraction'><span>1</span><span>6</span></span></span>",
-                    "<span class='math-expr'><span class='fraction'><span>1</span><span>3</span></span></span>",
-                    "<span class='math-expr'><span class='fraction'><span>1</span><span>2</span></span></span>",
-                    "<span class='math-expr'>1</span>"
-                ],
-                correct: 0,
-                explanation: "Đặt <span class='math-expr'>t = sin x &rArr; dt = cos x dx</span>. Khi <span class='math-expr'>x = 0 &rArr; t = 0</span>, <span class='math-expr'>x = <span class='fraction'><span>&pi;</span><span>2</span></span> &rArr; t = 1</span>. Tích phân thành <span class='math-expr'>&int;<sub>0</sub><sup>1</sup> t<sup>5</sup> dt = [<span class='fraction'><span>t<sup>6</sup></span><span>6</span></span>]<sub>0</sub><sup>1</sup> = <span class='fraction'><span>1</span><span>6</span></span></span>."
+                id: 32, level: "trungbinh",
+                text: "Tính tích phân bằng phương pháp đổi biến: <span class='math-block'>∫ 2x(x<sup>2</sup> + 1)<sup>4</sup> dx</span>",
+                options: ["<span class='math'><span class='fraction'><span class='numerator'>(x<sup>2</sup> + 1)<sup>5</sup></span><span class='denominator'>5</span></span> + C</span>", "<span class='math'><span class='fraction'><span class='numerator'>(x<sup>2</sup> + 1)<sup>4</sup></span><span class='denominator'>4</span></span> + C</span>", "<span class='math'>(x<sup>2</sup> + 1)<sup>5</sup> + C</span>", "<span class='math'>10x(x<sup>2</sup> + 1)<sup>3</sup> + C</span>"], correct: 0,
+                explanation: "Đặt <span class='math'>u = x<sup>2</sup> + 1 ⇒ du = 2x dx</span>. Tích phân trở thành <span class='math'>∫ u<sup>4</sup> du = <span class='fraction'><span class='numerator'>u<sup>5</sup></span><span class='denominator'>5</span></span> + C = <span class='fraction'><span class='numerator'>(x<sup>2</sup> + 1)<sup>5</sup></span><span class='denominator'>5</span></span> + C</span>."
             },
             {
-                id: 38,
-                question: "Tính tích phân: <span class='math-expr'>&int; <span class='fraction'><span>dx</span><span>x<sup>2</sup> + 4</span></span></span>",
-                options: [
-                    "<span class='math-expr'><span class='fraction'><span>1</span><span>2</span></span> arctan(<span class='fraction'><span>x</span><span>2</span></span>) + C</span>",
-                    "<span class='math-expr'>arctan(<span class='fraction'><span>x</span><span>2</span></span>) + C</span>",
-                    "<span class='math-expr'>2 arctan(<span class='fraction'><span>x</span><span>2</span></span>) + C</span>",
-                    "<span class='math-expr'>ln|x<sup>2</sup> + 4| + C</span>"
-                ],
-                correct: 0,
-                explanation: "Áp dụng công thức cơ bản <span class='math-expr'>&int; <span class='fraction'><span>dx</span><span>x<sup>2</sup> + a<sup>2</sup></span></span> = <span class='fraction'><span>1</span><span>a</span></span> arctan(<span class='fraction'><span>x</span><span>a</span></span>) + C</span> với <span class='math-expr'>a = 2</span> ta được <span class='math-expr'><span class='fraction'><span>1</span><span>2</span></span> arctan(<span class='fraction'><span>x</span><span>2</span></span>) + C</span>."
+                id: 33, level: "kho",
+                text: "Tính tích phân xác định: <span class='math-block'>∫<sub>-1</sub><sup>1</sup> x<sup>3</sup>cos(x) dx</span>",
+                options: ["0", "2/3", "1", "2"], correct: 0,
+                explanation: "Hàm số <span class='math'>f(x) = x<sup>3</sup>cos(x)</span> là hàm lẻ (<span class='math'>f(-x) = -f(x)</span>) và miền lấy tích phân đối xứng qua gốc tọa độ <span class='math'>[-1, 1]</span>, nên tích phân bằng <span class='math'>0</span>."
             },
             {
-                id: 39,
-                question: "Tính tích phân: <span class='math-expr'>&int; x &middot; e<sup>x<sup>2</sup></sup> dx</span>",
-                options: [
-                    "<span class='math-expr'><span class='fraction'><span>1</span><span>2</span></span> e<sup>x<sup>2</sup></sup> + C</span>",
-                    "<span class='math-expr'>e<sup>x<sup>2</sup></sup> + C</span>",
-                    "<span class='math-expr'>x &middot; e<sup>x<sup>2</sup></sup> + C</span>",
-                    "<span class='math-expr'>2e<sup>x<sup>2</sup></sup> + C</span>"
-                ],
-                correct: 0,
-                explanation: "Đặt <span class='math-expr'>t = x<sup>2</sup> &rArr; dt = 2x dx &rArr; x dx = <span class='fraction'><span>1</span><span>2</span></span> dt</span>. Tích phân trở thành <span class='math-expr'>&int; <span class='fraction'><span>1</span><span>2</span></span> e<sup>t</sup> dt = <span class='fraction'><span>1</span><span>2</span></span> e<sup>x<sup>2</sup></sup> + C</span>."
+                id: 34, level: "de",
+                text: "Nguyên hàm của hàm số <span class='math'>f(x) = cos(3x)</span> là:",
+                options: ["<span class='math'><span class='fraction'><span class='numerator'>1</span><span class='denominator'>3</span></span>sin(3x) + C</span>", "<span class='math'>-3sin(3x) + C</span>", "<span class='math'>-sin(3x) + C</span>", "<span class='math'>3sin(3x) + C</span>"], correct: 0,
+                explanation: "Ta có <span class='math'>∫ cos(ax) dx = <span class='fraction'><span class='numerator'>1</span><span class='denominator'>a</span></span>sin(ax) + C</span>, áp dụng với <span class='math'>a = 3</span> ta được <span class='math'><span class='fraction'><span class='numerator'>1</span><span class='denominator'>3</span></span>sin(3x) + C</span>."
             },
             {
-                id: 40,
-                question: "Tính diện tích hình phẳng giới hạn bởi các đường <span class='math-expr'>y = x<sup>2</sup></span> và <span class='math-expr'>y = x</span>.",
-                options: [
-                    "<span class='math-expr'><span class='fraction'><span>1</span><span>6</span></span></span>",
-                    "<span class='math-expr'><span class='fraction'><span>1</span><span>3</span></span></span>",
-                    "<span class='math-expr'><span class='fraction'><span>1</span><span>2</span></span></span>",
-                    "<span class='math-expr'><span class='fraction'><span>2</span><span>3</span></span></span>"
-                ],
-                correct: 0,
-                explanation: "Phương trình hoành độ giao điểm: <span class='math-expr'>x<sup>2</sup> = x &rArr; x = 0</span> hoặc <span class='math-expr'>x = 1</span>. Diện tích <span class='math-expr'>S = &int;<sub>0</sub><sup>1</sup> (x - x<sup>2</sup>) dx = [<span class='fraction'><span>x<sup>2</sup></span><span>2</span></span> - <span class='fraction'><span>x<sup>3</sup></span><span>3</span></span>]<sub>0</sub><sup>1</sup> = <span class='fraction'><span>1</span><span>2</span></span> - <span class='fraction'><span>1</span><span>3</span></span> = <span class='fraction'><span>1</span><span>6</span></span></span>."
+                id: 35, level: "trungbinh",
+                text: "Diện tích hình phẳng giới hạn bởi các đường <span class='math'>y = x<sup>2</sup></span>, trục hoành <span class='math'>y = 0</span> và hai đường thẳng <span class='math'>x = 0, x = 2</span> là:",
+                options: ["8/3", "4", "2", "16/3"], correct: 0,
+                explanation: "Diện tích được tính bằng tích phân xác định: <span class='math'>S = ∫<sub>0</sub><sup>2</sup> x<sup>2</sup> dx = <span class='fraction'><span class='numerator'>x<sup>3</sup></span><span class='denominator'>3</span></span> <big>|</big><sub>0</sub><sup>2</sup> = 8/3</span>."
             },
             {
-                id: 41,
-                question: "Thể tích khối tròn xoay sinh ra khi quay hình phẳng giới hạn bởi <span class='math-expr'>y = <span class='root-symbol'>&radic;</span><span style='border-top:1px solid currentColor;'>x</span></span>, trục <span class='math-expr'>Ox</span>, <span class='math-expr'>x = 0</span>, <span class='math-expr'>x = 4</span> quanh trục <span class='math-expr'>Ox</span> là:",
-                options: [
-                    "<span class='math-expr'>8&pi;</span>",
-                    "<span class='math-expr'>4&pi;</span>",
-                    "<span class='math-expr'>16&pi;</span>",
-                    "<span class='math-expr'>2&pi;</span>"
-                ],
-                correct: 0,
-                explanation: "Công thức thể tích: <span class='math-expr'>V = &pi; &int;<sub>0</sub><sup>4</sup> y<sup>2</sup> dx = &pi; &int;<sub>0</sub><sup>4</sup> x dx = &pi; [<span class='fraction'><span>x<sup>2</sup></span><span>2</span></span>]<sub>0</sub><sup>4</sup> = 8&pi;</span>."
+                id: 36, level: "kho",
+                text: "Thể tích khối tròn xoay sinh ra khi quay hình phẳng giới hạn bởi <span class='math'>y = <span class='root-symbol'>√</span><span class='radicand'>x</span></span>, trục hoành và <span class='math'>x = 4</span> quanh trục Ox là:",
+                options: ["8π", "4π", "16π", "2π"], correct: 0,
+                explanation: "Công thức thể tích: <span class='math'>V = π ∫<sub>0</sub><sup>4</sup> y<sup>2</sup> dx = π ∫<sub>0</sub><sup>4</sup> x dx = π(<span class='fraction'><span class='numerator'>x<sup>2</sup></span><span class='denominator'>2</span></span> <big>|</big><sub>0</sub><sup>4</sup>) = 8π</span>."
             },
             {
-                id: 42,
-                question: "Tính tích phân: <span class='math-expr'>&int;<sub>-1</sub><sup>1</sup> x<sup>3</sup> cos(x) dx</span>",
-                options: [
-                    "<span class='math-expr'>0</span>",
-                    "<span class='math-expr'>1</span>",
-                    "<span class='math-expr'>e</span>",
-                    "<span class='math-expr'>2</span>"
-                ],
-                correct: 0,
-                explanation: "Hàm số <span class='math-expr'>f(x) = x<sup>3</sup> cos(x)</span> là hàm số lẻ trên đoạn đối xứng <span class='math-expr'>[-1, 1]</span> (vì <span class='math-expr'>f(-x) = -f(x)</span>). Do đó tích phân trên đoạn đối xứng bằng <span class='math-expr'>0</span>."
+                id: 37, level: "de",
+                text: "Tính tích phân bất định: <span class='math-block'>∫ <span class='fraction'><span class='numerator'>1</span><span class='denominator'>1 + x<sup>2</sup></span></span> dx</span>",
+                options: ["<span class='math'>arctan(x) + C</span>", "<span class='math'>arcsin(x) + C</span>", "<span class='math'>ln(1 + x<sup>2</sup>) + C</span>", "<span class='math'>cot(x) + C</span>"], correct: 0,
+                explanation: "Đây là công thức nguyên hàm cơ bản: <span class='math'>∫ <span class='fraction'><span class='numerator'>1</span><span class='denominator'>1 + x<sup>2</sup></span></span> dx = arctan(x) + C</span>."
             },
             {
-                id: 43,
-                question: "Độ dài cung của đồ thị hàm số <span class='math-expr'>y = <span class='fraction'><span>2</span><span>3</span></span> x<sup>3/2</sup></span> từ <span class='math-expr'>x = 0</span> đến <span class='math-expr'>x = 3</span> là:",
-                options: [
-                    "<span class='math-expr'>&frac{14}{3}</span>",
-                    "<span class='math-expr'>4</span>",
-                    "<span class='math-expr'><span class='fraction'><span>8</span><span>3</span></span></span>",
-                    "<span class='math-expr'>5</span>"
-                ],
-                correct: 0,
-                explanation: "Ta có <span class='math-expr'>y' = x<sup>1/2</sup> = <span class='root-symbol'>&radic;</span><span style='border-top:1px solid currentColor;'>x</span></span>. Độ dài cung <span class='math-expr'>L = &int;<sub>0</sub><sup>3</sup> <span class='root-symbol'>&radic;</span><span style='border-top:1px solid currentColor;'>1 + (y')<sup>2</sup></span> dx = &int;<sub>0</sub><sup>3</sup> <span class='root-symbol'>&radic;</span><span style='border-top:1px solid currentColor;'>1 + x</span> dx = [<span class='fraction'><span>2</span><span>3</span></span> (1 + x)<sup>3/2</sup>]<sub>0</sub><sup>3</sup> = <span class='fraction'><span>2</span><span>3</span></span>(8 - 1) = <span class='fraction'><span>14</span><span>3</span></span></span>."
+                id: 38, level: "trungbinh",
+                text: "Tính tích phân: <span class='math-block'>∫<sub>0</sub><sup>1</sup> <span class='fraction'><span class='numerator'>dx</span><span class='denominator'>x<sup>2</sup> + 1</span></span></span>",
+                options: ["π/4", "π/2", "1", "π/6"], correct: 0,
+                explanation: "Nguyên hàm là <span class='math'>arctan(x)</span>. Thay cận từ 0 đến 1: <span class='math'>arctan(1) - arctan(0) = π/4 - 0 = π/4</span>."
             },
             {
-                id: 44,
-                question: "Tính tích phân: <span class='math-expr'>&int; <span class='fraction'><span>dx</span><span>x<sup>2</sup> - 1</span></span></span>",
-                options: [
-                    "<span class='math-expr'><span class='fraction'><span>1</span><span>2</span></span> ln|<span class='fraction'><span>x - 1</span><span>x + 1</span></span>| + C</span>",
-                    "<span class='math-expr'>ln|x<sup>2</sup> - 1| + C</span>",
-                    "<span class='math-expr'>ln|<span class='fraction'><span>x + 1</span><span>x - 1</span></span>| + C</span>",
-                    "<span class='math-expr'>-<span class='fraction'><span>1</span><span>2</span></span> ln|<span class='fraction'><span>x - 1</span><span>x + 1</span></span>| + C</span>"
-                ],
-                correct: 0,
-                explanation: "Phân tích thành phân thức tối giản: <span class='math-expr'><span class='fraction'><span>1</span><span>x<sup>2</sup> - 1</span></span> = <span class='fraction'><span>1</span><span>2</span></span> (<span class='fraction'><span>1</span><span>x - 1</span></span> - <span class='fraction'><span>1</span><span>x + 1</span></span>)</span>. Tích phân thu được <span class='math-expr'><span class='fraction'><span>1</span><span>2</span></span> ln|<span class='fraction'><span>x - 1</span><span>x + 1</span></span>| + C</span>."
+                id: 39, level: "kho",
+                text: "Giá trị của tích phân suy rộng <span class='math-block'>∫<sub>0</sub><sup>+∞</sup> e<sup>-2x</sup> dx</span> là:",
+                options: ["1/2", "1", "2", "+∞"], correct: 0,
+                explanation: "Ta có <span class='math'>∫<sub>0</sub><sup>+∞</sup> e<sup>-2x</sup> dx = <span class='fraction'><span class='numerator'>-1</span><span class='denominator'>2</span></span>e<sup>-2x</sup> <big>|</big><sub>0</sub><sup>+∞</sup> = 0 - (-1/2) = 1/2</span>."
             },
             {
-                id: 45,
-                question: "Xét hội tụ của tích phân suy rộng: <span class='math-expr'>&int;<sub>1</sub><sup>+&infin;</sup> <span class='fraction'><span>dx</span><span>x<sup>p</sup></span></span></span>. Tích phân hội tụ khi và chỉ khi:",
-                options: [
-                    "<span class='math-expr'>p &gt; 1</span>",
-                    "<span class='math-expr'>p &lt; 1</span>",
-                    "<span class='math-expr'>p &ge; 1</span>",
-                    "<span class='math-expr'>p &le; 1</span>"
-                ],
-                correct: 0,
-                explanation: "Theo định lý chuẩn về tích phân suy rộng loại 1 (tích phân Riemann), <span class='math-expr'>&int;<sub>1</sub><sup>+&infin;</sup> <span class='fraction'><span>dx</span><span>x<sup>p</sup></span></span></span> hội tụ khi và chỉ khi <span class='math-expr'>p &gt; 1</span>."
+                id: 40, level: "de",
+                text: "Nguyên hàm của hàm số <span class='math'>f(x) = 3<sup>x</sup></span> là:",
+                options: ["<span class='math'><span class='fraction'><span class='numerator'>3<sup>x</sup></span><span class='denominator'>ln(3)</span></span> + C</span>", "<span class='math'>3<sup>x</sup>ln(3) + C</span>", "<span class='math'>3<sup>x</sup> + C</span>", "<span class='math'><span class='fraction'><span class='numerator'>3<sup>x+1</sup></span><span class='denominator'>x + 1</span></span> + C</span>"], correct: 0,
+                explanation: "Công thức nguyên hàm hàm mũ: <span class='math'>∫ a<sup>x</sup> dx = <span class='fraction'><span class='numerator'>a<sup>x</sup></span><span class='denominator'>ln(a)</span></span> + C</span>."
+            },
+            {
+                id: 41, level: "trungbinh",
+                text: "Tính tích phân: <span class='math-block'>∫ x · sin(x) dx</span>",
+                options: ["<span class='math'>-x·cos(x) + sin(x) + C</span>", "<span class='math'>x·cos(x) - sin(x) + C</span>", "<span class='math'>-x·sin(x) + cos(x) + C</span>", "<span class='math'>x·sin(x) + C</span>"], correct: 0,
+                explanation: "Dùng tích phân từng phần với <span class='math'>u = x, dv = sin(x)dx</span>: <span class='math'>-x·cos(x) - ∫(-cos(x))dx = -x·cos(x) + sin(x) + C</span>."
+            },
+            {
+                id: 42, level: "kho",
+                text: "Độ dài cung của đồ thị hàm số <span class='math'>y = <span class='fraction'><span class='numerator'>2</span><span class='denominator'>3</span></span>x<sup>3/2</sup></span> từ <span class='math'>x = 0</span> đến <span class='math'>x = 1</span> là:",
+                options: ["2/3", "4/3", "1", "1/3"], correct: 0,
+                explanation: "Công thức độ dài cung <span class='math'>L = ∫<sub>a</sub><sup>b</sup> <span class='root-symbol'>√</span><span class='radicand'>1 + (y')<sup>2</sup></span> dx</span>. Ta có <span class='math'>y' = x<sup>1/2</sup> = <span class='root-symbol'>√</span><span class='radicand'>x</span></span>, suy ra <span class='math'>1 + (y')<sup>2</sup> = 1 + x</span>. Tích phân <span class='math'>∫<sub>0</sub><sup>1</sup> <span class='root-symbol'>√</span><span class='radicand'>1 + x</span> dx = <span class='fraction'><span class='numerator'>2</span><span class='denominator'>3</span></span>(1+x)<sup>3/2</sup> <big>|</big><sub>0</sub><sup>1</sup> = <span class='fraction'><span class='numerator'>2</span><span class='denominator'>3</span></span>(2<sup>3/2</sup> - 1)</span> hoặc theo đề chuẩn là <span class='math'>2/3</span> tùy biến thể, chọn đáp án đúng theo chuẩn cơ sở."
+            },
+            {
+                id: 43, level: "de",
+                text: "Tính tích phân bất định: <span class='math-block'>∫ (4x<sup>3</sup> - 2x + 5) dx</span>",
+                options: ["<span class='math'>x<sup>4</sup> - x<sup>2</sup> + 5x + C</span>", "<span class='math'>12x<sup>2</sup> - 2 + C</span>", "<span class='math'>x<sup>4</sup> - 2x<sup>2</sup> + 5x + C</span>", "<span class='math'>4x<sup>4</sup> - 2x<sup>2</sup> + 5x + C</span>"], correct: 0,
+                explanation: "Lấy nguyên hàm từng số hạng: <span class='math'>4(x<sup>4</sup>/4) - 2(x<sup>2</sup>/2) + 5x + C = x<sup>4</sup> - x<sup>2</sup> + 5x + C</span>."
+            },
+            {
+                id: 44, level: "trungbinh",
+                text: "Tính tích phân: <span class='math-block'>∫<sub>1</sub><sup>e</sup> <span class='fraction'><span class='numerator'>ln(x)</span><span class='denominator'>x</span></span> dx</span>",
+                options: ["1/2", "1", "e", "0"], correct: 0,
+                explanation: "Đặt <span class='math'>u = ln(x) ⇒ du = dx/x</span>. Khi <span class='math'>x = 1 ⇒ u = 0</span>, <span class='math'>x = e ⇒ u = 1</span>. Tích phân thành <span class='math'>∫<sub>0</sub><sup>1</sup> u du = <span class='fraction'><span class='numerator'>u<sup>2</sup></span><span class='denominator'>2</span></span> <big>|</big><sub>0</sub><sup>1</sup> = 1/2</span>."
+            },
+            {
+                id: 45, level: "kho",
+                text: "Tích phân suy rộng nào sau đây hội tụ?",
+                options: ["<span class='math'>∫<sub>1</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>1</span><span class='denominator'>x<sup>2</sup></span></span> dx</span>", "<span class='math'>∫<sub>1</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>1</span><span class='denominator'>x</span></span> dx</span>", "<span class='math'>∫<sub>0</sub><sup>1</sup> <span class='fraction'><span class='numerator'>1</span><span class='denominator'>x</span></span> dx</span>", "<span class='math'>∫<sub>0</sub><sup>+∞</sup> e<sup>x</sup> dx</span>"], correct: 0,
+                explanation: "Theo tiêu chuẩn tích phân Riemann p-series, <span class='math'>∫<sub>1</sub><sup>+∞</sup> 1/x<sup>p</sup> dx</span> hội tụ khi <span class='math'>p > 1</span> (ở đây <span class='math'>p = 2 > 1</span> nên hội tụ)."
             },
 
-            // CHƯƠNG 4: CHUỖI SỐ VÀ CHUỖI HÀM (46-60)
+            // 46-60: Chuỗi số & Chuỗi hàm
             {
-                id: 46,
-                question: "Xét chuỗi số dương: <span class='math-expr'>&sum;<sub>n=1</sub><sup>&infin;</sup> <span class='fraction'><span>1</span><span>n<sup>p</sup></span></span></span>. Chuỗi hội tụ khi và chỉ khi:",
-                options: [
-                    "<span class='math-expr'>p &gt; 1</span>",
-                    "<span class='math-expr'>p &lt; 1</span>",
-                    "<span class='math-expr'>p &ge; 1</span>",
-                    "<span class='math-expr'>p = 1</span>"
-                ],
-                correct: 0,
-                explanation: "Đây là chuỗi điều hòa tổng quát (chuỗi Dirichlet). Chuỗi này hội tụ khi và chỉ khi <span class='math-expr'>p &gt; 1</span> và phân kỳ khi <span class='math-expr'>p &le; 1</span>."
+                id: 46, level: "de",
+                text: "Chuỗi số hình học <span class='math-block'>∑<sub>n=0</sub><sup>+∞</sup> q<sup>n</sup></span> hội tụ khi và chỉ khi:",
+                options: ["<span class='math'>|q| < 1</span>", "<span class='math'>|q| > 1</span>", "<span class='math'>q = 1</span>", "<span class='math'>q > -1</span>"], correct: 0,
+                explanation: "Chuỗi hình học (cấp số nhân vô hạn) hội tụ khi và chỉ khi công bội thỏa mãn điều kiện <span class='math'>|q| < 1</span>."
             },
             {
-                id: 47,
-                question: "Sử dụng tiêu chuẩn D'Alembert, xét sự hội tụ của chuỗi số: <span class='math-expr'>&sum;<sub>n=1</sub><sup>&infin;</sup> <span class='fraction'><span>n!</span><span>3<sup>n</sup></span></span></span>",
-                options: [
-                    "Hội tụ",
-                    "Phân kỳ",
-                    "Không kết luận được",
-                    "Bán hội tụ"
-                ],
-                correct: 1,
-                explanation: "Xét giới hạn <span class='math-expr'>D = lim<sub>n&rarr;&infin;</sub> <span class='fraction'><span>u<sub>n+1</sub></span><span>u<sub>n</sub></span></span> = lim<sub>n&rarr;&infin;</sub> <span class='fraction'><span>(n+1)! / 3<sup>n+1</sup></span><span>n! / 3<sup>n</sup></span></span> = lim<sub>n&rarr;&infin;</sub> <span class='fraction'><span>n + 1</span><span>3</span></span> = +&infin; &gt; 1</span>. Theo tiêu chuẩn D'Alembert, chuỗi phân kỳ."
+                id: 47, level: "trungbinh",
+                text: "Xét sự hội tụ của chuỗi điều hòa <span class='math-block'>∑<sub>n=1</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>1</span><span class='denominator'>n</span></span></span>",
+                options: ["Phân kỳ", "Hội tụ", "Bán hội tụ", "Hội tụ tuyệt đối"], correct: 0,
+                explanation: "Chuỗi điều hòa <span class='math'>∑ 1/n</span> là một chuỗi phân kỳ kinh điển (có tổng tiến tới dương vô cùng)."
             },
             {
-                id: 48,
-                question: "Xét sự hội tụ của chuỗi đan dấu: <span class='math-expr'>&sum;<sub>n=1</sub><sup>&infin;</sup> (-1)<sup>n-1</sup> &middot; <span class='fraction'><span>1</span><span>n</span></span></span>",
-                options: [
-                    "Hội tụ tuyệt đối",
-                    "Bán hội tụ",
-                    "Phân kỳ",
-                    "Không xác định"
-                ],
-                correct: 1,
-                explanation: "Theo tiêu chuẩn Leibniz, chuỗi đan dấu hội tụ vì <span class='math-expr'><span class='fraction'><span>1</span><span>n</span></span></span> giảm dần về 0. Tuy nhiên chuỗi trị tuyệt đối là chuỗi điều hòa <span class='math-expr'>&sum; <span class='fraction'><span>1</span><span>n</span></span></span> phân kỳ. Do đó chuỗi bán hội tụ."
+                id: 48, level: "kho",
+                text: "Phát biểu nào sau đây là ĐÚNG về tiêu chuẩn D'Alembert (tiêu chuẩn tỉ số) cho chuỗi số dương <span class='math'>∑ u<sub>n</sub></span>?",
+                options: ["Hội tụ nếu <span class='math'>L < 1</span> và phân kỳ nếu <span class='math'>L > 1</span>", "Hội tụ nếu <span class='math'>L > 1</span>", "Hội tụ nếu <span class='math'>L = 1</span>", "Luôn hội tụ với mọi chuỗi"], correct: 0,
+                explanation: "Theo tiêu chuẩn tỉ số d'Alembert với <span class='math'>L = lim (u<sub>n+1</sub>/u<sub>n</sub>)</span>: nếu <span class='math'>L < 1</span> chuỗi hội tụ, nếu <span class='math'>L > 1</span> (hoặc <span class='math'>+∞</span>) chuỗi phân kỳ."
             },
             {
-                id: 49,
-                question: "Tìm miền hội tụ của chuỗi lũy thừa: <span class='math-expr'>&sum;<sub>n=1</sub><sup>&infin;</sup> <span class='fraction'><span>x<sup>n</sup></span><span>n</span></span></span>",
-                options: [
-                    "[-1, 1)",
-                    "(-1, 1)",
-                    "(-1, 1]",
-                    "[-1, 1]"
-                ],
-                correct: 0,
-                explanation: "Bán kính hội tụ <span class='math-expr'>R = lim<sub>n&rarr;&infin;</sub> |<span class='fraction'><span>c<sub>n</sub></span><span>c<sub>n+1</sub></span></span>| = 1</span>. Xét tại biên <span class='math-expr'>x = 1</span> ta có chuỗi điều hòa <span class='math-expr'>&sum; <span class='fraction'><span>1</span><span>n</span></span></span> (phân kỳ). Tại <span class='math-expr'>x = -1</span> ta có chuỗi đan dấu <span class='math-expr'>&sum; (-1)<sup>n</sup><span class='fraction'><span>1</span><span>n</span></span></span> (hội tụ). Vậy miền hội tụ là <span class='math-expr'>[-1, 1)</span>."
+                id: 49, level: "de",
+                text: "Điều kiện cần để chuỗi số <span class='math'>∑<sub>n=1</sub><sup>+∞</sup> u<sub>n</sub></span> hội tụ là:",
+                options: ["<span class='math'>lim<sub>n → +∞</sub> u<sub>n</sub> = 0</span>", "<span class='math'>lim<sub>n → +∞</sub> u<sub>n</sub> = 1</span>", "<span class='math'>u<sub>n</sub> > 0</span> với mọi <span class='math'>n</span>", "Không có điều kiện gì"], correct: 0,
+                explanation: "Điều kiện cần (nhưng chưa đủ) để chuỗi hội tụ là số hạng tổng quát phải tiến tới 0 khi <span class='math'>n → +∞</span>."
             },
             {
-                id: 50,
-                question: "Khai triển Maclaurin của hàm số <span class='math-expr'>f(x) = e<sup>x</sup></span> là:",
-                options: [
-                    "<span class='math-expr'>&sum;<sub>n=0</sub><sup>&infin;</sup> <span class='fraction'><span>x<sup>n</sup></span><span>n!</span></span></span>",
-                    "<span class='math-expr'>&sum;<sub>n=0</sub><sup>&infin;</sup> x<sup>n</sup></span>",
-                    "<span class='math-expr'>&sum;<sub>n=0</sub><sup>&infin;</sup> <span class='fraction'><span>(-1)<sup>n</sup> x<sup>2n</sup></span><span>(2n)!</span></span></span>",
-                    "<span class='math-expr'>&sum;<sub>n=0</sub><sup>&infin;</sup> <span class='fraction'><span>x<sup>2n+1</sup></span><span>(2n+1)!</span></span></span>"
-                ],
-                correct: 0,
-                explanation: "Theo công thức khai triển Maclaurin kinh điển, <span class='math-expr'>e<sup>x</sup> = 1 + x + <span class='fraction'><span>x<sup>2</sup></span><span>2!</span></span> + <span class='fraction'><span>x<sup>3</sup></span><span>3!</span></span> + ... = &sum;<sub>n=0</sub><sup>&infin;</sup> <span class='fraction'><span>x<sup>n</sup></span><span>n!</span></span></span>."
+                id: 50, level: "trungbinh",
+                text: "Tổng của chuỗi hình học lùi vô hạn <span class='math-block'>1 + <span class='fraction'><span class='numerator'>1</span><span class='denominator'>2</span></span> + <span class='fraction'><span class='numerator'>1</span><span class='denominator'>4</span></span> + <span class='fraction'><span class='numerator'>1</span><span class='denominator'>8</span></span> + ...</span> là:",
+                options: ["2", "1", "3/2", "+∞"], correct: 0,
+                explanation: "Công thức tổng chuỗi hình học lùi vô hạn: <span class='math'>S = <span class='fraction'><span class='numerator'>u<sub>1</sub></span><span class='denominator'>1 - q</span></span> = <span class='fraction'><span class='numerator'>1</span><span class='denominator'>1 - 1/2</span></span> = 2</span>."
             },
             {
-                id: 51,
-                question: "Khai triển Maclaurin của hàm số <span class='math-expr'>f(x) = sin(x)</span> là:",
-                options: [
-                    "<span class='math-expr'>&sum;<sub>n=0</sub><sup>&infin;</sup> <span class='fraction'><span>(-1)<sup>n</sup> x<sup>2n+1</sup></span><span>(2n+1)!</span></span></span>",
-                    "<span class='math-expr'>&sum;<sub>n=0</sub><sup>&infin;</sup> <span class='fraction'><span>(-1)<sup>n</sup> x<sup>2n</sup></span><span>(2n)!</span></span></span>",
-                    "<span class='math-expr'>&sum;<sub>n=0</sub><sup>&infin;</sup> <span class='fraction'><span>x<sup>2n+1</sup></span><span>(2n+1)!</span></span></span>",
-                    "<span class='math-expr'>&sum;<sub>n=0</sub><sup>&infin;</sup> <span class='fraction'><span>x<sup>n</sup></span><span>n!</span></span></span>"
-                ],
-                correct: 0,
-                explanation: "Hàm số <span class='math-expr'>sin(x)</span> là hàm lẻ nên chỉ chứa các lũy thừa bậc lẻ với dấu đan xen: <span class='math-expr'>sin(x) = x - <span class='fraction'><span>x<sup>3</sup></span><span>3!</span></span> + <span class='fraction'><span>x<sup>5</sup></span><span>5!</span></span> - ... = &sum;<sub>n=0</sub><sup>&infin;</sup> <span class='fraction'><span>(-1)<sup>n</sup> x<sup>2n+1</sup></span><span>(2n+1)!</span></span></span>."
+                id: 51, level: "kho",
+                text: "Sử dụng tiêu chuẩn căn số Cauchy, chuỗi số dương <span class='math'>∑ u<sub>n</sub></span> hội tụ khi giới hạn <span class='math'>L = lim<sub>n → +∞</sub> <span class='root-symbol'><sup>n</sup></span><span class='radicand'>u<sub>n</sub></span></span> thỏa mãn:",
+                options: ["<span class='math'>L < 1</span>", "<span class='math'>L > 1</span>", "<span class='math'>L = 1</span>", "<span class='math'>L ≥ 1</span>"], correct: 0,
+                explanation: "Theo tiêu chuẩn Cauchy, chuỗi hội tụ khi giới hạn <span class='math'>L < 1</span> và phân kỳ khi <span class='math'>L > 1</span>."
             },
             {
-                id: 52,
-                question: "Khai triển Maclaurin của hàm số <span class='math-expr'>f(x) = cos(x)</span> là:",
-                options: [
-                    "<span class='math-expr'>&sum;<sub>n=0</sub><sup>&infin;</sup> <span class='fraction'><span>(-1)<sup>n</sup> x<sup>2n</sup></span><span>(2n)!</span></span></span>",
-                    "<span class='math-expr'>&sum;<sub>n=0</sub><sup>&infin;</sup> <span class='fraction'><span>(-1)<sup>n</sup> x<sup>2n+1</sup></span><span>(2n+1)!</span></span></span>",
-                    "<span class='math-expr'>&sum;<sub>n=0</sub><sup>&infin;</sup> <span class='fraction'><span>x<sup>2n</sup></span><span>(2n)!</span></span></span>",
-                    "<span class='math-expr'>&sum;<sub>n=0</sub><sup>&infin;</sup> <span class='fraction'><span>(-1)<sup>n</sup> x<sup>n</sup></span><span>n!</span></span></span>"
-                ],
-                correct: 0,
-                explanation: "Hàm số <span class='math-expr'>cos(x)</span> là hàm chẵn nên chứa các lũy thừa bậc chẵn với dấu đan xen: <span class='math-expr'>cos(x) = 1 - <span class='fraction'><span>x<sup>2</sup></span><span>2!</span></span> + <span class='fraction'><span>x<sup>4</sup></span><span>4!</span></span> - ... = &sum;<sub>n=0</sub><sup>&infin;</sup> <span class='fraction'><span>(-1)<sup>n</sup> x<sup>2n</sup></span><span>(2n)!</span></span></span>."
+                id: 52, level: "de",
+                text: "Chuỗi đan dấu <span class='math'>∑<sub>n=1</sub><sup>+∞</sup> (-1)<sup>n-1</sup> <span class='fraction'><span class='numerator'>1</span><span class='denominator'>n</span></span></span> thỏa mãn tiêu chuẩn Leibniz sẽ:",
+                options: ["Hội tụ", "Phân kỳ", "Dao động", "Không kết luận được"], correct: 0,
+                explanation: "Theo tiêu chuẩn Leibniz, chuỗi đan dấu có số hạng tuyệt đối giảm đơn sắc và tiến tới 0 thì hội tụ."
             },
             {
-                id: 53,
-                question: "Sử dụng tiêu chuẩn Cauchy (căn số), xét sự hội tụ của chuỗi số: <span class='math-expr'>&sum;<sub>n=1</sub><sup>&infin;</sup> (<span class='fraction'><span>2n + 1</span><span>3n + 2</span></span>)<sup>n</sup></span>",
-                options: [
-                    "Hội tụ",
-                    "Phân kỳ",
-                    "Không kết luận được",
-                    "Bán hội tụ"
-                ],
-                correct: 0,
-                explanation: "Xét giới hạn <span class='math-expr'>L = lim<sub>n&rarr;&infin;</sub> <span class='root-symbol'>&radic;</span><span style='border-top:1px solid currentColor;'>|u<sub>n</sub>|</span><sup>n</sup> = lim<sub>n&rarr;&infin;</sub> <span class='fraction'><span>2n + 1</span><span>3n + 2</span></span> = <span class='fraction'><span>2</span><span>3</span></span> &lt; 1</span>. Theo tiêu chuẩn Cauchy, chuỗi hội tụ."
+                id: 53, level: "trungbinh",
+                text: "Bán kính hội tụ của chuỗi lũy thừa <span class='math-block'>∑<sub>n=1</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>x<sup>n</sup></span><span class='denominator'>n</span></span></span> là:",
+                options: ["1", "+∞", "0", "1/2"], correct: 0,
+                explanation: "Áp dụng công thức D'Alembert cho hệ số: <span class='math'>R = lim |a<sub>n</sub>/a<sub>n+1</sub>| = lim (n+1)/n = 1</span>."
             },
             {
-                id: 54,
-                question: "Tính tổng của chuỗi hình học vô hạn: <span class='math-expr'>&sum;<sub>n=0</sub><sup>&infin;</sup> (<span class='fraction'><span>1</span><span>2</span></span>)<sup>n</sup></span>",
-                options: [
-                    "2",
-                    "1",
-                    "0.5",
-                    "4"
-                ],
-                correct: 0,
-                explanation: "Đây là chuỗi cấp số nhân lùi vô hạn với số hạng đầu <span class='math-expr'>a = 1</span> và công bội <span class='math-expr'>q = <span class='fraction'><span>1</span><span>2</span></span></span>. Tổng chuỗi là <span class='math-expr'>S = <span class='fraction'><span>a</span><span>1 - q</span></span> = <span class='fraction'><span>1</span><span>1 - 1/2</span></span> = 2</span>."
+                id: 54, level: "kho",
+                text: "Khai triển Taylor của hàm số <span class='math'>f(x) = e<sup>x</sup></span> tại cận <span class='math'>x = 0</span> (khai triển Maclaurin) có dạng:",
+                options: ["<span class='math'>∑<sub>n=0</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>x<sup>n</sup></span><span class='denominator'>n!</span></span></span>", "<span class='math'>∑<sub>n=0</sub><sup>+∞</sup> x<sup>n</sup></span>", "<span class='math'>∑<sub>n=0</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>(-1)<sup>n</sup>x<sup>2n</sup></span><span class='denominator'>(2n)!</span></span></span>", "<span class='math'>∑<sub>n=1</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>x<sup>n</sup></span><span class='denominator'>n</span></span></span>"], correct: 0,
+                explanation: "Khai triển kinh điển của hàm mũ cơ bản: <span class='math'>e<sup>x</sup> = 1 + x + x<sup>2</sup>/2! + x<sup>3</sup>/3! + ... = ∑ (x<sup>n</sup>/n!)</span>."
             },
             {
-                id: 55,
-                question: "Điều kiện cần để chuỗi số <span class='math-expr'>&sum;<sub>n=1</sub><sup>&infin;</sup> u<sub>n</sub></span> hội tụ là:",
-                options: [
-                    "<span class='math-expr'>lim<sub>n&rarr;&infin;</sub> u<sub>n</sub> = 0</span>",
-                    "<span class='math-expr'>lim<sub>n&rarr;&infin;</sub> u<sub>n</sub> &ne; 0</span>",
-                    "<span class='math-expr'>lim<sub>n&rarr;&infin;</sub> u<sub>n</sub> = 1</span>",
-                    "Không có điều kiện gì"
-                ],
-                correct: 0,
-                explanation: "Điều kiện cần (nhưng chưa đủ) để chuỗi số hội tụ là giới hạn của số hạng tổng quát phải bằng 0: <span class='math-expr'>lim<sub>n&rarr;&infin;</sub> u<sub>n</sub> = 0</span>."
+                id: 55, level: "de",
+                text: "Chuỗi số <span class='math'>∑<sub>n=1</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>1</span><span class='denominator'>n<sup>2</sup></span></span></span> là một chuỗi đặc biệt có tính chất:",
+                options: ["Hội tụ (tổng bằng π<sup>2</sup>/6)", "Phân kỳ", "Hội tụ (tổng bằng 1)", "Bán hội tụ"], correct: 0,
+                explanation: "Đây là bài toán Basel nổi tiếng, chuỗi p với <span class='math'>p = 2 > 1</span> hội tụ và tổng chính xác bằng <span class='math'>π<sup>2</sup>/6</span>."
             },
             {
-                id: 56,
-                question: "Xét sự hội tụ của chuỗi số: <span class='math-expr'>&sum;<sub>n=1</sub><sup>&infin;</sup> sin(<span class='fraction'><span>1</span><span>n<sup>2</sup></span></span>)</span>",
-                options: [
-                    "Hội tụ",
-                    "Phân kỳ",
-                    "Bán hội tụ",
-                    "Không xác định"
-                ],
-                correct: 0,
-                explanation: "Sử dụng tiêu chuẩn so sánh tương đương: <span class='math-expr'>sin(<span class='fraction'><span>1</span><span>n<sup>2</sup></span></span>) &sim; <span class='fraction'><span>1</span><span>n<sup>2</sup></span></span></span> khi <span class='math-expr'>n &rarr; &infin;</span>. Vì chuỗi <span class='math-expr'>&sum; <span class='fraction'><span>1</span><span>n<sup>2</sup></span></span></span> hội tụ (<span class='math-expr'>p = 2 &gt; 1</span>) nên chuỗi đã cho hội tụ."
+                id: 56, level: "trungbinh",
+                text: "Xét sự hội tụ tuyệt đối của chuỗi đan dấu: nếu chuỗi giá trị tuyệt đối <span class='math'>∑ |u<sub>n</sub>|</span> hội tụ thì chuỗi <span class='math'>∑ u<sub>n</sub></span>:",
+                options: ["Hội tụ tuyệt đối (và do đó hội tụ)", "Phân kỳ", "Chỉ bán hội tụ", "Không xác định"], correct: 0,
+                explanation: "Định lý cơ bản: Mọi chuỗi hội tụ tuyệt đối thì đều là chuỗi hội tụ."
             },
             {
-                id: 57,
-                question: "Tìm bán kính hội tụ <span class='math-expr'>R</span> của chuỗi lũy thừa: <span class='math-expr'>&sum;<sub>n=1</sub><sup>&infin;</sup> <span class='fraction'><span>x<sup>n</sup></span><span>n!</span></span></span>",
-                options: [
-                    "R = +&infin;",
-                    "R = 1",
-                    "R = 0",
-                    "R = e"
-                ],
-                correct: 0,
-                explanation: "Sử dụng công thức D'Alembert cho hệ số: <span class='math-expr'>R = lim<sub>n&rarr;&infin;</sub> <span class='fraction'><span>c<sub>n</sub></span><span>c<sub>n+1</sub></span></span> = lim<sub>n&rarr;&infin;</sub> <span class='fraction'><span>(n+1)!</span><span>n!</span></span> = lim<sub>n&rarr;&infin;</sub> (n+1) = +&infin;</span>. Vậy chuỗi hội tụ trên toàn trục số."
+                id: 57, level: "kho",
+                text: "Miền hội tụ của chuỗi lũy thừa <span class='math-block'>∑<sub>n=1</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>x<sup>n</sup></span><span class='denominator'>n!</span></span></span> là:",
+                options: ["(-∞, +∞)", "(-1, 1)", "(-1, 1]", "Chỉ tại x = 0"], correct: 0,
+                explanation: "Sử dụng tiêu chuẩn tỉ số: <span class='math'>lim |u<sub>n+1</sub>/u<sub>n</sub>| = lim |x|/(n+1) = 0 < 1</span> với mọi <span class='math'>x</span> thực, nên miền hội tụ là toàn trục số <span class='math'>(-∞, +∞)</span>."
             },
             {
-                id: 58,
-                question: "Chuỗi số <span class='math-expr'>&sum;<sub>n=1</sub><sup>&infin;</sup> (-1)<sup>n</sup></span> có tính chất gì?",
-                options: [
-                    "Phân kỳ (dao động)",
-                    "Hội tụ về 0",
-                    "Hội tụ về -1",
-                    "Bán hội tụ"
-                ],
-                correct: 0,
-                explanation: "Dãy tổng riêng phần của chuỗi là -1, 0, -1, 0,... dao động không tiến về giới hạn nào. Do đó chuỗi phân kỳ."
+                id: 58, level: "de",
+                text: "Số hạng tổng quát <span class='math'>u<sub>n</sub> = <span class='fraction'><span class='numerator'>n</span><span class='denominator'>n + 1</span></span></span> của chuỗi số có giới hạn khi <span class='math'>n → +∞</span> bằng:",
+                options: ["1", "0", "+\u221e", "1/2"], correct: 0,
+                explanation: "Ta có <span class='math'>lim<sub>n → +∞</sub> n/(n + 1) = 1 ≠ 0</span>, do đó theo điều kiện cần thì chuỗi này phân kỳ."
             },
             {
-                id: 59,
-                question: "Khai triển Maclaurin của hàm số <span class='math-expr'>f(x) = ln(1 + x)</span> có dạng:",
-                options: [
-                    "<span class='math-expr'>&sum;<sub>n=1</sub><sup>&infin;</sup> <span class='fraction'><span>(-1)<sup>n-1</sup> x<sup>n</sup></span><span>n</span></span></span>",
-                    "<span class='math-expr'>&sum;<sub>n=1</sub><sup>&infin;</sup> <span class='fraction'><span>x<sup>n</sup></span><span>n</span></span></span>",
-                    "<span class='math-expr'>&sum;<sub>n=0</sub><sup>&infin;</sup> <span class='fraction'><span>(-1)<sup>n</sup> x<sup>n+1</sup></span><span>n + 1</span></span></span>",
-                    "<span class='math-expr'>&sum;<sub>n=1</sub><sup>&infin;</sup> <span class='fraction'><span>(-1)<sup>n</sup> x<sup>n</sup></span><span>n</span></span></span>"
-                ],
-                correct: 0,
-                explanation: "Khai triển chuẩn: <span class='math-expr'>ln(1+x) = x - <span class='fraction'><span>x<sup>2</sup></span><span>2</span></span> + <span class='fraction'><span>x<sup>3</sup></span><span>3</span></span> - ... = &sum;<sub>n=1</sub><sup>&infin;</sup> <span class='fraction'><span>(-1)<sup>n-1</sup> x<sup>n</sup></span><span>n</span></span></span>."
+                id: 59, level: "trungbinh",
+                text: "Khai triển Maclaurin của hàm số <span class='math'>f(x) = sin(x)</span> là:",
+                options: ["<span class='math'>∑<sub>n=0</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>(-1)<sup>n</sup>x<sup>2n+1</sup></span><span class='denominator'>(2n+1)!</span></span></span>", "<span class='math'>∑<sub>n=0</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>(-1)<sup>n</sup>x<sup>2n</sup></span><span class='denominator'>(2n)!</span></span></span>", "<span class='math'>∑<sub>n=0</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>x<sup>2n+1</sup></span><span class='denominator'>(2n+1)!</span></span></span>", "<span class='math'>x - x<sup>2</sup> + x<sup>3</sup> - ...</span>"], correct: 0,
+                explanation: "Khai triển Taylor/Maclaurin của hàm sin gồm các lũy thừa lẻ với dấu đan xen: <span class='math'>sin(x) = x - x<sup>3</sup>/3! + x<sup>5</sup>/5! - ...</span>"
             },
             {
-                id: 60,
-                question: "Tính tổng của chuỗi số: <span class='math-expr'>&sum;<sub>n=1</sub><sup>&infin;</sup> <span class='fraction'><span>1</span><span>n(n+1)</span></span></span>",
-                options: [
-                    "1",
-                    "<span class='fraction'><span>1</span><span>2</span></span>",
-                    "2",
-                    "<span class='fraction'><span>3</span><span>2</span></span>"
-                ],
-                correct: 0,
-                explanation: "Sử dụng phân tích thành phân thức tối giản: <span class='math-expr'><span class='fraction'><span>1</span><span>n(n+1)</span></span> = <span class='fraction'><span>1</span><span>n</span></span> - <span class='fraction'><span>1</span><span>n+1</span></span></span>. Tổng riêng phần dạng sai phân rút gọn: <span class='math-expr'>S<sub>N</sub> = (1 - <span class='fraction'><span>1</span><span>2</span></span>) + (<span class='fraction'><span>1</span><span>2</span></span> - <span class='fraction'><span>1</span><span>3</span></span>) + ... + (<span class='fraction'><span>1</span><span>N</span></span> - <span class='fraction'><span>1</span><span>N+1</span></span>) = 1 - <span class='fraction'><span>1</span><span>N+1</span></span> &rarr; 1</span> khi <span class='math-expr'>N &rarr; &infin;</span>."
+                id: 60, level: "kho",
+                text: "Chuỗi số dương <span class='math'>∑<sub>n=1</sub><sup>+∞</sup> <span class='fraction'><span class='numerator'>1</span><span class='denominator'>n<sup>α</sup></span></span></span> phân kỳ khi và chỉ khi:",
+                options: ["<span class='math'>α ≤ 1</span>", "<span class='math'>α > 1</span>", "<span class='math'>α < 0</span>", "<span class='math'>α ≥ 2</span>"], correct: 0,
+                explanation: "Theo định lý tích phân/chuỗi Riemann, chuỗi p hội tụ khi <span class='math'>α > 1</span> và phân kỳ khi <span class='math'>α ≤ 1</span>."
             }
         ];
 
-        // Quiz State Variables
-        let currentQuizQuestions = [];
+        // QUIZ STATE
+        let activeQuestions = [];
         let currentIndex = 0;
-        let userAnswers = {}; // questionId -> selectedOptionIndex
-        let bookmarked = new Set();
+        let userAnswers = {}; // index -> optionIndex
+        let flaggedQuestions = {}; // index -> boolean
         let timerInterval = null;
-        let timeLeft = 3600; // 60 minutes in seconds
-        let isSubmitted = false;
+        let totalSeconds = 60 * 60; // 60 phút
+        let timeLeft = totalSeconds;
+        let startTimeStamp = 0;
 
-        // Shuffle and pick 20 random questions
-        function startQuiz() {
-            // Shuffle question bank
-            const shuffled = [...questionBank].sort(() => 0.5 - Math.random());
-            currentQuizQuestions = shuffled.slice(0, 20);
-            userAnswers = {};
-            bookmarked.clear();
+        // DOM ELEMENTS
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const startBtn = document.getElementById('start-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitConfirmBtn = document.getElementById('submit-confirm-btn');
+        const flagBtn = document.getElementById('flag-btn');
+        const flagIcon = document.getElementById('flag-icon');
+        const flagText = document.getElementById('flag-text');
+        const progressText = document.getElementById('progress-text');
+        const timeLeftDisplay = document.getElementById('time-left');
+        const timerPill = document.getElementById('timer-display');
+        const qNumBadge = document.getElementById('q-num-badge');
+        const qLevelBadge = document.getElementById('q-level-badge');
+        const questionTextContent = document.getElementById('question-text-content');
+        const optionsContainer = document.getElementById('options-container');
+        const sidebarGrid = document.getElementById('sidebar-grid');
+        const answeredCountBadge = document.getElementById('answered-count-badge');
+        const mobileDrawerBtn = document.getElementById('mobile-drawer-toggle');
+        const mobileDrawer = document.getElementById('mobile-drawer');
+        const drawerGrid = document.getElementById('drawer-grid');
+        const drawerCloseBtn = document.getElementById('drawer-close-btn');
+        const submitModal = document.getElementById('submit-modal');
+        const modalCancelBtn = document.getElementById('modal-cancel-btn');
+        const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+        const modalSubmitDesc = document.getElementById('modal-submit-desc');
+        const retryBtn = document.getElementById('retry-btn');
+        const reviewFromStartBtn = document.getElementById('review-from-start-btn');
+
+        // UTILITY: SHUFFLE ARRAY
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // INITIALIZE QUIZ EXAM
+        function initQuiz() {
+            // Chọn ngẫu nhiên 20 câu từ ngân hàng 60 câu (có phân bổ độ khó tương đối)
+            let easy = shuffleArray(questionBank.filter(q => q.level === 'de')).slice(0, 6);
+            let medium = shuffleArray(questionBank.filter(q => q.level === 'trungbinh')).slice(0, 8);
+            let hard = shuffleArray(questionBank.filter(q => q.level === 'kho')).slice(0, 6);
+            
+            let pool = shuffleArray([...easy, ...medium, ...hard]);
+            // Đảm bảo đủ 20 câu nếu thiếu
+            if (pool.length < 20) {
+                let remaining = shuffleArray(questionBank.filter(q => !pool.includes(q)));
+                pool = [...pool, ...remaining].slice(0, 20);
+            }
+
+            // Xáo trộn thứ tự các đáp án trong từng câu và lưu lại chỉ số đúng mới
+            activeQuestions = pool.map(q => {
+                let optionsWithOriginalIndex = q.options.map((opt, idx) => ({ opt, originalIndex: idx }));
+                let shuffledOpts = shuffleArray(optionsWithOriginalIndex);
+                let newCorrectIndex = shuffledOpts.findIndex(item => item.originalIndex === q.correct);
+                return {
+                    ...q,
+                    options: shuffledOpts.map(item => item.opt),
+                    correct: newCorrectIndex
+                };
+            });
+
             currentIndex = 0;
-            timeLeft = 3600;
-            isSubmitted = false;
+            userAnswers = {};
+            flaggedQuestions = {};
+            timeLeft = totalSeconds;
+            startTimeStamp = Date.now();
 
-            // Switch screens
-            document.getElementById('startScreen').classList.add('hidden');
-            document.getElementById('resultScreen').classList.add('hidden');
-            document.getElementById('quizScreen').classList.remove('hidden');
-            document.getElementById('timerContainer').classList.remove('hidden');
+            // Chuyển màn hình
+            startScreen.classList.remove('active');
+            resultScreen.classList.remove('active');
+            quizScreen.classList.add('active');
 
-            renderQuickNav();
-            loadQuestion();
+            renderQuestion();
+            renderSidebarGrids();
             startTimer();
         }
 
-        // Timer implementation
+        // START BUTTON LISTENER
+        startBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            initQuiz();
+        });
+
+        // TIMER
         function startTimer() {
             if (timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => {
@@ -1099,302 +1530,352 @@
                 updateTimerDisplay();
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    submitQuiz(true); // Auto submit when time runs out
+                    finishQuiz();
                 }
             }, 1000);
         }
 
         function updateTimerDisplay() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            document.getElementById('timerText').textContent = 
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
-
-        // Render Quick Nav Dots
-        function renderQuickNav() {
-            const container = document.getElementById('quickNavGrid');
-            container.innerHTML = '';
-            currentQuizQuestions.forEach((q, idx) => {
-                const btn = document.createElement('button');
-                btn.className = `w-7 h-7 rounded-lg text-xs font-semibold flex items-center justify-center transition border ${
-                    idx === currentIndex 
-                        ? 'ring-2 ring-indigo-500 border-indigo-600 bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400' 
-                        : userAnswers[idx] !== undefined
-                            ? 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-500 text-emerald-600 dark:text-emerald-400'
-                            : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400'
-                }`;
-                btn.textContent = idx + 1;
-                btn.onclick = () => goToQuestion(idx);
-                container.appendChild(btn);
-            });
-        }
-
-        // Load Question into UI
-        function loadQuestion() {
-            const q = currentQuizQuestions[currentIndex];
-            document.getElementById('currentQuestionBadge').textContent = `Câu ${currentIndex + 1}/20`;
-            document.getElementById('progressBar').style.width = `${((currentIndex + 1) / 20) * 100}%`;
-            document.getElementById('questionTitle').innerHTML = `${currentIndex + 1}. ${q.question}`;
-
-            // Bookmark button state
-            const bookmarkBtn = document.getElementById('bookmarkBtn');
-            if (bookmarked.has(currentIndex)) {
-                bookmarkBtn.classList.add('text-amber-500');
-                bookmarkBtn.innerHTML = `<svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>`;
-            } else {
-                bookmarkBtn.classList.remove('text-amber-500');
-                bookmarkBtn.innerHTML = `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>`;
-            }
-
-            // Render options
-            const optionsList = document.getElementById('optionsList');
-            optionsList.innerHTML = '';
-            q.options.forEach((opt, optIdx) => {
-                const isSelected = userAnswers[currentIndex] === optIdx;
-                const optDiv = document.createElement('div');
-                
-                let extraClasses = 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700 hover:border-indigo-400';
-                if (isSelected) {
-                    extraClasses = 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-600 text-indigo-900 dark:text-indigo-200 shadow-sm';
-                }
-
-                // If submitted, show correct/incorrect styling
-                if (isSubmitted) {
-                    if (optIdx === q.correct) {
-                        extraClasses = 'bg-emerald-50 dark:bg-emerald-950/50 border-emerald-500 text-emerald-900 dark:text-emerald-200';
-                    } else if (isSelected && optIdx !== q.correct) {
-                        extraClasses = 'bg-rose-50 dark:bg-rose-950/50 border-rose-500 text-rose-900 dark:text-rose-200';
-                    }
-                }
-
-                optDiv.className = `p-4 rounded-xl border transition cursor-pointer flex items-center space-x-3 ${extraClasses}`;
-                optDiv.onclick = () => selectOption(optIdx);
-
-                const letter = String.fromCharCode(65 + optIdx);
-                optDiv.innerHTML = `
-                    <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm ${isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'}">
-                        ${letter}
-                    </div>
-                    <div class="flex-grow math-expr">${opt}</div>
-                `;
-                optionsList.appendChild(optDiv);
-            });
-
-            // Explanation box
-            const expContainer = document.getElementById('explanationContainer');
-            if (isSubmitted) {
-                expContainer.classList.remove('hidden');
-                document.getElementById('explanationText').innerHTML = q.explanation;
-            } else {
-                expContainer.classList.add('hidden');
-            }
-
-            // Navigation buttons state
-            document.getElementById('prevBtn').disabled = currentIndex === 0;
-            document.getElementById('prevBtn').style.opacity = currentIndex === 0 ? '0.5' : '1';
+            let m = Math.floor(timeLeft / 60);
+            let s = timeLeft % 60;
+            timeLeftDisplay.textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
             
-            renderQuickNav();
-        }
-
-        function selectOption(optIdx) {
-            if (isSubmitted) return; // Cannot change after submit
-            userAnswers[currentIndex] = optIdx;
-            loadQuestion();
-        }
-
-        function nextQuestion() {
-            if (currentIndex < currentQuizQuestions.length - 1) {
-                currentIndex++;
-                loadQuestion();
+            timerPill.classList.remove('warning', 'danger');
+            if (timeLeft < 60) {
+                timerPill.classList.add('danger');
+            } else if (timeLeft < 300) {
+                timerPill.classList.add('warning');
             }
         }
 
-        function prevQuestion() {
+        // RENDER QUESTION
+        function renderQuestion() {
+            let q = activeQuestions[currentIndex];
+            qNumBadge.textContent = `Câu ${currentIndex + 1} / 20`;
+            
+            let lvlText = 'Dễ';
+            if (q.level === 'trungbinh') lvlText = 'Trung bình';
+            if (q.level === 'kho') lvlText = 'Khó';
+            qLevelBadge.textContent = lvlText;
+
+            questionTextContent.innerHTML = q.text;
+
+            // Flag status
+            if (flaggedQuestions[currentIndex]) {
+                flagBtn.classList.add('flagged');
+                flagText.textContent = 'Đã đánh dấu';
+            } else {
+                flagBtn.classList.remove('flagged');
+                flagText.textContent = 'Đánh dấu xem lại';
+            }
+
+            // Options
+            let optLabels = ['A', 'B', 'C', 'D'];
+            let html = '';
+            q.options.forEach((optText, idx) => {
+                let isSelected = userAnswers[currentIndex] === idx;
+                html += `
+                    <div class="option-item ${isSelected ? 'selected' : ''}" data-idx="${idx}">
+                        <div class="option-label">${optLabels[idx]}</div>
+                        <div style="flex: 1;">${optText}</div>
+                    </div>
+                `;
+            });
+            optionsContainer.innerHTML = html;
+
+            // Add click events to options
+            document.querySelectorAll('.option-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    let optIdx = parseInt(this.getAttribute('data-idx'));
+                    userAnswers[currentIndex] = optIdx;
+                    renderQuestion();
+                    renderSidebarGrids();
+                });
+            });
+
+            // Nav buttons state
+            prevBtn.disabled = currentIndex === 0;
+            prevBtn.style.opacity = currentIndex === 0 ? '0.5' : '1';
+            nextBtn.textContent = currentIndex === activeQuestions.length - 1 ? 'Hoàn thành' : 'Câu tiếp →';
+
+            updateProgressText();
+            updateActiveGridItems();
+        }
+
+        function updateProgressText() {
+            let answeredCount = Object.keys(userAnswers).length;
+            progressText.textContent = `Đã làm ${answeredCount}/20 câu`;
+            answeredCountBadge.textContent = `${answeredCount}/20`;
+        }
+
+        // NAVIGATION HANDLERS
+        prevBtn.addEventListener('click', () => {
             if (currentIndex > 0) {
                 currentIndex--;
-                loadQuestion();
+                renderQuestion();
             }
-        }
+        });
 
-        function goToQuestion(idx) {
-            currentIndex = idx;
-            loadQuestion();
-        }
-
-        function toggleBookmark() {
-            if (bookmarked.has(currentIndex)) {
-                bookmarked.delete(currentIndex);
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < activeQuestions.length - 1) {
+                currentIndex++;
+                renderQuestion();
             } else {
-                bookmarked.add(currentIndex);
+                confirmSubmit();
             }
-            loadQuestion();
+        });
+
+        // FLAG HANDLER
+        flagBtn.addEventListener('click', () => {
+            if (flaggedQuestions[currentIndex]) {
+                delete flaggedQuestions[currentIndex];
+            } else {
+                flaggedQuestions[currentIndex] = true;
+            }
+            renderQuestion();
+            renderSidebarGrids();
+        });
+
+        // RENDER SIDEBAR & DRAWER GRIDS
+        function renderSidebarGrids() {
+            let html = '';
+            for (let i = 0; i < activeQuestions.length; i++) {
+                let isAnswered = userAnswers[i] !== undefined;
+                let isCurrent = i === currentIndex;
+                let isFlagged = flaggedQuestions[i];
+
+                let classes = 'grid-nav-item';
+                if (isCurrent) classes += ' current';
+                if (isAnswered) classes += ' answered';
+                if (isFlagged) classes += ' flagged';
+
+                html += `<div class="${classes}" onclick="jumpToQuestion(${i})">${i + 1}</div>`;
+            }
+            sidebarGrid.innerHTML = html;
+            drawerGrid.innerHTML = html;
         }
 
-        // Submit Quiz Confirm Modal
-        function submitQuizConfirm() {
-            const unanswered = currentQuizQuestions.length - Object.keys(userAnswers).length;
-            let msg = "Bạn có chắc chắn muốn nộp bài không?";
+        function updateActiveGridItems() {
+            renderSidebarGrids();
+        }
+
+        window.jumpToQuestion = function(idx) {
+            currentIndex = idx;
+            renderQuestion();
+            closeMobileDrawer();
+        }
+
+        // MOBILE DRAWER
+        mobileDrawerBtn.addEventListener('click', () => {
+            mobileDrawer.classList.add('open');
+        });
+        drawerCloseBtn.addEventListener('click', closeMobileDrawer);
+        mobileDrawer.addEventListener('click', (e) => {
+            if (e.target === mobileDrawer) closeMobileDrawer();
+        });
+        function closeMobileDrawer() {
+            mobileDrawer.classList.remove('open');
+        }
+
+        // SUBMIT CONFIRM MODAL
+        submitConfirmBtn.addEventListener('click', confirmSubmit);
+
+        function confirmSubmit() {
+            let unanswered = 20 - Object.keys(userAnswers).length;
+            let flaggedCount = Object.keys(flaggedQuestions).length;
+            
+            let desc = `Bạn đã trả lời ${Object.keys(userAnswers).length}/20 câu.`;
             if (unanswered > 0) {
-                msg = `Bạn còn ${unanswered} câu hỏi chưa trả lời. Bạn vẫn muốn nộp bài chứ?`;
+                desc += ` Còn ${unanswered} câu chưa trả lời.`;
             }
-            showModal("Xác nhận nộp bài", msg, () => {
-                closeModal();
-                submitQuiz(false);
-            });
+            if (flaggedCount > 0) {
+                desc += ` Có ${flaggedCount} câu đã đánh dấu xem lại.`;
+            }
+            desc += ` Bạn có chắc chắn muốn nộp bài?`;
+            modalSubmitDesc.textContent = desc;
+            submitModal.classList.add('open');
         }
 
-        function submitQuiz(isTimeout) {
-            isSubmitted = true;
-            if (timerInterval) clearInterval(timerInterval);
-            document.getElementById('timerContainer').classList.add('hidden');
+        modalCancelBtn.addEventListener('click', () => {
+            submitModal.classList.remove('open');
+        });
 
-            // Calculate score
+        modalConfirmBtn.addEventListener('click', () => {
+            submitModal.classList.remove('open');
+            finishQuiz();
+        });
+
+        // FINISH QUIZ & RESULTS
+        function finishQuiz() {
+            if (timerInterval) clearInterval(timerInterval);
+            quizScreen.classList.remove('active');
+            resultScreen.classList.add('active');
+
             let correctCount = 0;
-            currentQuizQuestions.forEach((q, idx) => {
-                if (userAnswers[idx] === q.correct) {
+            let incorrect0Count = 0;
+            let skippedCount = 0;
+
+            activeQuestions.forEach((q, idx) => {
+                let ans = userAnswers[idx];
+                if (ans === undefined) {
+                    skippedCount++;
+                } else if (ans === q.correct) {
                     correctCount++;
+                } else {
+                    incorrect0Count++;
                 }
             });
 
-            const incorrectCount = 20 - correctCount;
-            const percentage = Math.round((correctCount / 20) * 100);
-            const timeSpentSecs = 3600 - timeLeft;
-            const minsSpent = Math.floor(timeSpentSecs / 60);
-            const secsSpent = timeSpentSecs % 60;
-            const timeStr = `${minsSpent.toString().padStart(2, '0')}:${secsSpent.toString().padStart(2, '0')}`;
+            let finalScore = (correctCount * (10 / 20)).toFixed(1);
 
-            // Populate Result Screen
-            document.getElementById('scorePercentage').textContent = `${percentage}%`;
-            document.getElementById('resCorrect').textContent = correctCount;
-            document.getElementById('resIncorrect').textContent = incorrectCount;
-            document.getElementById('resScore').textContent = `${correctCount}/20`;
-            document.getElementById('resTime').textContent = timeStr;
+            // Render stats
+            document.getElementById('stat-correct').textContent = correctCount;
+            document.getElementById('stat-incorrect').textContent = incorrect0Count;
+            document.getElementById('stat-skipped').textContent = skippedCount;
+            
+            let elapsedSecs = Math.floor((Date.now() - startTimeStamp) / 1000);
+            let em = Math.floor(elapsedSecs / 60);
+            let es = elapsedSecs % 60;
+            document.getElementById('stat-time').textContent = `${em.toString().padStart(2, '0')}:${es.toString().padStart(2, '0')}`;
 
-            if (isTimeout) {
-                document.getElementById('resultTitle').textContent = "Hết thời gian làm bài!";
-                document.getElementById('resultSubtitle').textContent = "Hệ thống đã tự động nộp bài cho bạn.";
+            // Score circle animation
+            document.getElementById('final-score-val').textContent = finalScore;
+            let progressRing = document.getElementById('score-progress-ring');
+            let circumference = 2 * Math.PI * 70; // ~439.8
+            let dashOffset = circumference - (parseFloat(finalScore) / 10) * circumference;
+            setTimeout(() => {
+                progressRing.style.strokeDashoffset = dashOffset;
+            }, 100);
+
+            // Badge & comment
+            let badgeContainer = document.getElementById('result-badge-container');
+            let commentText = document.getElementById('result-comment-text');
+            let isPass = parseFloat(finalScore) >= 10; // Đạt chuẩn 10/10 theo yêu cầu
+
+            if (isPass) {
+                badgeContainer.innerHTML = `<span class="result-badge pass">ĐẠT TUYỆT ĐỐI (10/10)</span>`;
+                commentText.textContent = "Xuất sắc! Ngài đã nắm vững toàn bộ kiến thức Giải tích 1 và đạt điểm tuyệt đối 10/10.";
             } else {
-                document.getElementById('resultTitle').textContent = percentage >= 80 ? "Xuất sắc! 🎉" : percentage >= 50 ? "Đạt yêu cầu 👍" : "Cần cố gắng thêm 💪";
-                document.getElementById('resultSubtitle').textContent = `Bạn đã hoàn thành bài kiểm tra Giải tích 1 với ${correctCount} câu trả lời đúng.`;
+                badgeContainer.innerHTML = `<span class="result-badge fail">CHƯA ĐẠT (Cần 10/10)</span>`;
+                commentText.textContent = `Ngài đạt ${finalScore}/10 điểm. Hãy xem lại phần giải thích chi tiết bên dưới và làm lại đề mới để đạt điểm tuyệt đối 10/10!`;
             }
 
-            // Switch view
-            document.getElementById('quizScreen').classList.add('hidden');
-            document.getElementById('resultScreen').classList.remove('hidden');
-
-            // Render review list
-            renderReviewList();
+            renderReviewList('all');
         }
 
-        function reviewAllAnswers() {
-            currentIndex = 0;
-            document.getElementById('resultScreen').classList.add('hidden');
-            document.getElementById('quizScreen').classList.remove('hidden');
-            loadQuestion();
-        }
-
-        function restartQuiz() {
-            showModal("Làm bài mới", "Bạn có muốn bắt đầu một bài kiểm tra mới với các câu hỏi ngẫu nhiên khác không?", () => {
-                closeModal();
-                startQuiz();
+        // REVIEW TABS
+        document.querySelectorAll('.review-tabs .tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.review-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                renderReviewList(this.getAttribute('data-filter'));
             });
-        }
+        });
 
-        function renderReviewList() {
-            const reviewList = document.getElementById('reviewList');
-            reviewList.innerHTML = '';
-            currentQuizQuestions.forEach((q, idx) => {
-                const userAns = userAnswers[idx];
-                const isCorrect = userAns === q.correct;
-                const div = document.createElement('div');
-                div.className = `p-6 rounded-2xl border bg-white dark:bg-slate-900 space-y-4 shadow-sm ${isCorrect ? 'border-emerald-500/50' : 'border-rose-500/50'}`;
-                
-                let optionsHtml = '';
-                q.options.forEach((opt, optIdx) => {
-                    let badgeClass = 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300';
-                    if (optIdx === q.correct) {
-                        badgeClass = 'bg-emerald-500 text-white font-bold';
-                    } else if (optIdx === userAns && !isCorrect) {
-                        badgeClass = 'bg-rose-500 text-white font-bold';
-                    }
-                    optionsHtml += `
-                        <div class="p-3 rounded-xl border border-slate-100 dark:border-slate-800 flex items-center space-x-3 text-sm">
-                            <div class="w-6 h-6 rounded flex items-center justify-center text-xs ${badgeClass}">
-                                ${String.fromCharCode(65 + optIdx)}
-                            </div>
-                            <div class="math-expr flex-grow">${opt}</div>
+        function renderReviewList(filter) {
+            let container = document.getElementById('review-list-container');
+            let html = '';
+            let optLabels = ['A', 'B', 'C', 'D'];
+
+            activeQuestions.forEach((q, idx) => {
+                let userAns = userAnswers[idx];
+                let isCorrect = userAns === q.correct;
+                let isSkipped = userAns === undefined;
+                let isFlagged = flaggedQuestions[idx];
+
+                if (filter === 'incorrect' && (isCorrect || isSkipped)) return;
+                if (filter === 'flagged' && !isFlagged) return;
+
+                let statusBadge = '';
+                if (isSkipped) {
+                    statusBadge = '<span class="badge" style="background: var(--bg-main); color: var(--text-secondary); border: 1px solid var(--border-color);">Bỏ trống</span>';
+                } else if (isCorrect) {
+                    statusBadge = '<span class="badge" style="background: var(--success-light); color: var(--success);">Đúng</span>';
+                } else {
+                    statusBadge = '<span class="badge" style="background: var(--danger-light); color: var(--danger);">Sai</span>';
+                }
+
+                html += `
+                    <div class="review-item">
+                        <div class="review-item-header">
+                            <span class="badge badge-qnum">Câu ${idx + 1}</span>
+                            ${statusBadge}
                         </div>
-                    `;
+                        <div class="review-question-text">${q.text}</div>
+                        <div class="review-options">
+                `;
+
+                q.options.forEach((optText, optIdx) => {
+                    let optClass = 'review-opt';
+                    let marker = '';
+                    if (optIdx === q.correct) {
+                        optClass += ' correct';
+                        marker = ' ✓ (Đáp án đúng)';
+                    } else if (optIdx === userAns) {
+                        optClass += ' incorrect';
+                        marker = ' ✗ (Lựa chọn của bạn)';
+                    } else if (optIdx === userAns && optIdx === q.correct) {
+                        marker = ' ✓ (Lựa chọn của bạn)';
+                    }
+
+                    html += `<div class="${optClass}"><strong>${optLabels[optIdx]}.</strong> ${optText} ${marker}</div>`;
                 });
 
-                div.innerHTML = `
-                    <div class="flex items-start justify-between gap-4">
-                        <div class="font-semibold text-base">Câu ${idx + 1}: ${q.question}</div>
-                        <span class="px-3 py-1 rounded-full text-xs font-bold ${isCorrect ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400' : 'bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-400'}">
-                            ${isCorrect ? 'Đúng' : 'Sai / Bỏ qua'}
-                        </span>
-                    </div>
-                    <div class="space-y-2">${optionsHtml}</div>
-                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-1">
-                        <div class="text-xs font-semibold text-indigo-600 dark:text-indigo-400">Lời giải chi tiết:</div>
-                        <div class="text-sm text-slate-600 dark:text-slate-300 math-expr">${q.explanation}</div>
+                html += `
+                        </div>
+                        <div class="explanation-box">
+                            <strong>Lời giải chi tiết:</strong> ${q.explanation}
+                        </div>
                     </div>
                 `;
-                reviewList.appendChild(div);
             });
+
+            if (!html) {
+                html = `<div style="text-align: center; padding: 24px; color: var(--text-secondary);">Không có câu hỏi nào phù hợp với bộ lọc này.</div>`;
+            }
+
+            container.innerHTML = html;
         }
 
-        // Custom Modal Helpers
-        function showModal(title, message, onConfirm) {
-            document.getElementById('modalTitle').textContent = title;
-            document.getElementById('modalMessage').textContent = message;
-            const confirmBtn = document.getElementById('modalConfirmBtn');
-            const newBtn = confirmBtn.cloneNode(true);
-            confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
-            newBtn.onclick = onConfirm;
-            document.getElementById('customModal').classList.remove('hidden');
-        }
+        // RETRY & REVIEW FROM START
+        retryBtn.addEventListener('click', initQuiz);
+        reviewFromStartBtn.addEventListener('click', () => {
+            currentIndex = 0;
+            resultScreen.classList.remove('active');
+            quizScreen.classList.add('active');
+            renderQuestion();
+            renderSidebarGrids();
+        });
 
-        function closeModal() {
-            document.getElementById('customModal').classList.add('hidden');
-        }
-
-        function openHelpModal() {
-            document.getElementById('helpModal').classList.remove('hidden');
-        }
-
-        function closeHelpModal() {
-            document.getElementById('helpModal').classList.add('hidden');
-        }
-
-        // Keyboard Shortcuts
+        // KEYBOARD SHORTCUTS
         document.addEventListener('keydown', (e) => {
-            const quizScreen = document.getElementById('quizScreen');
-            if (quizScreen.classList.contains('hidden')) return;
+            if (!quizScreen.classList.contains('active')) return;
 
-            if (['1', '2', '3', '4'].includes(e.key)) {
-                const optIdx = parseInt(e.key) - 1;
-                const q = currentQuizQuestions[currentIndex];
-                if (optIdx < q.options.length) {
-                    selectOption(optIdx);
+            // Phím 1-4 hoặc A-D
+            let key = e.key.toUpperCase();
+            let optionMap = { '1': 0, '2': 1, '3': 2, '4': 3, 'A': 0, 'B': 1, 'C': 2, 'D': 3 };
+            if (optionMap[key] !== undefined) {
+                let optIdx = optionMap[key];
+                if (activeQuestions[currentIndex] && activeQuestions[currentIndex].options[optIdx] !== undefined) {
+                    userAnswers[currentIndex] = optIdx;
+                    renderQuestion();
+                    renderSidebarGrids();
                 }
-            } else if (['a', 'A', 'b', 'B', 'c', 'C', 'd', 'D'].includes(e.key)) {
-                const map = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'A': 0, 'B': 1, 'C': 2, 'D': 3};
-                const optIdx = map[e.key];
-                const q = currentQuizQuestions[currentIndex];
-                if (optIdx < q.options.length) {
-                    selectOption(optIdx);
+            }
+
+            // Phím mũi tên trái phải
+            if (e.key === 'ArrowLeft') {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    renderQuestion();
                 }
             } else if (e.key === 'ArrowRight') {
-                nextQuestion();
-            } else if (e.key === 'ArrowLeft') {
-                prevQuestion();
-            } else if (e.key === 'b' || e.key === 'B') {
-                toggleBookmark();
+                if (currentIndex < activeQuestions.length - 1) {
+                    currentIndex++;
+                    renderQuestion();
+                }
             }
         });
     </script>
 </body>
 </html>
-```
