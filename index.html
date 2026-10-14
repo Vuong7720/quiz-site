@@ -80,6 +80,7 @@
           e.topic && `<span class="badge topic">${escapeHtml(e.topic)}</span>`,
           e.questions && `<span class="badge">${escapeHtml(e.questions)} câu</span>`,
           e.minutes && `<span class="badge">⏱ ${escapeHtml(e.minutes)} phút</span>`,
+          e.locked && `<span class="badge">🔒 Có mật khẩu</span>`,
           e.createdAt && `<span class="badge">${new Date(e.createdAt).toLocaleDateString('vi-VN')}</span>`,
         ].filter(Boolean).join('');
         return `

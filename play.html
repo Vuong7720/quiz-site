@@ -13,6 +13,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
   <script src="theme.js"></script>
+  <script src="crypto.js"></script>
 </head>
 <body class="play">
   <div class="playbar">
@@ -29,6 +30,16 @@
   <iframe id="frame" class="play-frame" hidden
           sandbox="allow-scripts allow-forms allow-modals allow-popups allow-downloads"
           allow="fullscreen; clipboard-write"></iframe>
+  <div class="lock-wrap" id="lockBox" hidden>
+    <form class="card lock-card" id="lockForm">
+      <div class="lock-icon">🔒</div>
+      <h2 id="lockTitle">Bài thi được bảo vệ</h2>
+      <p class="hint">Nhập mật khẩu để vào làm bài.</p>
+      <input id="pw" type="password" placeholder="Mật khẩu" autocomplete="off" required>
+      <div id="pwError" class="lock-error" hidden>Sai mật khẩu, vui lòng thử lại.</div>
+      <button class="btn primary" id="pwBtn" type="submit">Vào làm bài</button>
+    </form>
+  </div>
   <div id="notfound" class="empty" hidden>
     <span class="big">😕</span>Không tìm thấy bài thi này.<br><br>
     <a class="btn primary" href="index.html">Về danh sách bài thi</a>
@@ -51,28 +62,75 @@
       $('notfound').hidden = false;
     }
 
+    const PW_KEY = 'quiz.pw.' + slug;
+    let payload = null;
+
+    function savedPassword() {
+      // Ưu tiên mật khẩu gắn trong link (#k=...), sau đó tới mật khẩu đã nhập trong tab này
+      const fromLink = new URLSearchParams(location.hash.slice(1)).get('k');
+      if (fromLink) history.replaceState(null, '', location.pathname + location.search);
+      try { return fromLink || sessionStorage.getItem(PW_KEY); } catch { return fromLink; }
+    }
+
+    async function unlock(pw) {
+      try {
+        const html = await QuizCrypto.decrypt(payload, pw);
+        try { sessionStorage.setItem(PW_KEY, pw); } catch {}
+        $('lockBox').hidden = true;
+        $('frame').srcdoc = html;
+        $('frame').hidden = false;
+        return true;
+      } catch {
+        try { sessionStorage.removeItem(PW_KEY); } catch {}
+        return false;
+      }
+    }
+
+    $('lockForm').onsubmit = async ev => {
+      ev.preventDefault();
+      $('pwBtn').disabled = true;
+      $('pwBtn').textContent = 'Đang mở...';
+      const ok = await unlock($('pw').value);
+      $('pwBtn').disabled = false;
+      $('pwBtn').textContent = 'Vào làm bài';
+      $('pwError').hidden = ok;
+      if (!ok) $('pw').select();
+    };
+
     async function init() {
       if (!/^[a-z0-9-]+$/.test(slug)) return notFound();
       const path = `exams/${slug}.html`;
-      const [exists, list] = await Promise.all([
-        fetch(path, { method: 'HEAD', cache: 'no-store' }).then(r => r.ok).catch(() => true),
+      const [html, list] = await Promise.all([
+        fetch(path, { cache: 'no-store' }).then(r => r.ok ? r.text() : null).catch(() => null),
         fetch('exams.json?t=' + Date.now()).then(r => r.ok ? r.json() : []).catch(() => []),
       ]);
-      if (!exists) return notFound();
+      if (html === null) return notFound();
       const info = (Array.isArray(list) ? list : []).find(e => e.slug === slug);
       const title = info?.title || slug;
       $('title').textContent = `${info?.icon ? info.icon + ' ' : ''}${title}`;
       document.title = title;
-      $('frame').src = path;
-      $('frame').hidden = false;
+
+      payload = QuizCrypto.readLocked(html);
+      if (!payload) {
+        $('frame').src = path;
+        $('frame').hidden = false;
+        return;
+      }
+      $('lockTitle').textContent = `🔒 ${title}`;
+      const pw = savedPassword();
+      if (pw && await unlock(pw)) return;
+      $('lockBox').hidden = false;
+      $('pw').focus();
     }
 
     $('copyBtn').onclick = async () => {
+      // Không bao giờ copy kèm mật khẩu
+      const link = location.origin + location.pathname + location.search;
       try {
-        await navigator.clipboard.writeText(location.href);
+        await navigator.clipboard.writeText(link);
         toast('Đã copy link bài thi');
       } catch {
-        prompt('Copy link bài thi:', location.href);
+        prompt('Copy link bài thi:', link);
       }
     };
 

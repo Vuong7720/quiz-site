@@ -46,6 +46,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 body {
   margin: 0;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -194,6 +195,18 @@ body.play { height: 100vh; height: 100dvh; display: flex; flex-direction: column
 .playbar .play-title { flex: 1; min-width: 0; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .playbar .actions { flex-wrap: nowrap; }
 .play-frame { flex: 1; width: 100%; border: 0; background: #fff; }
+.lock-wrap { flex: 1; display: grid; place-items: center; padding: 24px 16px; overflow: auto; }
+.lock-card { width: 100%; max-width: 380px; text-align: center; display: flex; flex-direction: column; gap: 12px; padding: 32px 24px; }
+.lock-card h2 { margin: 0; font-size: 1.25rem; }
+.lock-card .hint { margin: 0; }
+.lock-icon {
+  width: 64px; height: 64px; margin: 0 auto; border-radius: 50%; display: grid; place-items: center; font-size: 30px;
+  background: color-mix(in srgb, var(--primary) 14%, transparent);
+}
+.lock-card input { text-align: center; font-size: 1.05rem; padding: 12px; }
+.lock-card .btn { padding: 12px; font-size: 1rem; }
+.lock-error { color: var(--danger); font-size: .9rem; }
+
 .toast {
   position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(20px);
   background: #1d2433; color: #fff; padding: 10px 16px; border-radius: 8px; font-size: .9rem;

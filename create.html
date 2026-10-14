@@ -8,6 +8,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
   <script src="theme.js"></script>
+  <script src="crypto.js"></script>
 </head>
 <body>
   <div class="container stack">
@@ -146,9 +147,16 @@
           <input id="minutes" type="number" min="1" placeholder="vd: 15">
         </div>
       </div>
-      <div>
-        <label for="description">Mô tả ngắn</label>
-        <input id="description" type="text" placeholder="vd: Ôn tập chương 1">
+      <div class="row">
+        <div class="span-2">
+          <label for="description">Mô tả ngắn</label>
+          <input id="description" type="text" placeholder="vd: Ôn tập chương 1">
+        </div>
+        <div>
+          <label for="password">🔒 Mật khẩu bài thi</label>
+          <input id="password" type="text" autocomplete="off" placeholder="Để trống nếu không cần">
+          <div class="hint">Bài sẽ được mã hóa. Hãy ghi nhớ mật khẩu: quên thì không mở lại được bài.</div>
+        </div>
       </div>
       <div>
         <div class="actions" style="justify-content:space-between;align-items:end;margin-bottom:6px">
@@ -323,6 +331,24 @@
       return `${GUARD}\n${html}`;
     }
 
+    // File bài thi có mật khẩu: trang vỏ chứa dữ liệu đã mã hóa, play.html sẽ giải mã khi nhập đúng mật khẩu
+    function lockedStub(title, payload) {
+      const json = JSON.stringify(payload).replace(/</g, '\\u003c');
+      return `${LT}!doctype html>
+${LT}html lang="vi">
+${LT}head>
+${LT}meta charset="utf-8">
+${LT}meta name="viewport" content="width=device-width, initial-scale=1">
+${LT}title>🔒 ${title.replace(/</g, '&lt;')}${LT}/title>
+${LT}/head>
+${LT}body style="font-family:system-ui,sans-serif;text-align:center;padding:48px 16px">
+${LT}p>🔒 Bài thi này được bảo vệ bằng mật khẩu.${LT}/p>
+${LT}script type="application/json" id="quiz-locked">${json}${LT}/script>
+${LT}/body>
+${LT}/html>
+`;
+    }
+
     function showStatus(msg, type = 'info') {
       const el = $('status');
       el.innerHTML = msg;
@@ -484,7 +510,7 @@ ${content}`;
 
     // ---------- Đăng bài ----------
     function resetForm() {
-      ['title', 'slug', 'description', 'topic', 'icon', 'questions', 'minutes', 'html'].forEach(id => $(id).value = '');
+      ['title', 'slug', 'description', 'topic', 'icon', 'questions', 'minutes', 'password', 'html'].forEach(id => $(id).value = '');
       $('slugPreview').textContent = '...';
       slugTouched = titleTouched = false;
       $('preview').hidden = true;
@@ -508,7 +534,11 @@ ${content}`;
         if (existing && !confirm(`Bài thi "${slug}" đã tồn tại. Ghi đè?`)) return showStatus('Đã hủy.', 'info');
 
         showStatus('Đang tải bài thi lên GitHub...', 'info');
-        await putFile(path, addGuard(wrapHtml(html, title)), `${existing ? 'Cập nhật' : 'Thêm'} bài thi: ${title}`, existing?.sha);
+        const password = $('password').value;
+        const content = password
+          ? lockedStub(title, await QuizCrypto.encrypt(wrapHtml(stripGuard(html), title), password))
+          : wrapHtml(html, title);
+        await putFile(path, addGuard(content), `${existing ? 'Cập nhật' : 'Thêm'} bài thi: ${title}`, existing?.sha);
 
         showStatus('Đang cập nhật danh sách bài thi...', 'info');
         const m = await getManifest();
@@ -519,6 +549,7 @@ ${content}`;
           description: $('description').value.trim() || undefined,
           topic: $('topic').value.trim() || undefined,
           icon: $('icon').value.trim() || undefined,
+          locked: password ? true : undefined,
           questions: posInt($('questions').value),
           minutes: posInt($('minutes').value),
           createdAt: old?.createdAt || new Date().toISOString(),
@@ -528,7 +559,9 @@ ${content}`;
         await putFile(MANIFEST, JSON.stringify(list, null, 2) + '\n', `Cập nhật danh sách: ${title}`, m.sha);
 
         const link = new URL(`play.html?e=${slug}`, location.href).href;
-        showStatus(`✅ Đăng thành công! Khoảng 1 phút nữa GitHub Pages cập nhật xong.<br>Link bài thi: <a href="${link}" target="_blank" rel="noopener">${escapeHtml(link)}</a>`, 'ok');
+        const keyLink = password ? `${link}#k=${encodeURIComponent(password)}` : '';
+        showStatus(`✅ Đăng thành công! Khoảng 1 phút nữa GitHub Pages cập nhật xong.<br>Link bài thi: <a href="${link}" target="_blank" rel="noopener">${escapeHtml(link)}</a>` +
+          (password ? `<br>🔑 Link kèm mật khẩu (người nhận bấm là vào thẳng, không cần gõ): <a href="${escapeHtml(keyLink)}" target="_blank" rel="noopener">${escapeHtml(keyLink)}</a>` : ''), 'ok');
         resetForm();
         renderManage(list);
       } catch (e) {
@@ -552,7 +585,7 @@ ${content}`;
       box.innerHTML = list.map(e => `
         <div class="manage-item">
           <div>
-            <div class="name">${escapeHtml(e.icon || '📝')} ${escapeHtml(e.title)}</div>
+            <div class="name">${escapeHtml(e.icon || '📝')} ${escapeHtml(e.title)}${e.locked ? ' 🔒' : ''}</div>
             <div class="slug">exams/${escapeHtml(e.slug)}.html${e.topic ? ' · ' + escapeHtml(e.topic) : ''}</div>
           </div>
           <div class="actions">
@@ -585,6 +618,19 @@ ${content}`;
         try {
           showStatus('Đang tải nội dung bài thi...', 'info');
           const f = await getFile(`exams/${editSlug}.html`);
+          // Giải mã trước, chỉ điền form khi đã có nội dung (tránh ghi đè nhầm khi bấm hủy)
+          let text = stripGuard(f?.text || '');
+          let password = '';
+          const locked = QuizCrypto.readLocked(text);
+          if (locked) {
+            password = prompt('Bài này có mật khẩu. Nhập mật khẩu để sửa:') ?? '';
+            if (!password) return showStatus('Đã hủy.', 'info');
+            try {
+              text = await QuizCrypto.decrypt(locked, password);
+            } catch {
+              return showStatus('❌ Sai mật khẩu, không mở được bài để sửa.', 'err');
+            }
+          }
           $('title').value = e.title || '';
           $('slug').value = editSlug;
           $('slugPreview').textContent = editSlug;
@@ -594,7 +640,8 @@ ${content}`;
           $('icon').value = e.icon || '';
           $('questions').value = e.questions || '';
           $('minutes').value = e.minutes || '';
-          $('html').value = stripGuard(f?.text || '');
+          $('password').value = password;
+          $('html').value = text;
           showStatus('Đã nạp bài thi để sửa. Sửa xong bấm “Đăng bài thi” để ghi đè.', 'info');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (err) {
