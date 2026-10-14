@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tạo bài thi</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container stack">
+    <header class="top">
+      <h1>Tạo bài thi</h1>
+      <a class="btn" href="index.html">← Danh sách bài thi</a>
+    </header>
+
+    <!-- Cấu hình GitHub -->
+    <details class="card" id="settingsBox">
+      <summary>⚙️ Cấu hình GitHub <span id="settingsState" class="hint"></span></summary>
+      <div class="stack">
+        <div class="row">
+          <div>
+            <label for="owner">Tài khoản GitHub (owner)</label>
+            <input id="owner" type="text" placeholder="vd: vuongpq">
+          </div>
+          <div>
+            <label for="repo">Tên repo</label>
+            <input id="repo" type="text" placeholder="vd: quiz-site">
+          </div>
+          <div>
+            <label for="branch">Nhánh</label>
+            <input id="branch" type="text" value="main">
+          </div>
+        </div>
+        <div>
+          <label for="token">GitHub token</label>
+          <input id="token" type="password" placeholder="github_pat_...">
+          <div class="hint">Token chỉ lưu trên trình duyệt của bạn, không được đưa lên repo.</div>
+        </div>
+        <label style="font-weight:400"><input id="remember" type="checkbox"> Ghi nhớ token trên máy này (nếu không, token sẽ mất khi đóng tab)</label>
+        <div class="actions">
+          <button class="btn primary" id="saveSettings">Lưu cấu hình</button>
+          <button class="btn danger" id="clearToken">Xóa token</button>
+        </div>
+      </div>
+    </details>
+
+    <!-- Form tạo bài -->
+    <div class="card stack">
+      <div class="row">
+        <div>
+          <label for="title">Tên bài thi *</label>
+          <input id="title" type="text" placeholder="vd: Kiểm tra JavaScript cơ bản">
+        </div>
+        <div>
+          <label for="slug">Tên file</label>
+          <input id="slug" type="text" placeholder="tu-dong-tao-tu-ten-bai">
+          <div class="hint">Link bài thi: exams/<b id="slugPreview">...</b>.html</div>
+        </div>
+      </div>
+      <div>
+        <label for="description">Mô tả ngắn</label>
+        <input id="description" type="text" placeholder="vd: 20 câu, 15 phút">
+      </div>
+      <div>
+        <label for="html">Mã HTML bài thi *</label>
+        <textarea id="html" placeholder="Dán toàn bộ mã HTML của bài trắc nghiệm vào đây..."></textarea>
+      </div>
+      <div class="actions">
+        <button class="btn" id="previewBtn">👁 Xem trước</button>
+        <button class="btn primary" id="publishBtn">🚀 Đăng bài thi</button>
+      </div>
+      <div id="status" class="status"></div>
+      <iframe id="preview" class="preview" hidden sandbox="allow-scripts allow-forms allow-modals"></iframe>
+    </div>
+
+    <!-- Quản lý bài đã đăng -->
+    <div class="card">
+      <div class="actions" style="justify-content:space-between;align-items:center">
+        <h2 style="margin:0;font-size:1.2rem">Bài thi đã đăng</h2>
+        <button class="btn small" id="reloadBtn">↻ Tải lại</button>
+      </div>
+      <div id="manageList" class="hint" style="margin-top:12px">Nhập cấu hình GitHub để xem và quản lý bài thi.</div>
+    </div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const MANIFEST = 'exams.json';
+
+    // ---------- Cấu hình ----------
+    function loadSettings() {
+      const s = JSON.parse(localStorage.getItem('quiz.settings') || '{}');
+      // Tự đoán owner/repo khi chạy trên <owner>.github.io/<repo>/
+      const m = location.hostname.match(/^([^.]+)\.github\.io$/i);
+      if (m) {
+        s.owner ||= m[1];
+        s.repo ||= location.pathname.split('/').filter(Boolean)[0] || `${m[1]}.github.io`;
+      }
+      $('owner').value = s.owner || '';
+      $('repo').value = s.repo || '';
+      $('branch').value = s.branch || 'main';
+      const saved = localStorage.getItem('quiz.token');
+      $('token').value = saved || sessionStorage.getItem('quiz.token') || '';
+      $('remember').checked = !!saved;
+      updateSettingsState();
+    }
+
+    function cfg() {
+      return {
+        owner: $('owner').value.trim(),
+        repo: $('repo').value.trim(),
+        branch: $('branch').value.trim() || 'main',
+        token: $('token').value.trim(),
+      };
+    }
+
+    function updateSettingsState() {
+      const c = cfg();
+      const ok = c.owner && c.repo && c.token;
+      $('settingsState').textContent = ok ? `— ${c.owner}/${c.repo} (${c.branch}) ✓` : '— chưa cấu hình';
+      if (!ok) $('settingsBox').open = true;
+      return ok;
+    }
+
+    $('saveSettings').onclick = () => {
+      const c = cfg();
+      localStorage.setItem('quiz.settings', JSON.stringify({ owner: c.owner, repo: c.repo, branch: c.branch }));
+      localStorage.removeItem('quiz.token');
+      sessionStorage.removeItem('quiz.token');
+      if (c.token) ($('remember').checked ? localStorage : sessionStorage).setItem('quiz.token', c.token);
+      if (updateSettingsState()) {
+        $('settingsBox').open = false;
+        loadManageList();
+      }
+      showStatus('Đã lưu cấu hình.', 'ok');
+    };
+
+    $('clearToken').onclick = () => {
+      localStorage.removeItem('quiz.token');
+      sessionStorage.removeItem('quiz.token');
+      $('token').value = '';
+      updateSettingsState();
+      showStatus('Đã xóa token khỏi trình duyệt.', 'info');
+    };
+
+    // ---------- GitHub API ----------
+    function toBase64(text) {
+      const bytes = new TextEncoder().encode(text);
+      let bin = '';
+      for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+      return btoa(bin);
+    }
+    function fromBase64(b64) {
+      const bin = atob(b64.replace(/\n/g, ''));
+      return new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0)));
+    }
+
+    async function gh(path, options = {}) {
+      const c = cfg();
+      const url = `https://api.github.com/repos/${c.owner}/${c.repo}/contents/${path.split('/').map(encodeURIComponent).join('/')}`;
+      const res = await fetch(options.method ? url : `${url}?ref=${encodeURIComponent(c.branch)}`, {
+        ...options,
+        headers: {
+          Authorization: `Bearer ${c.token}`,
+          Accept: 'application/vnd.github+json',
+          'X-GitHub-Api-Version': '2022-11-28',
+          ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+        },
+      });
+      if (res.status === 404 && !options.method) return null;
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        const hints = { 401: 'Token sai hoặc đã hết hạn.', 403: 'Token không có quyền ghi (Contents: Read and write).', 404: 'Không tìm thấy repo/nhánh.', 409: 'Xung đột dữ liệu, hãy thử lại.', 422: 'Dữ liệu không hợp lệ.' };
+        throw new Error(`${hints[res.status] || 'Lỗi GitHub'} (${res.status}${err.message ? ': ' + err.message : ''})`);
+      }
+      return res.json();
+    }
+
+    async function getFile(path) {
+      const f = await gh(path);
+      return f ? { sha: f.sha, text: fromBase64(f.content || '') } : null;
+    }
+
+    function putFile(path, text, message, sha) {
+      return gh(path, { method: 'PUT', body: JSON.stringify({ message, content: toBase64(text), branch: cfg().branch, ...(sha ? { sha } : {}) }) });
+    }
+
+    function deleteFile(path, sha, message) {
+      return gh(path, { method: 'DELETE', body: JSON.stringify({ message, sha, branch: cfg().branch }) });
+    }
+
+    async function getManifest() {
+      const f = await getFile(MANIFEST);
+      let list = [];
+      try { list = f ? JSON.parse(f.text) : []; } catch { list = []; }
+      return { sha: f?.sha, list: Array.isArray(list) ? list : [] };
+    }
+
+    // ---------- Tiện ích ----------
+    function slugify(s) {
+      return s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/gi, 'd')
+        .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
+    }
+
+    function wrapHtml(html, title) {
+      // Nếu chỉ dán một đoạn HTML (không có <html>), bọc lại thành trang hoàn chỉnh
+      if (/<html[\s>]/i.test(html)) return html;
+      return `<!doctype html>\n<html lang="vi">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1">\n<title>${title.replace(/</g, '&lt;')}</title>\n</head>\n<body>\n${html}\n</body>\n</html>\n`;
+    }
+
+    function showStatus(msg, type = 'info') {
+      const el = $('status');
+      el.innerHTML = msg;
+      el.className = `status show ${type}`;
+    }
+
+    function escapeHtml(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    let slugTouched = false;
+    $('title').addEventListener('input', () => {
+      if (!slugTouched) $('slug').value = slugify($('title').value);
+      $('slugPreview').textContent = $('slug').value || '...';
+    });
+    $('slug').addEventListener('input', () => {
+      slugTouched = $('slug').value !== '';
+      $('slugPreview').textContent = slugify($('slug').value) || '...';
+    });
+
+    // ---------- Xem trước ----------
+    $('previewBtn').onclick = () => {
+      const html = $('html').value.trim();
+      if (!html) return showStatus('Bạn chưa dán mã HTML.', 'err');
+      $('preview').hidden = false;
+      $('preview').srcdoc = wrapHtml(html, $('title').value || 'Xem trước');
+      $('preview').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    // ---------- Đăng bài ----------
+    $('publishBtn').onclick = async () => {
+      if (!updateSettingsState()) return showStatus('Hãy nhập cấu hình GitHub trước.', 'err');
+      const title = $('title').value.trim();
+      const slug = slugify($('slug').value || title);
+      const html = $('html').value.trim();
+      if (!title) return showStatus('Bạn chưa nhập tên bài thi.', 'err');
+      if (!slug) return showStatus('Tên file không hợp lệ.', 'err');
+      if (!html) return showStatus('Bạn chưa dán mã HTML.', 'err');
+
+      const btn = $('publishBtn');
+      btn.disabled = true;
+      try {
+        showStatus('Đang kiểm tra...', 'info');
+        const path = `exams/${slug}.html`;
+        const existing = await getFile(path);
+        if (existing && !confirm(`Bài thi "${slug}" đã tồn tại. Ghi đè?`)) return showStatus('Đã hủy.', 'info');
+
+        showStatus('Đang tải bài thi lên GitHub...', 'info');
+        await putFile(path, wrapHtml(html, title), `${existing ? 'Cập nhật' : 'Thêm'} bài thi: ${title}`, existing?.sha);
+
+        showStatus('Đang cập nhật danh sách bài thi...', 'info');
+        const m = await getManifest();
+        const old = m.list.find(e => e.slug === slug);
+        const entry = { slug, title, description: $('description').value.trim(), createdAt: old?.createdAt || new Date().toISOString() };
+        const list = [entry, ...m.list.filter(e => e.slug !== slug)];
+        await putFile(MANIFEST, JSON.stringify(list, null, 2) + '\n', `Cập nhật danh sách: ${title}`, m.sha);
+
+        const link = new URL(path, location.href).href;
+        showStatus(`✅ Đăng thành công! Khoảng 1 phút nữa GitHub Pages cập nhật xong.<br>Link bài thi: <a href="${link}" target="_blank" rel="noopener">${escapeHtml(link)}</a>`, 'ok');
+        $('title').value = $('slug').value = $('description').value = $('html').value = '';
+        $('slugPreview').textContent = '...';
+        slugTouched = false;
+        $('preview').hidden = true;
+        renderManage(list);
+      } catch (e) {
+        showStatus('❌ ' + escapeHtml(e.message), 'err');
+      } finally {
+        btn.disabled = false;
+      }
+    };
+
+    // ---------- Quản lý ----------
+    function renderManage(list) {
+      const box = $('manageList');
+      if (!list.length) { box.textContent = 'Chưa có bài thi nào.'; return; }
+      box.className = '';
+      box.innerHTML = list.map(e => `
+        <div class="manage-item">
+          <div>
+            <div class="name">${escapeHtml(e.title)}</div>
+            <div class="slug">exams/${escapeHtml(e.slug)}.html</div>
+          </div>
+          <div class="actions">
+            <a class="btn small" href="exams/${encodeURIComponent(e.slug)}.html" target="_blank" rel="noopener">Mở</a>
+            <button class="btn small" data-edit="${escapeHtml(e.slug)}">Sửa</button>
+            <button class="btn small danger" data-del="${escapeHtml(e.slug)}">Xóa</button>
+          </div>
+        </div>`).join('');
+      box.dataset.list = JSON.stringify(list);
+    }
+
+    async function loadManageList() {
+      if (!updateSettingsState()) return;
+      $('manageList').className = 'hint';
+      $('manageList').textContent = 'Đang tải...';
+      try {
+        renderManage((await getManifest()).list);
+      } catch (e) {
+        $('manageList').textContent = '❌ ' + e.message;
+      }
+    }
+
+    $('reloadBtn').onclick = loadManageList;
+
+    $('manageList').addEventListener('click', async ev => {
+      const editSlug = ev.target.dataset.edit;
+      const delSlug = ev.target.dataset.del;
+      const list = JSON.parse($('manageList').dataset.list || '[]');
+
+      if (editSlug) {
+        const e = list.find(x => x.slug === editSlug);
+        try {
+          showStatus('Đang tải nội dung bài thi...', 'info');
+          const f = await getFile(`exams/${editSlug}.html`);
+          $('title').value = e?.title || '';
+          $('slug').value = editSlug;
+          slugTouched = true;
+          $('slugPreview').textContent = editSlug;
+          $('description').value = e?.description || '';
+          $('html').value = f?.text || '';
+          showStatus('Đã nạp bài thi để sửa. Sửa xong bấm “Đăng bài thi” để ghi đè.', 'info');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } catch (err) {
+          showStatus('❌ ' + escapeHtml(err.message), 'err');
+        }
+      }
+
+      if (delSlug) {
+        if (!confirm(`Xóa bài thi "${delSlug}"? Không thể hoàn tác.`)) return;
+        ev.target.disabled = true;
+        try {
+          const f = await getFile(`exams/${delSlug}.html`);
+          if (f) await deleteFile(`exams/${delSlug}.html`, f.sha, `Xóa bài thi: ${delSlug}`);
+          const m = await getManifest();
+          const next = m.list.filter(x => x.slug !== delSlug);
+          await putFile(MANIFEST, JSON.stringify(next, null, 2) + '\n', `Xóa khỏi danh sách: ${delSlug}`, m.sha);
+          renderManage(next);
+          showStatus(`Đã xóa "${escapeHtml(delSlug)}".`, 'ok');
+        } catch (err) {
+          ev.target.disabled = false;
+          showStatus('❌ ' + escapeHtml(err.message), 'err');
+        }
+      }
+    });
+
+    loadSettings();
+    loadManageList();
+  </script>
+</body>
+</html>

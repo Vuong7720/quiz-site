@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bài thi trắc nghiệm</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="top">
+      <h1>📝 Bài thi trắc nghiệm</h1>
+      <a class="btn primary" href="create.html">+ Tạo bài thi</a>
+    </header>
+
+    <input id="search" class="search" type="text" placeholder="Tìm bài thi...">
+    <div id="list" class="grid"></div>
+    <div id="empty" class="empty" hidden>Chưa có bài thi nào. Bấm “Tạo bài thi” để thêm.</div>
+  </div>
+
+  <script>
+    const listEl = document.getElementById('list');
+    const emptyEl = document.getElementById('empty');
+    const searchEl = document.getElementById('search');
+    let exams = [];
+
+    function escapeHtml(s) {
+      return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    function render() {
+      const q = searchEl.value.trim().toLowerCase();
+      const items = exams.filter(e => !q || (e.title + ' ' + (e.description || '')).toLowerCase().includes(q));
+      emptyEl.hidden = items.length > 0;
+      emptyEl.textContent = exams.length ? 'Không tìm thấy bài thi phù hợp.' : 'Chưa có bài thi nào. Bấm “Tạo bài thi” để thêm.';
+      listEl.innerHTML = items.map(e => `
+        <a class="card exam-card" href="exams/${encodeURIComponent(e.slug)}.html">
+          <h3>${escapeHtml(e.title)}</h3>
+          ${e.description ? `<p>${escapeHtml(e.description)}</p>` : ''}
+          <div class="meta">${e.createdAt ? new Date(e.createdAt).toLocaleDateString('vi-VN') : ''}</div>
+        </a>`).join('');
+    }
+
+    fetch('exams.json?t=' + Date.now())
+      .then(r => r.ok ? r.json() : [])
+      .catch(() => [])
+      .then(data => {
+        exams = (Array.isArray(data) ? data : []).sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''));
+        render();
+      });
+
+    searchEl.addEventListener('input', render);
+  </script>
+</body>
+</html>

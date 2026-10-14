@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bài mẫu</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 680px; margin: 0 auto; padding: 24px 16px; background: #f6f7fb; color: #1d2433; }
+  .q { background: #fff; border: 1px solid #e4e7ec; border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+  .q h3 { margin: 0 0 10px; font-size: 1rem; }
+  label { display: block; padding: 6px 8px; border-radius: 6px; cursor: pointer; }
+  label:hover { background: #f0f3fa; }
+  .correct { background: #d1fadf !important; }
+  .wrong { background: #fee4e2 !important; }
+  button { padding: 10px 20px; border: 0; border-radius: 8px; background: #2f6fed; color: #fff; font-size: 1rem; cursor: pointer; }
+  #result { font-size: 1.2rem; font-weight: 600; margin-top: 16px; }
+</style>
+</head>
+<body>
+  <p><a href="../index.html">← Danh sách bài thi</a></p>
+  <h1>Bài mẫu: Kiến thức web cơ bản</h1>
+  <form id="quiz"></form>
+  <button id="submit">Nộp bài</button>
+  <div id="result"></div>
+
+<script>
+  const questions = [
+    { q: 'HTML là viết tắt của?', options: ['HyperText Markup Language', 'HighText Machine Language', 'Hyperlink Text Mode Language'], answer: 0 },
+    { q: 'Thuộc tính CSS nào đổi màu chữ?', options: ['background', 'color', 'font-style'], answer: 1 },
+    { q: 'Lệnh nào khai báo hằng số trong JavaScript?', options: ['var', 'let', 'const'], answer: 2 },
+  ];
+
+  const form = document.getElementById('quiz');
+  form.innerHTML = questions.map((item, i) => `
+    <div class="q">
+      <h3>Câu ${i + 1}. ${item.q}</h3>
+      ${item.options.map((o, j) => `<label><input type="radio" name="q${i}" value="${j}"> ${o}</label>`).join('')}
+    </div>`).join('');
+
+  document.getElementById('submit').onclick = () => {
+    let score = 0;
+    questions.forEach((item, i) => {
+      const picked = form.querySelector(`input[name=q${i}]:checked`);
+      form.querySelectorAll(`input[name=q${i}]`).forEach(inp => {
+        inp.parentElement.classList.remove('correct', 'wrong');
+        if (+inp.value === item.answer) inp.parentElement.classList.add('correct');
+        else if (inp === picked) inp.parentElement.classList.add('wrong');
+      });
+      if (picked && +picked.value === item.answer) score++;
+    });
+    document.getElementById('result').textContent = `Bạn đúng ${score}/${questions.length} câu.`;
+  };
+</script>
+</body>
+</html>
