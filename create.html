@@ -83,6 +83,27 @@
             <label for="pMinutes">Thời gian (phút)</label>
             <input id="pMinutes" type="number" min="0" placeholder="0 = không giới hạn">
           </div>
+          <div>
+            <label for="pMode">Kiểu làm bài</label>
+            <select id="pMode">
+              <option value="one">Từng câu một (như thi thật)</option>
+              <option value="all">Tất cả câu trên một trang</option>
+            </select>
+          </div>
+          <div>
+            <label for="pColor">Màu chủ đạo</label>
+            <select id="pColor">
+              <option value="xanh dương chuyên nghiệp (#2563eb), nền xám rất nhạt">Xanh dương</option>
+              <option value="xanh lục bảo (#059669), nền xám rất nhạt">Xanh lục</option>
+              <option value="tím (#7c3aed), nền xám rất nhạt">Tím</option>
+              <option value="cam đất (#ea580c), nền kem nhạt">Cam</option>
+              <option value="xanh navy đậm (#1e3a8a) kết hợp vàng (#f59e0b) làm điểm nhấn, phong cách trang trọng như đề thi chính thức">Navy &amp; vàng (trang trọng)</option>
+            </select>
+          </div>
+          <div>
+            <label for="pPass">Điểm đạt (hệ 10)</label>
+            <input id="pPass" type="number" min="0" max="10" step="0.5" value="5">
+          </div>
         </div>
         <textarea id="pOutput" readonly style="min-height:200px"></textarea>
         <div class="actions">
@@ -381,25 +402,49 @@
 - Mỗi câu có 4 đáp án, chỉ 1 đáp án đúng, kèm 1 câu giải thích ngắn.
 - Thời gian làm bài: ${time}`;
 
-      return `Hãy tạo cho tôi một bài thi trắc nghiệm dưới dạng MỘT file HTML duy nhất.
+      const oneByOne = $('pMode').value === 'one';
+      const pass = $('pPass').value || '5';
+      const layout = oneByOne
+        ? `- Hiển thị TỪNG CÂU MỘT trong một thẻ lớn ở giữa, có nút "← Câu trước" / "Câu tiếp →" và hiệu ứng chuyển câu mượt (fade/slide nhẹ).
+- Có BẢNG CÂU HỎI (lưới các ô số 1, 2, 3...) để nhảy nhanh tới câu bất kỳ: ô câu đang làm có viền màu chủ đạo, ô đã trả lời tô màu chủ đạo, ô được đánh dấu có biểu tượng cờ, ô chưa làm màu xám. Trên máy tính bảng này nằm ở cột bên phải (sticky); trên điện thoại thu gọn thành nút "Danh sách câu" mở ra dạng bảng trượt từ dưới lên.
+- Mỗi câu có nút "🚩 Đánh dấu xem lại".
+- Phím tắt: 1–4 hoặc A–D để chọn đáp án, ← → để chuyển câu.`
+        : `- Hiển thị tất cả câu hỏi trên một trang, mỗi câu là một thẻ riêng có số thứ tự nổi bật.
+- Có BẢNG CÂU HỎI (lưới ô số) cố định bên phải trên máy tính để cuộn nhanh tới từng câu; ô đã trả lời tô màu chủ đạo, ô chưa làm màu xám. Trên điện thoại thu gọn thành nút nổi "Danh sách câu".
+- Mỗi câu có nút "🚩 Đánh dấu xem lại".`;
+
+      return `Hãy tạo cho tôi một bài thi trắc nghiệm dưới dạng MỘT file HTML duy nhất, giao diện đẹp và chuyên nghiệp như các nền tảng thi trực tuyến hiện đại (ví dụ: Google Forms Quiz, Coursera, Duolingo). Không làm giao diện đơn điệu kiểu danh sách câu hỏi trơn.
 
 YÊU CẦU KỸ THUẬT:
 - Chỉ dùng HTML, CSS, JavaScript thuần, viết hết trong 1 file (CSS trong <style>, JS trong <script>).
-- Không dùng thư viện ngoài, không gọi API, không fetch dữ liệu từ bên ngoài.
-- Không đọc/ghi localStorage, sessionStorage hay cookie.
-- Không dùng location.reload() hay chuyển trang; nút "Làm lại" phải reset bằng JavaScript.
+- Được phép dùng DUY NHẤT font "Be Vietnam Pro" từ Google Fonts (thẻ <link>). Ngoài ra không dùng thư viện, framework, icon font hay ảnh bên ngoài; icon dùng emoji hoặc SVG viết trực tiếp.
+- Không gọi API, không fetch dữ liệu từ bên ngoài.
+- TUYỆT ĐỐI không đọc/ghi localStorage, sessionStorage hay cookie (trang sẽ bị lỗi nếu dùng).
+- Không dùng alert/confirm của trình duyệt; mọi hộp thoại phải là modal tự thiết kế.
+- Không dùng location.reload() hay chuyển trang; "Làm lại" phải reset bằng JavaScript.
 - Không cần thêm link quay lại hay header website (trang của tôi đã có sẵn).
 - Đặt tên bài thi trong thẻ <title> và một thẻ <h1>.
 - Toàn bộ câu hỏi để trong một mảng JavaScript ở đầu thẻ <script> để tôi dễ sửa.
-- Giao diện tiếng Việt, hiện đại, gọn gàng, hiển thị tốt trên cả điện thoại.
 - Chỉ trả về mã HTML hoàn chỉnh trong một khối code, không giải thích thêm. Trả về đầy đủ, không viết tắt hay bỏ bớt câu nào.
 
-CHỨC NĂNG:
-- Hiển thị tên bài thi, số câu, thời gian.
-- Có đồng hồ đếm ngược (nếu có giới hạn thời gian), hết giờ tự nộp bài.
-- Có nút "Nộp bài"; nếu còn câu chưa làm thì hỏi xác nhận.
-- Sau khi nộp: hiện điểm (số câu đúng / tổng và điểm hệ 10), tô xanh đáp án đúng, tô đỏ đáp án sai đã chọn, hiện giải thích từng câu.
-- Có nút "Làm lại", khi làm lại thì xáo trộn thứ tự câu hỏi và đáp án.
+THIẾT KẾ GIAO DIỆN:
+- Màu chủ đạo: ${$('pColor').value}. Định nghĩa toàn bộ màu bằng biến CSS (:root) và có chế độ tối tự động theo @media (prefers-color-scheme: dark).
+- Phong cách: thẻ (card) bo góc 16px, đổ bóng mềm, khoảng trắng rộng rãi, chữ dễ đọc (cỡ chữ câu hỏi ~18px, đáp án ~16px), phân cấp chữ rõ ràng.
+- Đáp án là các ô lớn bấm được cả ô, có nhãn tròn A/B/C/D bên trái; hover đổi nền nhẹ; đáp án đang chọn có viền và nền màu chủ đạo nhạt, nhãn tròn tô đậm.
+- Hiệu ứng chuyển động nhẹ nhàng (transition 150–250ms), không lòe loẹt.
+- Hiển thị đẹp trên điện thoại (từ 360px), máy tính bảng và máy tính; nút bấm đủ lớn để chạm.
+
+BỐ CỤC & CHỨC NĂNG:
+1. MÀN HÌNH BẮT ĐẦU: thẻ lớn ở giữa gồm icon chủ đề, tên bài thi, mô tả ngắn, 3 ô thông tin (📝 số câu · ⏱ thời gian · 🎯 điểm đạt ${pass}/10), vài dòng hướng dẫn, và nút "Bắt đầu làm bài" nổi bật.
+2. MÀN HÌNH LÀM BÀI:
+- Thanh trên cùng cố định (sticky) gồm: tên bài thi rút gọn, thanh tiến độ "Đã làm X/Y câu", và đồng hồ đếm ngược dạng viên thuốc (pill) — chuyển màu cam khi còn dưới 5 phút, màu đỏ và nhấp nháy nhẹ khi còn dưới 1 phút. Hết giờ thì tự nộp bài.
+${layout}
+- Nút "Nộp bài" luôn dễ thấy; khi bấm thì mở modal xác nhận cho biết số câu chưa làm và số câu đã đánh dấu.
+3. MÀN HÌNH KẾT QUẢ:
+- Vòng tròn điểm lớn (vẽ bằng SVG, có hiệu ứng chạy số) hiển thị điểm hệ 10, kèm nhãn "ĐẠT" (xanh) hoặc "CHƯA ĐẠT" (đỏ) theo điểm đạt ${pass}/10 và một câu nhận xét động viên theo mức điểm.
+- 4 ô thống kê: ✅ số câu đúng · ❌ số câu sai · ⏭ bỏ trống · ⏱ thời gian đã làm.
+- Phần xem lại đáp án có bộ lọc dạng tab: Tất cả / Sai / Bỏ trống. Mỗi câu hiện đáp án đã chọn, đáp án đúng (tô xanh), đáp án sai đã chọn (tô đỏ) và ô giải thích có nền nhạt.
+- Nút "Làm lại" (xáo trộn thứ tự câu hỏi và đáp án) và nút "Xem lại từ đầu".
 
 ${content}`;
     }
@@ -408,7 +453,10 @@ ${content}`;
       document.querySelectorAll('.ai-only').forEach(el => el.hidden = $('pSource').value === 'own');
       $('pOutput').value = buildPrompt();
     }
-    ['pSource', 'pTopic', 'pCount', 'pLevel', 'pMinutes'].forEach(id => $(id).addEventListener('input', updatePrompt));
+    ['pSource', 'pTopic', 'pCount', 'pLevel', 'pMinutes', 'pMode', 'pColor', 'pPass'].forEach(id => {
+      $(id).addEventListener('input', updatePrompt);
+      $(id).addEventListener('change', updatePrompt);
+    });
 
     $('copyPrompt').onclick = async () => {
       try {
