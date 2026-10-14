@@ -8,6 +8,7 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
   <script src="theme.js"></script>
+  <script src="common.js"></script>
   <script src="crypto.js"></script>
 </head>
 <body>
@@ -60,6 +61,7 @@
             <label for="pSource">Nguồn câu hỏi</label>
             <select id="pSource">
               <option value="ai">AI tự soạn câu hỏi</option>
+              <option value="bank">Ngân hàng câu hỏi (mỗi lần làm ra đề khác)</option>
               <option value="own">Tôi có sẵn câu hỏi</option>
             </select>
           </div>
@@ -67,11 +69,16 @@
             <label for="pTopic">Chủ đề</label>
             <input id="pTopic" type="text" placeholder="vd: JavaScript cơ bản">
           </div>
-          <div class="ai-only">
-            <label for="pCount">Số câu</label>
+          <div class="bank-only">
+            <label for="pBank">Số câu trong ngân hàng</label>
+            <input id="pBank" type="number" min="10" max="150" value="60">
+            <div class="hint">Nên ≤ 60 để Gemini không bị cắt giữa chừng.</div>
+          </div>
+          <div class="gen-only">
+            <label for="pCount" id="pCountLabel">Số câu</label>
             <input id="pCount" type="number" min="1" max="100" value="20">
           </div>
-          <div class="ai-only">
+          <div class="gen-only">
             <label for="pLevel">Độ khó</label>
             <select id="pLevel">
               <option>trộn lẫn dễ, trung bình và khó</option>
@@ -145,6 +152,18 @@
         <div>
           <label for="minutes">Thời gian (phút)</label>
           <input id="minutes" type="number" min="1" placeholder="vd: 15">
+        </div>
+      </div>
+      <div class="row">
+        <div class="span-2">
+          <label for="series">📚 Thuộc bộ đề</label>
+          <input id="series" type="text" list="seriesList" placeholder="Để trống nếu là bài lẻ. vd: Đề thi Tiếng Anh">
+          <datalist id="seriesList"></datalist>
+          <div class="hint">Các bài cùng tên bộ đề sẽ được gom thành một thẻ trên trang chủ.</div>
+        </div>
+        <div>
+          <label for="order">Thứ tự trong bộ</label>
+          <input id="order" type="number" min="1" placeholder="vd: 1">
         </div>
       </div>
       <div class="row">
@@ -314,8 +333,7 @@
 
     // ---------- Tiện ích ----------
     function slugify(s) {
-      return s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/gi, 'd')
-        .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
+      return QuizUtil.slugify(s);
     }
 
     function wrapHtml(html, title) {
@@ -414,23 +432,35 @@ ${LT}/html>
 
     // ---------- Prompt cho Gemini ----------
     function buildPrompt() {
-      const own = $('pSource').value === 'own';
+      const source = $('pSource').value;
       const topic = $('pTopic').value.trim() || '[chủ đề]';
       const minutes = posInt($('pMinutes').value);
       const time = minutes ? `${minutes} phút` : 'không giới hạn';
-      const content = own
-        ? `NỘI DUNG:
+      const count = posInt($('pCount').value) || 20;
+      const bank = Math.max(posInt($('pBank').value) || 60, count);
+      const contents = {
+        own: `NỘI DUNG:
 - Chủ đề: ${topic}
 - Thời gian làm bài: ${time}
 - Dưới đây là danh sách câu hỏi của tôi. Giữ nguyên nội dung câu hỏi và đáp án, không tự thêm hay bớt câu nào. Đáp án đúng được đánh dấu [*]. Nếu câu nào không có giải thích thì tự viết giải thích ngắn.
 
-[DÁN CÂU HỎI VÀO ĐÂY]`
-        : `NỘI DUNG:
+[DÁN CÂU HỎI VÀO ĐÂY]`,
+        ai: `NỘI DUNG:
 - Chủ đề: ${topic}
-- Số câu: ${posInt($('pCount').value) || 20}
+- Số câu: ${count}
 - Độ khó: ${$('pLevel').value}
 - Mỗi câu có 4 đáp án, chỉ 1 đáp án đúng, kèm 1 câu giải thích ngắn.
-- Thời gian làm bài: ${time}`;
+- Thời gian làm bài: ${time}`,
+        bank: `NỘI DUNG — NGÂN HÀNG CÂU HỎI:
+- Chủ đề: ${topic}
+- Soạn một NGÂN HÀNG gồm đúng ${bank} câu hỏi khác nhau, không trùng ý, bao quát nhiều mảng kiến thức của chủ đề. Độ khó: ${$('pLevel').value}.
+- Mỗi câu có 4 đáp án, chỉ 1 đáp án đúng, kèm 1 câu giải thích ngắn. Mỗi câu có thêm trường "level" (de / trungbinh / kho).
+- MỖI LƯỢT LÀM BÀI: chọn ngẫu nhiên ${count} câu từ ngân hàng (cố gắng cân đối độ khó), xáo trộn thứ tự câu và thứ tự đáp án. Nút "Làm lại" bốc một đề mới.
+- Màn hình bắt đầu ghi rõ: "Mỗi lượt ${count} câu ngẫu nhiên từ ngân hàng ${bank} câu".
+- Thời gian làm bài: ${time} cho mỗi lượt.
+- Viết đủ cả ${bank} câu trong mảng dữ liệu, không được viết tắt kiểu "// ... thêm câu tương tự".`,
+      };
+      const content = contents[source];
 
       const oneByOne = $('pMode').value === 'one';
       const pass = $('pPass').value || '5';
@@ -480,10 +510,13 @@ ${content}`;
     }
 
     function updatePrompt() {
-      document.querySelectorAll('.ai-only').forEach(el => el.hidden = $('pSource').value === 'own');
+      const source = $('pSource').value;
+      document.querySelectorAll('.gen-only').forEach(el => el.hidden = source === 'own');
+      document.querySelectorAll('.bank-only').forEach(el => el.hidden = source !== 'bank');
+      $('pCountLabel').textContent = source === 'bank' ? 'Số câu mỗi lượt làm' : 'Số câu';
       $('pOutput').value = buildPrompt();
     }
-    ['pSource', 'pTopic', 'pCount', 'pLevel', 'pMinutes', 'pMode', 'pColor', 'pPass'].forEach(id => {
+    ['pSource', 'pTopic', 'pCount', 'pBank', 'pLevel', 'pMinutes', 'pMode', 'pColor', 'pPass'].forEach(id => {
       $(id).addEventListener('input', updatePrompt);
       $(id).addEventListener('change', updatePrompt);
     });
@@ -498,7 +531,7 @@ ${content}`;
       // Điền sẵn thông tin vào form tạo bài
       if (!$('topic').value && $('pTopic').value.trim()) $('topic').value = $('pTopic').value.trim();
       if (!$('minutes').value && posInt($('pMinutes').value)) $('minutes').value = posInt($('pMinutes').value);
-      if (!$('questions').value && $('pSource').value === 'ai') $('questions').value = posInt($('pCount').value) || '';
+      if (!$('questions').value && $('pSource').value !== 'own') $('questions').value = posInt($('pCount').value) || '';
       $('copyPrompt').textContent = '✅ Đã copy';
       setTimeout(() => $('copyPrompt').textContent = '📋 Copy prompt', 1500);
     };
@@ -514,11 +547,26 @@ ${content}`;
 
     // ---------- Đăng bài ----------
     function resetForm() {
-      ['title', 'slug', 'description', 'topic', 'icon', 'questions', 'minutes', 'password', 'html'].forEach(id => $(id).value = '');
+      ['title', 'slug', 'description', 'topic', 'icon', 'questions', 'minutes', 'password', 'series', 'order', 'html'].forEach(id => $(id).value = '');
       $('slugPreview').textContent = '...';
       slugTouched = titleTouched = false;
       $('preview').hidden = true;
     }
+
+    function nextOrder(list, series, slug) {
+      const orders = list.filter(e => e.series === series && e.slug !== slug).map(e => e.order || 0);
+      return (orders.length ? Math.max(...orders) : 0) + 1;
+    }
+
+    function seriesLink(series) {
+      return new URL(`series.html?s=${QuizUtil.slugify(series)}`, location.href).href;
+    }
+
+    // Chọn bộ đề có sẵn → gợi ý số thứ tự tiếp theo
+    $('series').addEventListener('change', () => {
+      const s = $('series').value.trim();
+      if (s && !$('order').value) $('order').value = nextOrder(manageList, s, slugify($('slug').value || $('title').value));
+    });
 
     $('publishBtn').onclick = async () => {
       if (!updateSettingsState()) return showStatus('Hãy nhập cấu hình GitHub trước.', 'err');
@@ -539,6 +587,7 @@ ${content}`;
 
         showStatus('Đang tải bài thi lên GitHub...', 'info');
         const password = $('password').value;
+        const series = $('series').value.trim().replace(/\s+/g, ' ');
         const content = password
           ? lockedStub(title, await QuizCrypto.encrypt(wrapHtml(stripGuard(html), title), password))
           : wrapHtml(html, title);
@@ -554,6 +603,8 @@ ${content}`;
           topic: $('topic').value.trim() || undefined,
           icon: $('icon').value.trim() || undefined,
           locked: password ? true : undefined,
+          series: series || undefined,
+          order: series ? (posInt($('order').value) || nextOrder(m.list, series, slug)) : undefined,
           questions: posInt($('questions').value),
           minutes: posInt($('minutes').value),
           createdAt: old?.createdAt || new Date().toISOString(),
@@ -565,7 +616,8 @@ ${content}`;
         const link = new URL(`play.html?e=${slug}`, location.href).href;
         const keyLink = password ? `${link}#k=${encodeURIComponent(password)}` : '';
         showStatus(`✅ Đăng thành công! Khoảng 1 phút nữa GitHub Pages cập nhật xong.<br>Link bài thi: <a href="${link}" target="_blank" rel="noopener">${escapeHtml(link)}</a>` +
-          (password ? `<br>🔑 Link kèm mật khẩu (người nhận bấm là vào thẳng, không cần gõ): <a href="${escapeHtml(keyLink)}" target="_blank" rel="noopener">${escapeHtml(keyLink)}</a>` : ''), 'ok');
+          (password ? `<br>🔑 Link kèm mật khẩu (người nhận bấm là vào thẳng, không cần gõ): <a href="${escapeHtml(keyLink)}" target="_blank" rel="noopener">${escapeHtml(keyLink)}</a>` : '') +
+          (series ? `<br>📚 Link cả bộ đề: <a href="${seriesLink(series)}" target="_blank" rel="noopener">${escapeHtml(seriesLink(series))}</a>` : ''), 'ok');
         resetForm();
         renderManage(list);
       } catch (e) {
@@ -582,22 +634,42 @@ ${content}`;
       manageList = list;
       const topics = [...new Set(list.map(e => e.topic).filter(Boolean))];
       $('topicList').innerHTML = topics.map(t => `<option value="${escapeHtml(t)}">`).join('');
+      const seriesNames = [...new Set(list.map(e => e.series).filter(Boolean))];
+      $('seriesList').innerHTML = seriesNames.map(s => `<option value="${escapeHtml(s)}">`).join('');
 
       const box = $('manageList');
       if (!list.length) { box.className = 'hint'; box.textContent = 'Chưa có bài thi nào.'; return; }
       box.className = '';
-      box.innerHTML = list.map(e => `
-        <div class="manage-item">
+
+      // Gom các đề cùng bộ lại với nhau (giữ vị trí của bộ theo đề mới nhất)
+      const groups = [];
+      const bySeries = {};
+      list.forEach(e => {
+        if (!e.series) return groups.push({ items: [e] });
+        if (!bySeries[e.series]) groups.push(bySeries[e.series] = { series: e.series, items: [] });
+        bySeries[e.series].items.push(e);
+      });
+      const row = e => `
+        <div class="manage-item${e.series ? ' in-series' : ''}">
           <div>
             <div class="name">${escapeHtml(e.icon || '📝')} ${escapeHtml(e.title)}${e.locked ? ' 🔒' : ''}</div>
-            <div class="slug">exams/${escapeHtml(e.slug)}.html${e.topic ? ' · ' + escapeHtml(e.topic) : ''}</div>
+            <div class="slug">exams/${escapeHtml(e.slug)}.html${e.series ? ' · đề #' + escapeHtml(e.order || '?') : ''}${e.topic ? ' · ' + escapeHtml(e.topic) : ''}</div>
           </div>
           <div class="actions">
             <a class="btn small" href="play.html?e=${encodeURIComponent(e.slug)}" target="_blank" rel="noopener">Mở</a>
             <button class="btn small" data-edit="${escapeHtml(e.slug)}">Sửa</button>
             <button class="btn small danger" data-del="${escapeHtml(e.slug)}">Xóa</button>
           </div>
-        </div>`).join('');
+        </div>`;
+      box.innerHTML = groups.map(g => g.series
+        ? `<div class="manage-series">
+             <div class="manage-series-head">
+               <span>📚 ${escapeHtml(g.series)} <span class="hint">· ${g.items.length} đề</span></span>
+               <a class="btn small" href="series.html?s=${QuizUtil.slugify(g.series)}" target="_blank" rel="noopener">Mở bộ đề</a>
+             </div>
+             ${g.items.sort(QuizUtil.compareInSeries).map(row).join('')}
+           </div>`
+        : row(g.items[0])).join('');
     }
 
     async function loadManageList() {
@@ -644,6 +716,8 @@ ${content}`;
           $('icon').value = e.icon || '';
           $('questions').value = e.questions || '';
           $('minutes').value = e.minutes || '';
+          $('series').value = e.series || '';
+          $('order').value = e.order || '';
           $('password').value = password;
           $('html').value = text;
           showStatus('Đã nạp bài thi để sửa. Sửa xong bấm “Đăng bài thi” để ghi đè.', 'info');

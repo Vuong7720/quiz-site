@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bộ đề</title>
+  <meta name="description" content="Bộ đề thi trắc nghiệm — chọn một đề để bắt đầu.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="📚 Mời bạn luyện bộ đề trắc nghiệm">
+  <meta property="og:description" content="Chọn một đề trong bộ và làm ngay, không cần đăng nhập.">
+  <meta property="og:image" content="https://vuong7720.github.io/quiz-site/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script src="theme.js"></script>
+  <script src="common.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header class="top">
+      <a class="btn" href="index.html">← Danh sách bài thi</a>
+      <button class="btn icon" data-theme-toggle></button>
+    </header>
+
+    <section class="card series-hero" id="hero" hidden>
+      <div class="exam-head">
+        <div class="exam-icon">📚</div>
+        <div>
+          <h1 id="name"></h1>
+          <p id="meta"></p>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn small" id="copyBtn">🔗 Copy link bộ đề</button>
+      </div>
+    </section>
+
+    <div id="papers" class="paper-list"></div>
+    <div id="empty" class="empty" hidden>
+      <span class="big">😕</span>Không tìm thấy bộ đề này.<br><br>
+      <a class="btn primary" href="index.html">Về danh sách bài thi</a>
+    </div>
+  </div>
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const { escapeHtml, slugify, accent } = QuizUtil;
+    const $ = id => document.getElementById(id);
+    const seriesSlug = new URLSearchParams(location.search).get('s') || '';
+
+    $('copyBtn').onclick = async () => {
+      const link = location.origin + location.pathname + location.search;
+      try {
+        await navigator.clipboard.writeText(link);
+        $('toast').textContent = 'Đã copy link bộ đề';
+        $('toast').classList.add('show');
+        setTimeout(() => $('toast').classList.remove('show'), 1800);
+      } catch {
+        prompt('Copy link bộ đề:', link);
+      }
+    };
+
+    QuizUtil.loadExams().then(all => {
+      const items = all.filter(e => e.series && slugify(e.series) === seriesSlug).sort(QuizUtil.compareInSeries);
+      if (!items.length) { $('empty').hidden = false; return; }
+
+      const name = items[0].series;
+      const topics = [...new Set(items.map(e => e.topic).filter(Boolean))];
+      document.title = name;
+      $('name').textContent = name;
+      $('meta').textContent = [`${items.length} đề`, ...topics].join(' · ');
+      $('hero').style.setProperty('--accent', accent(name));
+      $('hero').hidden = false;
+
+      $('papers').innerHTML = items.map((e, i) => {
+        const badges = [
+          e.questions && `<span class="badge">${escapeHtml(e.questions)} câu</span>`,
+          e.minutes && `<span class="badge">⏱ ${escapeHtml(e.minutes)} phút</span>`,
+          e.locked && `<span class="badge">🔒</span>`,
+        ].filter(Boolean).join('');
+        return `
+          <a class="card paper" style="--accent:${accent(name)}" href="play.html?e=${encodeURIComponent(e.slug)}&s=${encodeURIComponent(seriesSlug)}">
+            <div class="paper-no">${escapeHtml(e.order || i + 1)}</div>
+            <div>
+              <h3>${escapeHtml(e.title)}</h3>
+              ${badges ? `<div class="badges">${badges}</div>` : ''}
+            </div>
+          </a>`;
+      }).join('');
+    });
+  </script>
+</body>
+</html>

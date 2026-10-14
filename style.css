@@ -130,6 +130,15 @@ header.top h1 { margin: 0; font-size: 1.6rem; }
 }
 .exam-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 4px; background: var(--accent); }
 .exam-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); border-color: var(--accent); }
+/* Thẻ bộ đề: hiệu ứng xấp giấy chồng lên nhau */
+.series-card {
+  overflow: visible; margin-bottom: 10px;
+  box-shadow: 0 5px 0 -1px var(--card), 0 5px 0 0 var(--border), 0 10px 0 -2px var(--card), 0 10px 0 -1px var(--border), var(--shadow);
+}
+.series-card::before { border-radius: 14px 14px 0 0; }
+.series-card:hover {
+  box-shadow: 0 5px 0 -1px var(--card), 0 5px 0 0 var(--accent), 0 10px 0 -2px var(--card), 0 10px 0 -1px var(--accent), var(--shadow-hover);
+}
 .exam-head { display: flex; gap: 12px; align-items: flex-start; }
 .exam-icon {
   flex: none; width: 46px; height: 46px; border-radius: 12px;
@@ -141,6 +150,27 @@ header.top h1 { margin: 0; font-size: 1.6rem; }
 .badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: auto; padding-top: 4px; }
 .badge { font-size: .75rem; padding: 2px 9px; border-radius: 999px; background: var(--chip); color: var(--muted); }
 .badge.topic { background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--text); }
+
+/* ---------- Trang bộ đề ---------- */
+.series-hero { --accent: var(--primary); border-top: 4px solid var(--accent); margin-bottom: 20px; }
+.series-hero .exam-head { align-items: center; }
+.series-hero h1 { margin: 0; font-size: 1.5rem; }
+.series-hero p { margin: 2px 0 0; color: var(--muted); }
+.series-hero .actions { margin-top: 14px; }
+.paper-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.paper {
+  --accent: var(--primary);
+  display: flex; align-items: center; gap: 14px; text-decoration: none; color: inherit; padding: 16px;
+  transition: transform .15s, box-shadow .15s, border-color .15s;
+}
+.paper:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); border-color: var(--accent); }
+.paper-no {
+  flex: none; width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center;
+  font-weight: 700; font-size: 1.2rem; color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+.paper h3 { margin: 0; font-size: 1rem; line-height: 1.35; }
+.paper .badges { padding-top: 6px; }
 
 .empty { text-align: center; color: var(--muted); padding: 48px 16px; }
 .empty .big { font-size: 2.5rem; display: block; margin-bottom: 8px; }
@@ -184,6 +214,12 @@ details[open] summary { margin-bottom: 14px; }
 }
 .manage-item:last-child { border-bottom: 0; }
 .manage-item .name { font-weight: 500; }
+.manage-series { border: 1px solid var(--border); border-radius: 10px; padding: 4px 12px; margin: 8px 0; }
+.manage-series-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
+  padding: 8px 0; font-weight: 600; border-bottom: 1px solid var(--border);
+}
+.manage-item.in-series { padding-left: 12px; }
 .manage-item .slug { font-size: .8rem; color: var(--muted); }
 
 /* ---------- Trang làm bài ---------- */

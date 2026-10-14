@@ -13,13 +13,15 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
   <script src="theme.js"></script>
+  <script src="common.js"></script>
   <script src="crypto.js"></script>
 </head>
 <body class="play">
   <div class="playbar">
-    <a class="btn small" href="index.html" title="Về danh sách bài thi">←<span class="lbl"> Danh sách</span></a>
+    <a class="btn small" id="backBtn" href="index.html" title="Về danh sách bài thi">←<span class="lbl" id="backLbl"> Danh sách</span></a>
     <div class="play-title" id="title">Đang tải…</div>
     <div class="actions">
+      <a class="btn small" id="nextBtn" hidden title="Làm đề tiếp theo trong bộ"><span class="lbl">Đề tiếp </span>→</a>
       <button class="btn small" id="copyBtn" title="Copy link bài thi">🔗<span class="lbl"> Copy link</span></button>
       <button class="btn small" id="fsBtn" title="Toàn màn hình">⛶<span class="lbl"> Toàn màn hình</span></button>
       <button class="btn small icon" data-theme-toggle></button>
@@ -97,6 +99,22 @@
       if (!ok) $('pw').select();
     };
 
+    // Bài thuộc bộ đề: nút ← về trang bộ đề, nút "Đề tiếp →" sang đề kế tiếp
+    function setupSeriesNav(list, info) {
+      if (!info?.series) return;
+      const s = QuizUtil.slugify(info.series);
+      $('backBtn').href = `series.html?s=${s}`;
+      $('backBtn').title = `Về bộ đề: ${info.series}`;
+      $('backLbl').textContent = ' Bộ đề';
+      const papers = list.filter(e => e.series === info.series).sort(QuizUtil.compareInSeries);
+      const next = papers[papers.findIndex(e => e.slug === info.slug) + 1];
+      if (next) {
+        $('nextBtn').href = `play.html?e=${encodeURIComponent(next.slug)}&s=${s}`;
+        $('nextBtn').title = `Đề tiếp: ${next.title}`;
+        $('nextBtn').hidden = false;
+      }
+    }
+
     async function init() {
       if (!/^[a-z0-9-]+$/.test(slug)) return notFound();
       const path = `exams/${slug}.html`;
@@ -107,6 +125,7 @@
       if (html === null) return notFound();
       const info = (Array.isArray(list) ? list : []).find(e => e.slug === slug);
       const title = info?.title || slug;
+      setupSeriesNav(Array.isArray(list) ? list : [], info);
       $('title').textContent = `${info?.icon ? info.icon + ' ' : ''}${title}`;
       document.title = title;
 
