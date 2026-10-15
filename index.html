@@ -11,9 +11,13 @@
   <meta property="og:image" content="https://vuong7720.github.io/quiz-site/og.png">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#2f6fed">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="stylesheet" href="style.css">
   <script src="theme.js"></script>
   <script src="common.js"></script>
+  <script src="history.js"></script>
 </head>
 <body>
   <div class="container">
@@ -24,6 +28,8 @@
       </div>
       <div class="actions">
         <button class="btn ghost icon" data-theme-toggle></button>
+        <button class="btn ghost" id="installBtn" hidden>📲 Cài ứng dụng</button>
+        <a class="btn ghost" id="resultsBtn" href="results.html" hidden>📈 Kết quả của tôi</a>
         <a class="btn white" id="createBtn" href="create.html" hidden>+ Tạo bài thi</a>
       </div>
     </section>
@@ -54,6 +60,16 @@
     } catch {}
 
     const dateOf = e => e.createdAt ? new Date(e.createdAt).toLocaleDateString('vi-VN') : '';
+    const fmtScore = x => Number(x).toLocaleString('vi-VN', { maximumFractionDigits: 1 });
+
+    // Điểm cao nhất của người xem (lưu trên máy họ)
+    const history = Object.fromEntries(QuizHistory.all().map(h => [h.slug, h]));
+    if (Object.keys(history).length) document.getElementById('resultsBtn').hidden = false;
+    function scoreBadge(e) {
+      const h = history[e.slug];
+      if (!h || h.best === null) return '';
+      return `<span class="badge ${h.best >= 5 ? 'score-ok' : 'score-bad'}" title="Điểm cao nhất của bạn · ${h.count} lượt">${h.best >= 5 ? '✅' : '📈'} ${fmtScore(h.best)}đ</span>`;
+    }
 
     function renderChips() {
       const counts = {};
@@ -67,6 +83,7 @@
 
     function examCard(e) {
       const badges = [
+        scoreBadge(e),
         e.topic && `<span class="badge topic">${escapeHtml(e.topic)}</span>`,
         e.questions && `<span class="badge">${escapeHtml(e.questions)} câu</span>`,
         e.minutes && `<span class="badge">⏱ ${escapeHtml(e.minutes)} phút</span>`,
@@ -91,7 +108,9 @@
       const topics = [...new Set(items.map(e => e.topic).filter(Boolean))];
       const latest = items.reduce((a, b) => ((b.createdAt || '') > (a.createdAt || '') ? b : a));
       const preview = sorted.slice(0, 3).map(e => escapeHtml(e.title)).join(' · ') + (sorted.length > 3 ? ' …' : '');
+      const doneCount = items.filter(e => history[e.slug]?.count).length;
       const badges = [
+        doneCount && `<span class="badge score-ok">✅ Đã làm ${doneCount}/${items.length}</span>`,
         `<span class="badge topic">📚 ${items.length} đề</span>`,
         ...topics.slice(0, 2).map(t => `<span class="badge">${escapeHtml(t)}</span>`),
         items.some(e => e.locked) && `<span class="badge">🔒</span>`,
@@ -132,6 +151,29 @@
         : '<span class="big">📭</span>Chưa có bài thi nào.';
       listEl.innerHTML = cards.join('');
     }
+
+    // Cài như ứng dụng (Android/Chrome/Edge: hộp thoại cài; iPhone: hướng dẫn thêm vào màn hình chính)
+    const installBtn = document.getElementById('installBtn');
+    const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    let installPrompt = null;
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      installPrompt = e;
+      if (!standalone) installBtn.hidden = false;
+    });
+    window.addEventListener('appinstalled', () => { installBtn.hidden = true; });
+    if (isIOS && !standalone) installBtn.hidden = false;
+    installBtn.onclick = async () => {
+      if (installPrompt) {
+        installPrompt.prompt();
+        await installPrompt.userChoice;
+        installPrompt = null;
+        installBtn.hidden = true;
+      } else {
+        alert('Cài lên iPhone/iPad:\n\n1. Mở trang này bằng Safari\n2. Bấm nút Chia sẻ (ô vuông có mũi tên ⬆️)\n3. Chọn "Thêm vào MH chính"');
+      }
+    };
 
     chipsEl.addEventListener('click', ev => {
       const chip = ev.target.closest('.chip');

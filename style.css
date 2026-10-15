@@ -151,6 +151,41 @@ header.top h1 { margin: 0; font-size: 1.6rem; }
 .badge { font-size: .75rem; padding: 2px 9px; border-radius: 999px; background: var(--chip); color: var(--muted); }
 .badge.topic { background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--text); }
 
+/* ---------- Kết quả của tôi ---------- */
+.res-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+.res-tile { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 16px 8px; }
+.res-tile span { font-size: 1.3rem; }
+.res-tile b { font-size: 1.5rem; }
+.res-tile small { color: var(--muted); font-size: .8rem; }
+.res-h { font-size: 1.1rem; margin: 8px 0 12px; }
+.res-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; margin-bottom: 24px; }
+.res-item { --accent: var(--primary); display: flex; flex-direction: column; gap: 12px; border-top: 4px solid var(--accent); }
+.res-item h3 { margin: 0; font-size: 1rem; }
+.res-item p { margin: 2px 0 0; }
+.res-score { text-align: center; flex: none; }
+.res-score b { display: block; font-size: 1.6rem; line-height: 1.1; color: var(--accent); }
+.res-score small { color: var(--muted); font-size: .75rem; }
+.spark { display: flex; align-items: flex-end; gap: 4px; height: 44px; }
+.spark i { flex: 1; max-width: 16px; border-radius: 3px 3px 0 0; background: var(--success); opacity: .85; }
+.spark i.bad { background: var(--danger); }
+.res-recent { padding: 6px 16px; }
+.res-row {
+  display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border);
+  text-decoration: none; color: inherit;
+}
+.res-row:last-child { border-bottom: 0; }
+.res-row:hover .res-row-title { color: var(--primary); }
+.res-row-title { flex: 1; min-width: 0; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.res-row b { min-width: 34px; text-align: right; }
+.res-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--success); flex: none; }
+.res-dot.bad { background: var(--danger); }
+.badge.score-ok { background: color-mix(in srgb, var(--success) 16%, transparent); color: var(--text); }
+.badge.score-bad { background: color-mix(in srgb, var(--danger) 13%, transparent); color: var(--text); }
+@media (max-width: 600px) {
+  .res-tiles { grid-template-columns: repeat(2, 1fr); }
+  .res-list { grid-template-columns: 1fr; }
+}
+
 /* ---------- Trang bộ đề ---------- */
 .series-hero { --accent: var(--primary); border-top: 4px solid var(--accent); margin-bottom: 20px; }
 .series-hero .exam-head { align-items: center; }

@@ -31,6 +31,29 @@
   }
   function fmtScore(x) { return Number(x).toLocaleString('vi-VN', { maximumFractionDigits: 1 }); }
 
+  // Mã nhận diện câu hỏi (không đổi khi xáo trộn) → dùng để nhớ câu sai
+  function keyOf(q) {
+    var s = q.q + '\u0001' + q.options.join('\u0001'), h1 = 0x811c9dc5, h2 = 0;
+    for (var i = 0; i < s.length; i++) {
+      var c = s.charCodeAt(i);
+      h1 = Math.imul(h1 ^ c, 16777619) >>> 0;
+      h2 = (h2 * 31 + c) >>> 0;
+    }
+    return h1.toString(36) + h2.toString(36);
+  }
+
+  function fmtDate(t) {
+    return new Date(t).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+  }
+
+  // Biểu đồ cột nhỏ các lượt gần nhất
+  function sparkBars(attempts, pass) {
+    var a = attempts.slice(-12);
+    return '<div class="qz-spark" title="Điểm các lượt gần nhất">' + a.map(function (x) {
+      return '<i class="' + (x.score >= pass ? 'ok' : 'bad') + '" style="height:' + Math.max(8, x.score * 10) + '%" title="' + fmtScore(x.score) + ' điểm · ' + fmtDate(x.at) + '"></i>';
+    }).join('') + '</div>';
+  }
+
   function normalize(raw) {
     var d = raw || {};
     var s = Object.assign({}, DEFAULTS, d.settings || {});
@@ -50,6 +73,7 @@
         image: safeImg(q.image),
       };
     }).filter(function (q) { return q.q.trim() && q.options.length >= 2; });
+    questions.forEach(function (q) { q.key = keyOf(q); });
     return { title: String(d.title || 'Bài thi'), description: String(d.description || ''), settings: s, questions: questions };
   }
 
@@ -125,10 +149,20 @@
       });
     }
 
+    function stats() { return opts.getStats ? opts.getStats() : null; }
+    function wrongInExam(st_) {
+      var keys = (st_ && st_.wrongKeys) || [];
+      return data.questions.filter(function (q) { return keys.indexOf(q.key) >= 0; });
+    }
+
     // ---------- Lượt làm bài mới ----------
-    function newAttempt() {
+    // review = true: chỉ làm lại các câu từng sai, không giới hạn thời gian
+    function newAttempt(review) {
       var qs = data.questions.map(function (q, i) { return Object.assign({}, q, { idx: i }); });
-      if (S.pick > 0 && S.pick < qs.length) {
+      if (review) {
+        var wrong = wrongInExam(stats()).map(function (q) { return q.key; });
+        qs = shuffle(qs.filter(function (q) { return wrong.indexOf(q.key) >= 0; }));
+      } else if (S.pick > 0 && S.pick < qs.length) {
         qs = shuffle(qs).slice(0, S.pick);
         if (!S.shuffleQuestions) qs.sort(function (a, b) { return a.idx - b.idx; });
       } else if (S.shuffleQuestions) {
@@ -136,12 +170,12 @@
       }
       var items = qs.map(function (q) {
         var o = q.options.map(function (text, i) { return { text: text, correct: i === q.answer }; });
-        if (S.shuffleOptions) o = shuffle(o);
+        if (S.shuffleOptions || review) o = shuffle(o);
         return Object.assign({}, q, { opts: o });
       });
       st = {
-        items: items, answers: items.map(function () { return null; }), flags: {},
-        cur: 0, start: Date.now(), end: S.minutes > 0 ? Date.now() + S.minutes * 60000 : 0, done: false,
+        items: items, answers: items.map(function () { return null; }), flags: {}, review: !!review,
+        cur: 0, start: Date.now(), end: S.minutes > 0 && !review ? Date.now() + S.minutes * 60000 : 0, done: false,
       };
     }
 
@@ -171,8 +205,34 @@
         '<li>Bấm 🚩 để đánh dấu câu muốn xem lại trước khi nộp.</li>' +
         (S.minutes > 0 ? '<li>Hết giờ, bài sẽ được nộp tự động.</li>' : '') +
         '<li class="qz-kbd-hint">Phím tắt: 1–' + maxOpts + ' hoặc A–' + LETTERS[maxOpts - 1] + ' để chọn đáp án' + (S.mode === 'one' ? ', ← → để chuyển câu' : '') + '.</li>' +
-        '</ul><button class="qz-btn qz-primary qz-big" data-act="start">Bắt đầu làm bài →</button></div></div>';
+        '</ul><button class="qz-btn qz-primary qz-big" data-act="start">Bắt đầu làm bài →</button>' +
+        historyHtml() +
+        (opts.onPrint
+          ? '<div class="qz-print-row"><button class="qz-btn qz-ghost" data-act="print" data-mode="paper">🖨️ In đề / Lưu PDF</button>' +
+            (opts.canPrintAnswers ? '<button class="qz-btn qz-ghost" data-act="print" data-mode="answers">🖨️ In kèm đáp án</button>' : '') + '</div>'
+          : '') +
+        '</div></div>';
       toTop();
+    }
+
+    // Khối "Kết quả của bạn" trên màn hình bắt đầu
+    function historyHtml() {
+      var h = stats();
+      if (!h) return '';
+      var wrong = wrongInExam(h).length;
+      if (!h.count && !wrong) return '';
+      return '<div class="qz-hist">' +
+        (h.count
+          ? '<div class="qz-hist-row"><div class="qz-hist-nums">' +
+            '<div><small>Lần gần nhất</small><b>' + fmtScore(h.last.score) + '</b></div>' +
+            '<div><small>Cao nhất</small><b>' + fmtScore(h.best) + '</b></div>' +
+            '<div><small>Số lượt</small><b>' + h.count + '</b></div></div>' +
+            (h.count > 1 ? sparkBars(h.attempts, S.pass) : '') + '</div>'
+          : '') +
+        (wrong
+          ? '<button class="qz-btn qz-review-btn" data-act="review">🔁 Ôn lại ' + wrong + ' câu từng làm sai</button>'
+          : (h.count ? '<div class="qz-hist-ok">🎉 Bạn không còn câu sai nào cần ôn.</div>' : '')) +
+        '</div>';
     }
 
     // ---------- Màn hình làm bài ----------
@@ -198,7 +258,7 @@
     function renderQuiz() {
       root.innerHTML =
         '<div class="qz-bar"><div class="qz-bar-in">' +
-        '<div class="qz-bar-title">' + esc(data.title) + '</div>' +
+        '<div class="qz-bar-title">' + (st.review ? '🔁 Ôn câu sai · ' : '') + esc(data.title) + '</div>' +
         '<div class="qz-prog"><div class="qz-prog-text">Đã làm <b data-ref="done">0</b>/' + total() + ' câu</div>' +
         '<div class="qz-track"><div class="qz-fill" data-ref="fill"></div></div></div>' +
         (st.end ? '<div class="qz-timer" data-ref="timer"></div>' : '') +
@@ -310,12 +370,12 @@
       if (closeModal) closeModal();
       var rows = st.items.map(function (it, i) {
         var a = st.answers[i];
-        return { status: a === null ? 'skip' : it.opts[a].correct ? 'right' : 'wrong' };
+        return { key: it.key, status: a === null ? 'skip' : it.opts[a].correct ? 'right' : 'wrong' };
       });
       var right = rows.filter(function (r) { return r.status === 'right'; }).length;
       var wrong = rows.filter(function (r) { return r.status === 'wrong'; }).length;
       var score = Math.round(right / total() * 100) / 10;
-      result = { rows: rows, right: right, wrong: wrong, skip: total() - right - wrong, total: total(), score: score, passed: score >= S.pass, usedSec: usedSec, timeUp: timeUp };
+      result = { rows: rows, right: right, wrong: wrong, skip: total() - right - wrong, total: total(), score: score, passed: score >= S.pass, usedSec: usedSec, timeUp: timeUp, review: st.review };
       reviewTab = 'all';
       if (opts.onFinish) { try { opts.onFinish(result); } catch (e) {} }
       if (timeUp) {
@@ -336,16 +396,21 @@
         '<div class="qz-ring"><svg viewBox="0 0 120 120"><circle class="qz-ring-bg" cx="60" cy="60" r="52"/>' +
         '<circle class="qz-ring-fg" data-ref="ring" cx="60" cy="60" r="52" stroke-dasharray="' + C + '" stroke-dashoffset="' + C + '"/></svg>' +
         '<div class="qz-ring-num"><b data-ref="num">0</b><small>/10</small></div></div>' +
-        '<span class="qz-verdict">' + (R.passed ? 'ĐẠT' : 'CHƯA ĐẠT') + '</span>' +
-        '<h2>' + remarkFor(R.score, R.passed) + '</h2>' +
-        '<p class="qz-desc">' + esc(data.title) + ' · Điểm đạt ' + fmtScore(S.pass) + '/10</p>' +
+        (R.review ? '' : '<span class="qz-verdict">' + (R.passed ? 'ĐẠT' : 'CHƯA ĐẠT') + '</span>') +
+        '<h2>' + (R.review
+          ? (R.right === R.total ? 'Tuyệt vời! Bạn đã sửa hết các câu sai 🎉' : 'Đã sửa được ' + R.right + '/' + R.total + ' câu. Ôn tiếp nhé 💪')
+          : remarkFor(R.score, R.passed)) + '</h2>' +
+        '<p class="qz-desc">' + (R.review ? '🔁 Ôn câu sai · ' : '') + esc(data.title) + (R.review ? '' : ' · Điểm đạt ' + fmtScore(S.pass) + '/10') + '</p>' +
         '<div class="qz-stats">' +
         '<div class="qz-tile"><span>✅</span><b>' + R.right + '</b><small>câu đúng</small></div>' +
         '<div class="qz-tile"><span>❌</span><b>' + R.wrong + '</b><small>câu sai</small></div>' +
         '<div class="qz-tile"><span>⏭</span><b>' + R.skip + '</b><small>bỏ trống</small></div>' +
         '<div class="qz-tile"><span>⏱</span><b>' + fmtTime(R.usedSec) + '</b><small>thời gian</small></div>' +
         '</div><div class="qz-actions">' +
-        '<button class="qz-btn qz-primary" data-act="retry">🔁 Làm lại' + (S.pick > 0 && S.pick < data.questions.length ? ' (đề mới)' : '') + '</button>' +
+        (R.review
+          ? (wrongInExam(stats()).length ? '<button class="qz-btn qz-primary" data-act="review">🔁 Ôn tiếp ' + wrongInExam(stats()).length + ' câu còn sai</button>' : '') +
+            '<button class="qz-btn' + (wrongInExam(stats()).length ? '' : ' qz-primary') + '" data-act="retry">📝 Làm cả bài</button>'
+          : '<button class="qz-btn qz-primary" data-act="retry">🔁 Làm lại' + (S.pick > 0 && S.pick < data.questions.length ? ' (đề mới)' : '') + '</button>') +
         '<button class="qz-btn" data-act="to-review">📋 Xem đáp án</button>' +
         '<button class="qz-btn" data-act="home">↩ Màn hình đầu</button>' +
         '</div></div>' +
@@ -405,6 +470,8 @@
         case 'palette': root.classList.toggle('qz-pal-open'); break;
         case 'submit': askSubmit(); break;
         case 'retry': newAttempt(); renderQuiz(); break;
+        case 'review': newAttempt(true); renderQuiz(); break;
+        case 'print': if (opts.onPrint) opts.onPrint(b.dataset.mode); break;
         case 'home': renderStart(); break;
         case 'to-review': ref('review').scrollIntoView({ behavior: 'smooth', block: 'start' }); break;
         case 'tab':
@@ -424,9 +491,67 @@
       root._qzDestroy = null;
     };
 
-    renderStart();
+    // Link "?review=1" (từ trang Kết quả của tôi) → vào thẳng chế độ ôn câu sai
+    if (opts.autoReview && wrongInExam(stats()).length) { newAttempt(true); renderQuiz(); }
+    else renderStart();
     return { destroy: function () { if (root._qzDestroy) root._qzDestroy(); }, data: data };
   }
 
-  window.QuizEngine = { mount: mount, normalize: normalize, LETTERS: LETTERS };
+  // =====================================================================
+  // In đề / Lưu PDF: dựng bản in trắng đen rồi gọi hộp thoại in của trình duyệt
+  // mode: 'paper' (đề trống), 'answers' (đề kèm đáp án + giải thích + bảng đáp án)
+  // =====================================================================
+  function printExam(raw, mode, meta) {
+    var data = normalize(raw), S = data.settings, withAns = mode === 'answers';
+    meta = meta || {};
+    var old = document.getElementById('qz-print');
+    if (old) old.remove();
+    var el = document.createElement('div');
+    el.id = 'qz-print';
+    var qs = data.questions;
+    var info = [qs.length + ' câu', S.minutes > 0 ? S.minutes + ' phút' : 'không giới hạn thời gian', 'điểm đạt ' + fmtScore(S.pass) + '/10'];
+    el.innerHTML =
+      '<header class="qp-head">' +
+      (meta.series ? '<div class="qp-series">' + esc(meta.series) + '</div>' : '') +
+      '<h1>' + esc(data.title) + (withAns ? ' — ĐÁP ÁN' : '') + '</h1>' +
+      (data.description ? '<p class="qp-desc">' + esc(data.description) + '</p>' : '') +
+      '<p class="qp-info">' + info.join(' · ') + '</p>' +
+      (withAns ? '' : '<div class="qp-student"><span>Họ và tên: ....................................................</span><span>Lớp/Nhóm: ....................</span><span>Điểm: ..........</span></div>') +
+      '</header>' +
+      '<ol class="qp-list">' + qs.map(function (q, i) {
+        var short = q.options.every(function (o) { return o.length <= 28; });
+        return '<li class="qp-q"><div class="qp-text"><b>Câu ' + (i + 1) + '.</b> ' + esc(q.q) + '</div>' +
+          (q.image ? '<img class="qp-img" src="' + esc(q.image) + '" alt="">' : '') +
+          '<div class="qp-opts' + (short && q.options.length <= 4 ? ' qp-cols' : '') + '">' + q.options.map(function (o, j) {
+            var right = withAns && j === q.answer;
+            return '<div class="qp-opt' + (right ? ' qp-right' : '') + '"><span class="qp-letter">' + LETTERS[j] + '.</span> ' + esc(o) + (right ? ' ✔' : '') + '</div>';
+          }).join('') + '</div>' +
+          (withAns && q.explain ? '<div class="qp-explain"><b>Giải thích:</b> ' + esc(q.explain) + '</div>' : '') +
+          '</li>';
+      }).join('') + '</ol>' +
+      (withAns
+        ? '<section class="qp-key"><h2>Bảng đáp án</h2><div class="qp-key-grid">' + qs.map(function (q, i) {
+            return '<span><b>' + (i + 1) + '</b>' + LETTERS[q.answer] + '</span>';
+          }).join('') + '</div></section>'
+        : '') +
+      '<footer class="qp-foot">' + esc(meta.footer || '') + '</footer>';
+    document.body.appendChild(el);
+    document.body.classList.add('qz-printing');
+    var prevTitle = document.title;
+    document.title = data.title + (withAns ? ' - Đáp án' : ''); // tên file khi "Lưu thành PDF"
+    function cleanup() {
+      document.body.classList.remove('qz-printing');
+      document.title = prevTitle;
+      el.remove();
+      window.removeEventListener('afterprint', cleanup);
+    }
+    window.addEventListener('afterprint', cleanup);
+    // chờ ảnh tải xong rồi mới in
+    var imgs = [].slice.call(el.querySelectorAll('img'));
+    Promise.all(imgs.map(function (im) {
+      return im.complete ? 0 : new Promise(function (r) { im.onload = im.onerror = r; });
+    })).then(function () { setTimeout(function () { window.print(); }, 50); });
+  }
+
+  window.QuizEngine = { mount: mount, normalize: normalize, print: printExam, keyOf: keyOf, LETTERS: LETTERS };
 })();

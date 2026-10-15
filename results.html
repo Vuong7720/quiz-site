@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kết quả của tôi</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#2f6fed">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
+  <script src="theme.js"></script>
+  <script src="common.js"></script>
+  <script src="history.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header class="top">
+      <a class="btn" href="index.html">← Danh sách bài thi</a>
+      <button class="btn icon" data-theme-toggle></button>
+    </header>
+
+    <section class="hero">
+      <div>
+        <h1>📈 Kết quả của tôi</h1>
+        <p>Lịch sử làm bài được lưu ngay trên thiết bị này.</p>
+      </div>
+    </section>
+
+    <div id="content"></div>
+  </div>
+
+  <script>
+    const { escapeHtml: esc, accent } = QuizUtil;
+    const fmt = x => Number(x).toLocaleString('vi-VN', { maximumFractionDigits: 1 });
+    const when = t => {
+      const d = (Date.now() - t) / 1000;
+      if (d < 60) return 'vừa xong';
+      if (d < 3600) return Math.floor(d / 60) + ' phút trước';
+      if (d < 86400) return Math.floor(d / 3600) + ' giờ trước';
+      if (d < 7 * 86400) return Math.floor(d / 86400) + ' ngày trước';
+      return new Date(t).toLocaleDateString('vi-VN');
+    };
+    const bars = (attempts, pass) => `<div class="spark">${attempts.slice(-15).map(a =>
+      `<i class="${a.score >= pass ? 'ok' : 'bad'}" style="height:${Math.max(8, a.score * 10)}%" title="${fmt(a.score)} điểm · ${new Date(a.at).toLocaleString('vi-VN')}"></i>`).join('')}</div>`;
+
+    function render(exams) {
+      const bySlug = Object.fromEntries(exams.map(e => [e.slug, e]));
+      const items = QuizHistory.all()
+        .map(h => ({ ...h, exam: bySlug[h.slug] }))
+        .sort((a, b) => (b.last?.at || 0) - (a.last?.at || 0));
+      const box = document.getElementById('content');
+
+      if (!items.length) {
+        box.innerHTML = `<div class="card empty"><span class="big">🌱</span>Bạn chưa làm bài nào trên thiết bị này.<br>
+          <span class="hint">Lịch sử chỉ ghi lại các bài dạng “Soạn câu hỏi”.</span><br><br>
+          <a class="btn primary" href="index.html">Chọn bài để làm</a></div>`;
+        return;
+      }
+
+      const attempts = items.flatMap(i => i.attempts.map(a => ({ ...a, slug: i.slug, title: i.exam?.title || i.title })));
+      const avg = attempts.length ? attempts.reduce((s, a) => s + a.score, 0) / attempts.length : 0;
+      const wrong = items.filter(i => i.exam).reduce((s, i) => s + i.wrongKeys.length, 0);
+
+      box.innerHTML = `
+        <div class="res-tiles">
+          <div class="card res-tile"><span>📝</span><b>${items.filter(i => i.count).length}</b><small>bài đã làm</small></div>
+          <div class="card res-tile"><span>🔁</span><b>${attempts.length}</b><small>lượt làm bài</small></div>
+          <div class="card res-tile"><span>📊</span><b>${fmt(avg)}</b><small>điểm trung bình</small></div>
+          <div class="card res-tile"><span>🎯</span><b>${wrong}</b><small>câu sai cần ôn</small></div>
+        </div>
+
+        <h2 class="res-h">Theo từng bài</h2>
+        <div class="res-list">${items.map(i => {
+          const e = i.exam;
+          const title = e?.title || i.title || i.slug;
+          const link = `play.html?e=${encodeURIComponent(i.slug)}`;
+          return `<div class="card res-item" style="--accent:${accent(i.slug)}">
+            <div class="exam-head">
+              <div class="exam-icon">${esc(e?.icon || '📝')}</div>
+              <div style="min-width:0;flex:1">
+                <h3>${esc(title)}${e ? '' : ' <span class="hint">(bài đã bị xóa)</span>'}</h3>
+                <p class="hint">${i.count ? `${i.count} lượt · lần cuối ${when(i.last.at)}` : 'Chưa có lượt làm bài đầy đủ'}</p>
+              </div>
+              ${i.count ? `<div class="res-score"><b>${fmt(i.best)}</b><small>cao nhất</small></div>` : ''}
+            </div>
+            ${i.count > 1 ? bars(i.attempts, 5) : ''}
+            <div class="actions">
+              ${e ? `<a class="btn small primary" href="${link}">Làm lại</a>` : ''}
+              ${e && i.wrongKeys.length ? `<a class="btn small" href="${link}&review=1">🔁 Ôn ${i.wrongKeys.length} câu sai</a>` : ''}
+              <button class="btn small danger" data-clear="${esc(i.slug)}">Xóa lịch sử</button>
+            </div>
+          </div>`;
+        }).join('')}</div>
+
+        <h2 class="res-h">Hoạt động gần đây</h2>
+        <div class="card res-recent">${attempts.sort((a, b) => b.at - a.at).slice(0, 12).map(a => `
+          <a class="res-row" href="play.html?e=${encodeURIComponent(a.slug)}">
+            <span class="res-dot ${a.passed ? 'ok' : 'bad'}"></span>
+            <span class="res-row-title">${esc(a.title)}</span>
+            <span class="hint">${a.right}/${a.total} câu · ${when(a.at)}</span>
+            <b>${fmt(a.score)}</b>
+          </a>`).join('')}</div>
+
+        <div style="text-align:center;margin-top:24px">
+          <button class="btn small danger" id="clearAll">🗑 Xóa toàn bộ lịch sử trên thiết bị này</button>
+        </div>`;
+
+      box.querySelectorAll('[data-clear]').forEach(b => b.onclick = () => {
+        if (!confirm('Xóa lịch sử của bài này?')) return;
+        QuizHistory.clear(b.dataset.clear);
+        render(exams);
+      });
+      document.getElementById('clearAll').onclick = () => {
+        if (!confirm('Xóa toàn bộ lịch sử làm bài trên thiết bị này?')) return;
+        QuizHistory.clear();
+        render(exams);
+      };
+    }
+
+    QuizUtil.loadExams().then(render);
+  </script>
+</body>
+</html>

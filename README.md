@@ -7,9 +7,11 @@ Trang bài thi trắc nghiệm tĩnh (HTML/CSS/JS), chạy trên GitHub Pages, k
 - `play.html`: trang làm bài (bài soạn câu hỏi chạy bằng `quiz-engine.js`; bài HTML chạy trong iframe cô lập)
 - `create.html`: soạn câu hỏi (`quiz-editor.js`) hoặc dán HTML → xem trước → đăng (commit thẳng vào repo qua GitHub API)
 - `exams/<tên>.json`: bài soạn câu hỏi · `exams/<tên>.html`: bài HTML
+- `results.html` + `history.js`: lịch sử làm bài & câu sai, lưu trên máy người làm (localStorage)
+- `manifest.webmanifest`, `sw.js`, `icons/`: cài như ứng dụng, dùng offline cho các trang/bài đã mở
 - `crypto.js`: mã hóa bài có mật khẩu (AES-GCM) · `common.js`, `theme.js`: tiện ích chung
 
-### Định dạng bài soạn câu hỏi (`exams/<tên>.json`)
+## Định dạng bài soạn câu hỏi (`exams/<tên>.json`)
 
 ```json
 {

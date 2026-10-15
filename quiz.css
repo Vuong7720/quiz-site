@@ -62,6 +62,26 @@
 }
 @media (hover: none) { .qz-kbd-hint { display: none; } }
 
+.qz-ghost { background: none; border-color: transparent; color: var(--muted); font-weight: 500; font-size: .88rem; padding: 8px 12px; }
+.qz-ghost:hover:not(:disabled) { background: var(--chip); border-color: transparent; color: var(--text); }
+.qz-print-row { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-top: 14px; }
+
+/* Kết quả của bạn (trên màn hình bắt đầu) */
+.qz-hist {
+  margin: 22px auto 0; max-width: 520px; padding: 16px; border-radius: 14px;
+  border: 1px dashed var(--border); display: flex; flex-direction: column; gap: 12px;
+}
+.qz-hist-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.qz-hist-nums { display: flex; gap: 22px; text-align: left; }
+.qz-hist-nums small { display: block; color: var(--muted); font-size: .75rem; }
+.qz-hist-nums b { font-size: 1.25rem; }
+.qz-spark { display: flex; align-items: flex-end; gap: 3px; height: 40px; flex: 1; max-width: 200px; justify-content: flex-end; }
+.qz-spark i { width: 10px; border-radius: 3px 3px 0 0; background: var(--qz-ok); opacity: .85; }
+.qz-spark i.bad { background: var(--qz-bad); }
+.qz-review-btn { border-color: color-mix(in srgb, var(--qz-warn) 55%, var(--border)); background: color-mix(in srgb, var(--qz-warn) 10%, transparent); }
+.qz-review-btn:hover:not(:disabled) { border-color: var(--qz-warn); }
+.qz-hist-ok { font-size: .9rem; color: var(--muted); }
+
 /* ---------- Thanh trên cùng khi làm bài ---------- */
 .qz-bar {
   position: sticky; top: 0; z-index: 20;
@@ -248,4 +268,40 @@
   .qz-q-text { font-size: 1.05rem; }
   .qz-opt { padding: 12px; gap: 10px; }
   .qz-nav .qz-btn { flex: 1; }
+}
+
+/* =========================================================
+   Bản in / Lưu PDF (QuizEngine.print)
+   ========================================================= */
+#qz-print { display: none; }
+@media print {
+  @page { size: A4; margin: 14mm 14mm 16mm; }
+  body.qz-printing { height: auto !important; overflow: visible !important; display: block !important; background: #fff !important; }
+  body.qz-printing > *:not(#qz-print) { display: none !important; }
+  body.qz-printing #qz-print { display: block; }
+  #qz-print {
+    color: #000; background: #fff; font: 11.5pt/1.45 "Be Vietnam Pro", "Times New Roman", serif;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  #qz-print .qp-head { text-align: center; border-bottom: 1.5pt solid #000; padding-bottom: 8pt; margin-bottom: 12pt; }
+  #qz-print .qp-series { font-size: 9.5pt; text-transform: uppercase; letter-spacing: .08em; }
+  #qz-print h1 { font-size: 16pt; margin: 2pt 0 4pt; }
+  #qz-print .qp-desc, #qz-print .qp-info { margin: 2pt 0; font-size: 10pt; }
+  #qz-print .qp-student { display: flex; justify-content: space-between; gap: 10pt; margin-top: 10pt; font-size: 10.5pt; text-align: left; }
+  #qz-print .qp-list { list-style: none; padding: 0; margin: 0; }
+  #qz-print .qp-q { break-inside: avoid; page-break-inside: avoid; margin: 0 0 10pt; }
+  #qz-print .qp-text { white-space: pre-wrap; margin-bottom: 3pt; }
+  #qz-print .qp-img { display: block; max-width: 70%; max-height: 55mm; margin: 4pt 0; }
+  #qz-print .qp-opts { padding-left: 14pt; }
+  #qz-print .qp-opts.qp-cols { display: grid; grid-template-columns: 1fr 1fr; column-gap: 16pt; }
+  #qz-print .qp-opt { white-space: pre-wrap; }
+  #qz-print .qp-letter { font-weight: 700; }
+  #qz-print .qp-right { font-weight: 700; text-decoration: underline; }
+  #qz-print .qp-explain { margin: 3pt 0 0 14pt; font-size: 10pt; font-style: italic; }
+  #qz-print .qp-key { break-before: page; page-break-before: always; }
+  #qz-print .qp-key h2 { font-size: 13pt; text-align: center; margin: 0 0 8pt; }
+  #qz-print .qp-key-grid { display: grid; grid-template-columns: repeat(10, 46pt); justify-content: center; padding: 1pt 0 0 1pt; }
+  #qz-print .qp-key-grid span { border: 1pt solid #000; margin: -1pt 0 0 -1pt; text-align: center; padding: 3pt 0; font-size: 10.5pt; }
+  #qz-print .qp-key-grid b { display: block; font-size: 8.5pt; font-weight: 400; color: #444; }
+  #qz-print .qp-foot { margin-top: 14pt; font-size: 8.5pt; color: #555; text-align: center; }
 }

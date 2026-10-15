@@ -32,5 +32,10 @@
       .then(function (d) { return Array.isArray(d) ? d : []; });
   }
 
+  // Cài như ứng dụng + dùng offline (cần HTTPS hoặc localhost)
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+  }
+
   window.QuizUtil = { slugify: slugify, escapeHtml: escapeHtml, compareInSeries: compareInSeries, accent: accent, loadExams: loadExams };
 })();

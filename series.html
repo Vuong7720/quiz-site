@@ -11,9 +11,13 @@
   <meta property="og:image" content="https://vuong7720.github.io/quiz-site/og.png">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#2f6fed">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="stylesheet" href="style.css">
   <script src="theme.js"></script>
   <script src="common.js"></script>
+  <script src="history.js"></script>
 </head>
 <body>
   <div class="container">
@@ -73,7 +77,9 @@
       $('hero').hidden = false;
 
       $('papers').innerHTML = items.map((e, i) => {
+        const h = QuizHistory.summary(e.slug);
         const badges = [
+          h?.best != null && `<span class="badge ${h.best >= 5 ? 'score-ok' : 'score-bad'}" title="Điểm cao nhất của bạn">${h.best >= 5 ? '✅' : '📈'} ${h.best.toLocaleString('vi-VN', { maximumFractionDigits: 1 })}đ</span>`,
           e.questions && `<span class="badge">${escapeHtml(e.questions)} câu</span>`,
           e.minutes && `<span class="badge">⏱ ${escapeHtml(e.minutes)} phút</span>`,
           e.locked && `<span class="badge">🔒</span>`,
