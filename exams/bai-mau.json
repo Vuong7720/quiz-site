@@ -1,0 +1,38 @@
+{
+  "v": 1,
+  "title": "Bài mẫu: Kiến thức web cơ bản",
+  "description": "5 câu hỏi mẫu về HTML, CSS và JavaScript. Có thể xóa sau.",
+  "settings": { "mode": "one", "minutes": 5, "pass": 5, "pick": 0, "shuffleQuestions": false, "shuffleOptions": true, "color": "#2563eb" },
+  "questions": [
+    {
+      "q": "HTML là viết tắt của cụm từ nào?",
+      "options": ["HyperText Markup Language", "HighText Machine Language", "Hyperlink Text Mode Language", "Home Tool Markup Language"],
+      "answer": 0,
+      "explain": "HTML = HyperText Markup Language, ngôn ngữ đánh dấu dùng để xây dựng cấu trúc trang web."
+    },
+    {
+      "q": "Thuộc tính CSS nào dùng để đổi màu chữ?",
+      "options": ["background", "color", "font-style", "text-decoration"],
+      "answer": 1,
+      "explain": "Thuộc tính color đặt màu chữ; background đặt màu nền."
+    },
+    {
+      "q": "Từ khóa nào khai báo một hằng số trong JavaScript?",
+      "options": ["var", "let", "const", "static"],
+      "answer": 2,
+      "explain": "const khai báo biến không thể gán lại giá trị (hằng số)."
+    },
+    {
+      "q": "Thẻ HTML nào dùng để chèn một liên kết?",
+      "options": ["<link>", "<a>", "<href>", "<nav>"],
+      "answer": 1,
+      "explain": "Thẻ <a href=\"...\"> tạo liên kết. Thẻ <link> dùng để nhúng tài nguyên như file CSS."
+    },
+    {
+      "q": "Kết quả của biểu thức 2 + \"2\" trong JavaScript là gì?",
+      "options": ["4", "\"22\"", "NaN", "Lỗi"],
+      "answer": 1,
+      "explain": "Khi cộng số với chuỗi, JavaScript chuyển số thành chuỗi rồi nối lại, nên kết quả là \"22\"."
+    }
+  ]
+}

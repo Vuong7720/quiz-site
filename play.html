@@ -11,10 +11,15 @@
   <meta property="og:image" content="https://vuong7720.github.io/quiz-site/og.png">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="quiz.css">
   <script src="theme.js"></script>
   <script src="common.js"></script>
   <script src="crypto.js"></script>
+  <script src="quiz-engine.js"></script>
 </head>
 <body class="play">
   <div class="playbar">
@@ -32,6 +37,8 @@
   <iframe id="frame" class="play-frame" hidden
           sandbox="allow-scripts allow-forms allow-modals allow-popups allow-downloads"
           allow="fullscreen; clipboard-write"></iframe>
+  <!-- Bài dạng dữ liệu: chạy bằng trình làm bài của trang (nội dung luôn được escape) -->
+  <main id="quizRoot" class="play-quiz" hidden></main>
   <div class="lock-wrap" id="lockBox" hidden>
     <form class="card lock-card" id="lockForm">
       <div class="lock-icon">🔒</div>
@@ -61,11 +68,25 @@
     function notFound() {
       $('title').textContent = 'Không tìm thấy';
       $('frame').hidden = true;
+      $('quizRoot').hidden = true;
       $('notfound').hidden = false;
     }
 
     const PW_KEY = 'quiz.pw.' + slug;
     let payload = null;
+    let info = null;
+
+    // Hiện nội dung bài (đã giải mã nếu có mật khẩu)
+    function show(content) {
+      if (info?.type === 'quiz') {
+        const data = typeof content === 'string' ? JSON.parse(content) : content;
+        $('quizRoot').hidden = false;
+        QuizEngine.mount($('quizRoot'), data, { icon: info.icon });
+      } else {
+        $('frame').srcdoc = content;
+        $('frame').hidden = false;
+      }
+    }
 
     function savedPassword() {
       // Ưu tiên mật khẩu gắn trong link (#k=...), sau đó tới mật khẩu đã nhập trong tab này
@@ -76,11 +97,10 @@
 
     async function unlock(pw) {
       try {
-        const html = await QuizCrypto.decrypt(payload, pw);
+        const content = await QuizCrypto.decrypt(payload, pw);
         try { sessionStorage.setItem(PW_KEY, pw); } catch {}
         $('lockBox').hidden = true;
-        $('frame').srcdoc = html;
-        $('frame').hidden = false;
+        show(content);
         return true;
       } catch {
         try { sessionStorage.removeItem(PW_KEY); } catch {}
@@ -117,23 +137,30 @@
 
     async function init() {
       if (!/^[a-z0-9-]+$/.test(slug)) return notFound();
-      const path = `exams/${slug}.html`;
-      const [html, list] = await Promise.all([
-        fetch(path, { cache: 'no-store' }).then(r => r.ok ? r.text() : null).catch(() => null),
-        fetch('exams.json?t=' + Date.now()).then(r => r.ok ? r.json() : []).catch(() => []),
-      ]);
-      if (html === null) return notFound();
-      const info = (Array.isArray(list) ? list : []).find(e => e.slug === slug);
+      const list = await QuizUtil.loadExams();
+      info = list.find(e => e.slug === slug) || null;
+      const isQuiz = info?.type === 'quiz';
+      const path = `exams/${slug}.${isQuiz ? 'json' : 'html'}`;
+      const text = await fetch(path, { cache: 'no-store' }).then(r => r.ok ? r.text() : null).catch(() => null);
+      if (text === null) return notFound();
+
       const title = info?.title || slug;
-      setupSeriesNav(Array.isArray(list) ? list : [], info);
+      setupSeriesNav(list, info);
       $('title').textContent = `${info?.icon ? info.icon + ' ' : ''}${title}`;
       document.title = title;
 
-      payload = QuizCrypto.readLocked(html);
-      if (!payload) {
-        $('frame').src = path;
-        $('frame').hidden = false;
-        return;
+      if (isQuiz) {
+        let data;
+        try { data = JSON.parse(text); } catch { return notFound(); }
+        payload = data.locked || null;
+        if (!payload) return show(data);
+      } else {
+        payload = QuizCrypto.readLocked(text);
+        if (!payload) {
+          $('frame').src = path;
+          $('frame').hidden = false;
+          return;
+        }
       }
       $('lockTitle').textContent = `🔒 ${title}`;
       const pw = savedPassword();

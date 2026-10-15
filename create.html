@@ -6,10 +6,16 @@
   <title>Tạo bài thi</title>
   <meta name="robots" content="noindex">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="quiz.css">
   <script src="theme.js"></script>
   <script src="common.js"></script>
   <script src="crypto.js"></script>
+  <script src="quiz-engine.js"></script>
+  <script src="quiz-editor.js"></script>
 </head>
 <body>
   <div class="container stack">
@@ -57,6 +63,13 @@
       <summary>✨ Tạo prompt nhờ Gemini / ChatGPT soạn bài</summary>
       <div class="stack">
         <div class="row">
+          <div>
+            <label for="pOut">Gemini trả về</label>
+            <select id="pOut">
+              <option value="data">Dữ liệu câu hỏi (dùng trình làm bài của trang)</option>
+              <option value="html">Trang HTML riêng</option>
+            </select>
+          </div>
           <div>
             <label for="pSource">Nguồn câu hỏi</label>
             <select id="pSource">
@@ -118,12 +131,21 @@
           <button class="btn primary" id="copyPrompt">📋 Copy prompt</button>
           <a class="btn" href="https://gemini.google.com/app" target="_blank" rel="noopener">Mở Gemini ↗</a>
         </div>
-        <div class="hint">Copy prompt → dán vào Gemini → copy mã HTML Gemini trả về → dán vào ô bên dưới.</div>
+        <div class="hint" id="copyPromptHint"></div>
       </div>
     </details>
 
     <!-- Form tạo bài -->
     <div class="card stack">
+      <div>
+        <label>Cách tạo bài</label>
+        <div class="seg" id="kindSeg">
+          <button type="button" data-kind="quiz" class="on">📝 Soạn câu hỏi <small>(khuyên dùng)</small></button>
+          <button type="button" data-kind="html">🧩 Dán trang HTML</button>
+        </div>
+        <div class="hint" id="kindHint"></div>
+      </div>
+      <div id="draftBar" class="status info" hidden></div>
       <div class="row">
         <div class="span-2">
           <label for="title">Tên bài thi *</label>
@@ -132,7 +154,7 @@
         <div>
           <label for="slug">Tên file</label>
           <input id="slug" type="text" placeholder="tu-dong-tao">
-          <div class="hint">exams/<b id="slugPreview">...</b>.html</div>
+          <div class="hint">exams/<b id="slugPreview">...</b><span id="slugExt">.json</span></div>
         </div>
       </div>
       <div class="row">
@@ -145,7 +167,7 @@
           <label for="icon">Icon</label>
           <input id="icon" type="text" maxlength="4" placeholder="📝">
         </div>
-        <div>
+        <div class="html-only">
           <label for="questions">Số câu</label>
           <input id="questions" type="number" min="1" placeholder="vd: 20">
         </div>
@@ -177,7 +199,8 @@
           <div class="hint">Bài sẽ được mã hóa. Hãy ghi nhớ mật khẩu: quên thì không mở lại được bài.</div>
         </div>
       </div>
-      <div>
+      <div class="quiz-only" id="editorRoot"></div>
+      <div class="html-only">
         <div class="actions" style="justify-content:space-between;align-items:end;margin-bottom:6px">
           <label for="html" style="margin:0">Mã HTML bài thi *</label>
           <button class="btn small" id="pickFile">📂 Chọn file .html</button>
@@ -194,6 +217,7 @@
       </div>
       <div id="status" class="status"></div>
       <iframe id="preview" class="preview" hidden sandbox="allow-scripts allow-forms allow-modals"></iframe>
+      <div id="quizPreview" class="quiz-preview" hidden></div>
     </div>
 
     <!-- Quản lý bài đã đăng -->
@@ -430,6 +454,84 @@ ${LT}/html>
     ['dragleave', 'drop'].forEach(t => dz.addEventListener(t, e => { e.preventDefault(); dz.classList.remove('drag'); }));
     dz.addEventListener('drop', e => loadFile(e.dataTransfer.files[0]));
 
+    // ---------- Cách tạo bài: soạn câu hỏi (quiz) / dán HTML ----------
+    let kind = 'quiz';
+    const KIND_HINT = {
+      quiz: 'Bài chạy bằng trình làm bài của trang: giao diện đẹp sẵn, sửa từng câu dễ dàng, dán được từ Word/Excel/Gemini.',
+      html: 'Dán nguyên một trang HTML (vd: do Gemini viết). Giao diện tùy theo trang đó.',
+    };
+    function setKind(k) {
+      kind = k;
+      document.querySelectorAll('#kindSeg button').forEach(b => b.classList.toggle('on', b.dataset.kind === k));
+      document.querySelectorAll('.quiz-only').forEach(el => el.hidden = k !== 'quiz');
+      document.querySelectorAll('.html-only').forEach(el => el.hidden = k !== 'html');
+      $('kindHint').textContent = KIND_HINT[k];
+      $('slugExt').textContent = k === 'quiz' ? '.json' : '.html';
+      $('preview').hidden = true;
+      $('quizPreview').hidden = true;
+    }
+    $('kindSeg').addEventListener('click', e => {
+      const b = e.target.closest('[data-kind]');
+      if (b && b.dataset.kind !== kind) setKind(b.dataset.kind);
+    });
+
+    const editor = QuizEditor.create($('editorRoot'), {
+      onChange: saveDraftSoon,
+      // JSON từ Gemini có kèm tên/mô tả → tự điền nếu ô còn trống
+      onImportMeta: meta => {
+        if (meta.title && !titleTouched && !$('title').value) setTitle(String(meta.title));
+        if (meta.description && !$('description').value) $('description').value = String(meta.description);
+      },
+    });
+
+    // Bản nháp: tự lưu trên máy để không mất công soạn khi lỡ đóng tab
+    const DRAFT_KEY = 'quiz.draft';
+    let draftTimer = 0;
+    function saveDraftSoon() {
+      clearTimeout(draftTimer);
+      draftTimer = setTimeout(() => {
+        if (kind !== 'quiz' || !editor.count()) return;
+        try {
+          localStorage.setItem(DRAFT_KEY, JSON.stringify({
+            at: Date.now(), title: $('title').value, slug: $('slug').value, minutes: $('minutes').value,
+            questions: editor.getQuestions(), settings: editor.getSettings(),
+          }));
+        } catch {}
+      }, 600);
+    }
+    function clearDraft() { try { localStorage.removeItem(DRAFT_KEY); } catch {} $('draftBar').hidden = true; }
+    function offerDraft() {
+      let d = null;
+      try { d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } catch {}
+      if (!d || !d.questions?.length) return;
+      const when = new Date(d.at).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
+      $('draftBar').innerHTML = `📝 Có bản nháp chưa đăng: <b>${escapeHtml(d.title || 'Chưa đặt tên')}</b> · ${d.questions.length} câu · lưu lúc ${when}. ` +
+        `<button class="btn small primary" id="draftRestore">Khôi phục</button> <button class="btn small" id="draftDiscard">Bỏ nháp</button>`;
+      $('draftBar').className = 'status show info';
+      $('draftBar').hidden = false;
+      $('draftRestore').onclick = () => {
+        setKind('quiz');
+        if (d.title) { setTitle(d.title); titleTouched = true; }
+        if (d.slug) { $('slug').value = d.slug; slugTouched = true; $('slugPreview').textContent = slugify(d.slug); }
+        if (d.minutes) $('minutes').value = d.minutes;
+        editor.setData({ questions: d.questions, settings: d.settings });
+        $('draftBar').hidden = true;
+      };
+      $('draftDiscard').onclick = clearDraft;
+    }
+    ['title', 'minutes'].forEach(id => $(id).addEventListener('input', saveDraftSoon));
+
+    // Dữ liệu bài thi dạng quiz để lưu lên GitHub
+    function buildQuizData(title) {
+      return {
+        v: 1,
+        title,
+        description: $('description').value.trim(),
+        settings: { ...editor.getSettings(), minutes: posInt($('minutes').value) || 0 },
+        questions: editor.getQuestions(),
+      };
+    }
+
     // ---------- Prompt cho Gemini ----------
     function buildPrompt() {
       const source = $('pSource').value;
@@ -461,6 +563,8 @@ ${LT}/html>
 - Viết đủ cả ${bank} câu trong mảng dữ liệu, không được viết tắt kiểu "// ... thêm câu tương tự".`,
       };
       const content = contents[source];
+
+      if ($('pOut').value === 'data') return buildDataPrompt(source, topic, count, bank);
 
       const oneByOne = $('pMode').value === 'one';
       const pass = $('pPass').value || '5';
@@ -509,14 +613,56 @@ ${layout}
 ${content}`;
     }
 
+    // Prompt ngắn: Gemini chỉ trả dữ liệu JSON, trang tự lo giao diện
+    function buildDataPrompt(source, topic, count, bank) {
+      const level = $('pLevel').value;
+      const n = source === 'bank' ? bank : count;
+      const content = {
+        ai: `- Chủ đề: ${topic}\n- Số câu: đúng ${n} câu\n- Độ khó: ${level}\n- Mỗi câu có 4 đáp án, chỉ 1 đáp án đúng, kèm 1 câu giải thích ngắn.`,
+        bank: `- Chủ đề: ${topic}\n- Đây là NGÂN HÀNG câu hỏi: soạn đúng ${n} câu khác nhau, không trùng ý, bao quát nhiều mảng kiến thức của chủ đề.\n- Độ khó: ${level}\n- Mỗi câu có 4 đáp án, chỉ 1 đáp án đúng, kèm 1 câu giải thích ngắn.`,
+        own: `- Chủ đề: ${topic}\n- Chuyển danh sách câu hỏi bên dưới sang JSON. Giữ nguyên nội dung câu hỏi và đáp án, không thêm bớt câu nào. Đáp án đúng được đánh dấu [*]. Câu nào chưa có giải thích thì tự viết giải thích ngắn.\n\n[DÁN CÂU HỎI VÀO ĐÂY]`,
+      }[source];
+      return `Hãy soạn một bài thi trắc nghiệm và trả về DUY NHẤT một khối code JSON (không giải thích gì thêm), đúng cấu trúc sau:
+
+{
+  "title": "Tên bài thi",
+  "description": "Mô tả ngắn về bài thi",
+  "questions": [
+    {
+      "q": "Nội dung câu hỏi",
+      "options": ["Đáp án thứ nhất", "Đáp án thứ hai", "Đáp án thứ ba", "Đáp án thứ tư"],
+      "answer": 0,
+      "explain": "Giải thích ngắn vì sao đáp án đúng"
+    }
+  ]
+}
+
+QUY TẮC:
+- "answer" là vị trí của đáp án đúng trong mảng "options", tính từ 0 (0 = đáp án thứ nhất, 1 = thứ hai, 2 = thứ ba, 3 = thứ tư).
+- Phân bố đáp án đúng đều giữa các vị trí, không dồn vào một vị trí.
+- Không ghi "A.", "B.", "C.", "D." ở đầu đáp án.
+- Các đáp án sai phải hợp lý, cùng kiểu với đáp án đúng, tránh đáp án hiển nhiên sai.
+- JSON phải hợp lệ: dùng dấu nháy kép, không có dấu phẩy thừa, không có chú thích.
+- Viết đủ tất cả các câu, không viết tắt kiểu "..." hay "tương tự".
+- Nội dung bằng tiếng Việt (trừ khi chủ đề yêu cầu ngôn ngữ khác).
+
+NỘI DUNG:
+${content}`;
+    }
+
     function updatePrompt() {
       const source = $('pSource').value;
+      const data = $('pOut').value === 'data';
+      // Kiểu làm bài / màu / điểm đạt: với dạng dữ liệu sẽ được điền sẵn vào phần cài đặt bài
+      $('copyPromptHint').textContent = data
+        ? 'Copy prompt → dán vào Gemini → copy khối JSON Gemini trả về → dán vào mục “📋 Dán câu hỏi” bên dưới.'
+        : 'Copy prompt → dán vào Gemini → copy mã HTML Gemini trả về → chọn “🧩 Dán trang HTML” và dán vào ô bên dưới.';
       document.querySelectorAll('.gen-only').forEach(el => el.hidden = source === 'own');
       document.querySelectorAll('.bank-only').forEach(el => el.hidden = source !== 'bank');
       $('pCountLabel').textContent = source === 'bank' ? 'Số câu mỗi lượt làm' : 'Số câu';
       $('pOutput').value = buildPrompt();
     }
-    ['pSource', 'pTopic', 'pCount', 'pBank', 'pLevel', 'pMinutes', 'pMode', 'pColor', 'pPass'].forEach(id => {
+    ['pOut', 'pSource', 'pTopic', 'pCount', 'pBank', 'pLevel', 'pMinutes', 'pMode', 'pColor', 'pPass'].forEach(id => {
       $(id).addEventListener('input', updatePrompt);
       $(id).addEventListener('change', updatePrompt);
     });
@@ -532,12 +678,33 @@ ${content}`;
       if (!$('topic').value && $('pTopic').value.trim()) $('topic').value = $('pTopic').value.trim();
       if (!$('minutes').value && posInt($('pMinutes').value)) $('minutes').value = posInt($('pMinutes').value);
       if (!$('questions').value && $('pSource').value !== 'own') $('questions').value = posInt($('pCount').value) || '';
+      if ($('pOut').value === 'data') {
+        // Chuyển sang soạn câu hỏi và áp dụng sẵn cài đặt
+        setKind('quiz');
+        editor.setSetting('mode', $('pMode').value);
+        editor.setSetting('pass', parseFloat($('pPass').value) || 5);
+        const hex = ($('pColor').value.match(/#[0-9a-f]{6}/i) || [])[0];
+        if (hex) editor.setSetting('color', hex);
+        if ($('pSource').value === 'bank') {
+          editor.setSetting('pick', posInt($('pCount').value) || 20);
+          editor.setSetting('shuffleOptions', true);
+        }
+        const box = $('editorRoot').querySelector('[data-ref="importBox"]');
+        if (box) box.open = true;
+      }
       $('copyPrompt').textContent = '✅ Đã copy';
       setTimeout(() => $('copyPrompt').textContent = '📋 Copy prompt', 1500);
     };
 
     // ---------- Xem trước ----------
     $('previewBtn').onclick = () => {
+      if (kind === 'quiz') {
+        if (!editor.count()) return showStatus('Bạn chưa có câu hỏi nào.', 'err');
+        $('quizPreview').hidden = false;
+        QuizEngine.mount($('quizPreview'), buildQuizData($('title').value.trim() || 'Xem trước'), { icon: $('icon').value.trim(), preview: true });
+        $('quizPreview').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
       const html = $('html').value.trim();
       if (!html) return showStatus('Bạn chưa dán mã HTML.', 'err');
       $('preview').hidden = false;
@@ -551,6 +718,9 @@ ${content}`;
       $('slugPreview').textContent = '...';
       slugTouched = titleTouched = false;
       $('preview').hidden = true;
+      $('quizPreview').hidden = true;
+      if ($('quizPreview')._qzDestroy) $('quizPreview')._qzDestroy();
+      editor.clear();
     }
 
     function nextOrder(list, series, slug) {
@@ -575,23 +745,42 @@ ${content}`;
       const html = $('html').value.trim();
       if (!title) return showStatus('Bạn chưa nhập tên bài thi.', 'err');
       if (!slug) return showStatus('Tên file không hợp lệ.', 'err');
-      if (!html) return showStatus('Bạn chưa dán mã HTML.', 'err');
+      const isQuiz = kind === 'quiz';
+      if (isQuiz) {
+        if (!editor.count()) return showStatus('Bạn chưa có câu hỏi nào.', 'err');
+        const errs = editor.validate();
+        if (errs.length) {
+          return showStatus(`❌ Còn ${errs.length} câu chưa hợp lệ (câu ${errs.slice(0, 5).map(e => e.i + 1).join(', ')}${errs.length > 5 ? '…' : ''}). ` +
+            'Các câu này được đánh dấu ⚠️ trong danh sách.', 'err');
+        }
+      } else if (!html) {
+        return showStatus('Bạn chưa dán mã HTML.', 'err');
+      }
 
       const btn = $('publishBtn');
       btn.disabled = true;
       try {
         showStatus('Đang kiểm tra...', 'info');
-        const path = `exams/${slug}.html`;
-        const existing = await getFile(path);
-        if (existing && !confirm(`Bài thi "${slug}" đã tồn tại. Ghi đè?`)) return showStatus('Đã hủy.', 'info');
+        const path = `exams/${slug}.${isQuiz ? 'json' : 'html'}`;
+        const otherPath = `exams/${slug}.${isQuiz ? 'html' : 'json'}`;
+        const [existing, other] = await Promise.all([getFile(path), getFile(otherPath)]);
+        if ((existing || other) && !confirm(`Bài thi "${slug}" đã tồn tại. Ghi đè?`)) return showStatus('Đã hủy.', 'info');
 
         showStatus('Đang tải bài thi lên GitHub...', 'info');
         const password = $('password').value;
         const series = $('series').value.trim().replace(/\s+/g, ' ');
-        const content = password
-          ? lockedStub(title, await QuizCrypto.encrypt(wrapHtml(stripGuard(html), title), password))
-          : wrapHtml(html, title);
-        await putFile(path, addGuard(content), `${existing ? 'Cập nhật' : 'Thêm'} bài thi: ${title}`, existing?.sha);
+        let content;
+        if (isQuiz) {
+          const data = JSON.stringify(buildQuizData(title));
+          content = password ? JSON.stringify({ locked: await QuizCrypto.encrypt(data, password) }) : data;
+        } else {
+          content = addGuard(password
+            ? lockedStub(title, await QuizCrypto.encrypt(wrapHtml(stripGuard(html), title), password))
+            : wrapHtml(html, title));
+        }
+        await putFile(path, content, `${existing || other ? 'Cập nhật' : 'Thêm'} bài thi: ${title}`, existing?.sha);
+        // Đổi loại bài (HTML ↔ soạn câu hỏi) → xóa file kiểu cũ
+        if (other) await deleteFile(otherPath, other.sha, `Đổi loại bài thi: ${title}`);
 
         showStatus('Đang cập nhật danh sách bài thi...', 'info');
         const m = await getManifest();
@@ -602,10 +791,11 @@ ${content}`;
           description: $('description').value.trim() || undefined,
           topic: $('topic').value.trim() || undefined,
           icon: $('icon').value.trim() || undefined,
+          type: isQuiz ? 'quiz' : undefined,
           locked: password ? true : undefined,
           series: series || undefined,
           order: series ? (posInt($('order').value) || nextOrder(m.list, series, slug)) : undefined,
-          questions: posInt($('questions').value),
+          questions: isQuiz ? (editor.getSettings().pick > 0 && editor.getSettings().pick < editor.count() ? editor.getSettings().pick : editor.count()) : posInt($('questions').value),
           minutes: posInt($('minutes').value),
           createdAt: old?.createdAt || new Date().toISOString(),
           updatedAt: old ? new Date().toISOString() : undefined,
@@ -619,6 +809,7 @@ ${content}`;
           (password ? `<br>🔑 Link kèm mật khẩu (người nhận bấm là vào thẳng, không cần gõ): <a href="${escapeHtml(keyLink)}" target="_blank" rel="noopener">${escapeHtml(keyLink)}</a>` : '') +
           (series ? `<br>📚 Link cả bộ đề: <a href="${seriesLink(series)}" target="_blank" rel="noopener">${escapeHtml(seriesLink(series))}</a>` : ''), 'ok');
         resetForm();
+        clearDraft();
         renderManage(list);
       } catch (e) {
         showStatus('❌ ' + escapeHtml(e.message), 'err');
@@ -653,7 +844,7 @@ ${content}`;
         <div class="manage-item${e.series ? ' in-series' : ''}">
           <div>
             <div class="name">${escapeHtml(e.icon || '📝')} ${escapeHtml(e.title)}${e.locked ? ' 🔒' : ''}</div>
-            <div class="slug">exams/${escapeHtml(e.slug)}.html${e.series ? ' · đề #' + escapeHtml(e.order || '?') : ''}${e.topic ? ' · ' + escapeHtml(e.topic) : ''}</div>
+            <div class="slug">${e.type === 'quiz' ? '📝 Soạn câu hỏi' : '🧩 HTML'} · exams/${escapeHtml(e.slug)}.${e.type === 'quiz' ? 'json' : 'html'}${e.series ? ' · đề #' + escapeHtml(e.order || '?') : ''}${e.topic ? ' · ' + escapeHtml(e.topic) : ''}</div>
           </div>
           <div class="actions">
             <a class="btn small" href="play.html?e=${encodeURIComponent(e.slug)}" target="_blank" rel="noopener">Mở</a>
@@ -693,20 +884,28 @@ ${content}`;
         const e = manageList.find(x => x.slug === editSlug) || {};
         try {
           showStatus('Đang tải nội dung bài thi...', 'info');
-          const f = await getFile(`exams/${editSlug}.html`);
+          const isQuiz = e.type === 'quiz';
+          const f = await getFile(`exams/${editSlug}.${isQuiz ? 'json' : 'html'}`);
           // Giải mã trước, chỉ điền form khi đã có nội dung (tránh ghi đè nhầm khi bấm hủy)
-          let text = stripGuard(f?.text || '');
+          let text = isQuiz ? (f?.text || '{}') : stripGuard(f?.text || '');
           let password = '';
-          const locked = QuizCrypto.readLocked(text);
+          let quizData = null;
+          if (isQuiz) {
+            try { quizData = JSON.parse(text); } catch { return showStatus('❌ File bài thi bị lỗi, không đọc được.', 'err'); }
+          }
+          const locked = isQuiz ? quizData.locked : QuizCrypto.readLocked(text);
           if (locked) {
             password = prompt('Bài này có mật khẩu. Nhập mật khẩu để sửa:') ?? '';
             if (!password) return showStatus('Đã hủy.', 'info');
             try {
               text = await QuizCrypto.decrypt(locked, password);
+              if (isQuiz) quizData = JSON.parse(text);
             } catch {
               return showStatus('❌ Sai mật khẩu, không mở được bài để sửa.', 'err');
             }
           }
+          setKind(isQuiz ? 'quiz' : 'html');
+          if (isQuiz) editor.setData(quizData);
           $('title').value = e.title || '';
           $('slug').value = editSlug;
           $('slugPreview').textContent = editSlug;
@@ -715,11 +914,12 @@ ${content}`;
           $('topic').value = e.topic || '';
           $('icon').value = e.icon || '';
           $('questions').value = e.questions || '';
-          $('minutes').value = e.minutes || '';
+          $('minutes').value = (isQuiz ? quizData.settings?.minutes : e.minutes) || '';
+          if (isQuiz && quizData.description && !e.description) $('description').value = quizData.description;
           $('series').value = e.series || '';
           $('order').value = e.order || '';
           $('password').value = password;
-          $('html').value = text;
+          $('html').value = isQuiz ? '' : text;
           showStatus('Đã nạp bài thi để sửa. Sửa xong bấm “Đăng bài thi” để ghi đè.', 'info');
           window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (err) {
@@ -731,8 +931,10 @@ ${content}`;
         if (!confirm(`Xóa bài thi "${delSlug}"? Không thể hoàn tác.`)) return;
         ev.target.disabled = true;
         try {
-          const f = await getFile(`exams/${delSlug}.html`);
-          if (f) await deleteFile(`exams/${delSlug}.html`, f.sha, `Xóa bài thi: ${delSlug}`);
+          for (const ext of ['html', 'json']) {
+            const f = await getFile(`exams/${delSlug}.${ext}`);
+            if (f) await deleteFile(`exams/${delSlug}.${ext}`, f.sha, `Xóa bài thi: ${delSlug}`);
+          }
           const m = await getManifest();
           const next = m.list.filter(x => x.slug !== delSlug);
           await putFile(MANIFEST, JSON.stringify(next, null, 2) + '\n', `Xóa khỏi danh sách: ${delSlug}`, m.sha);
@@ -746,7 +948,9 @@ ${content}`;
     });
 
     loadSettings();
+    setKind('quiz');
     updatePrompt();
+    offerDraft();
     loadManageList();
   </script>
 </body>
